@@ -1,26 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.scss';
+import React, { Component } from "react";
+import { Theme } from "@material-ui/core/styles/createMuiTheme";
+import withStyles, {
+  WithStyles,
+  StyleRules
+} from "@material-ui/core/styles/withStyles";
+import createStyles from "@material-ui/core/styles/createStyles";
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          CircleCI+Firebase最高!
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+// Components
+import Navbar from './components/Navbar';
+// withRoot を import
+import withRoot from './utils/withRoot';
+
+// styles を定義
+const styles = (theme: Theme): StyleRules => createStyles({
+  root: {
+
+  }
+});
+
+// 型定義 Props を定義
+type Props = WithStyles<typeof styles>;
+
+interface State {
+  open: boolean;
 }
 
-export default App;
+// App Component を定義
+class App extends Component<{}, State> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      open: false
+    };
+    this.onToggle = this.onToggle.bind(this);
+  }
+  onToggle() {
+    this.setState({
+      open: !this.state.open
+    });
+  }
+  render() {
+    return <div>
+      <Navbar open={this.state.open} onToggle={this.onToggle} />
+    </div>
+  }
+}
+// withRoot で export
+export default withRoot(withStyles(styles)(App));
