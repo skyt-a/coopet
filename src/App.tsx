@@ -8,10 +8,13 @@ import createStyles from "@material-ui/core/styles/createStyles";
 
 // Components
 import Landing from "./components/Landing";
+import Navbar from "./components/Navbar";
 // withRoot を import
 import withRoot from "./utils/withRoot";
 // robotoフォントをインポート
 import "typeface-roboto";
+// Routing設定をインポート
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 // styles を定義
 const styles = (theme: Theme): StyleRules =>
@@ -42,9 +45,18 @@ class App extends Component<Props, State> {
   }
   render() {
     return (
-      <div>
-        <Landing />
-      </div>
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" render={props => <Landing />} />
+          <Route path="/top" component={Landing} />
+          <Route
+            path="/nav"
+            render={props => (
+              <Navbar open={this.state.open} onToggle={this.onToggle} />
+            )}
+          />
+        </Switch>
+      </BrowserRouter>
     );
   }
 }
