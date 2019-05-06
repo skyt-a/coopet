@@ -7,16 +7,17 @@ import withStyles, {
 import createStyles from "@material-ui/core/styles/createStyles";
 
 // Components
-import Navbar from './components/Navbar';
+import Landing from "./components/Landing";
 // withRoot を import
-import withRoot from './utils/withRoot';
+import withRoot from "./utils/withRoot";
+// robotoフォントをインポート
+import "typeface-roboto";
 
 // styles を定義
-const styles = (theme: Theme): StyleRules => createStyles({
-  root: {
-
-  }
-});
+const styles = (theme: Theme): StyleRules =>
+  createStyles({
+    root: {}
+  });
 
 // 型定義 Props を定義
 type Props = WithStyles<typeof styles>;
@@ -40,9 +41,11 @@ class App extends Component<Props, State> {
     });
   }
   render() {
-    return <div>
-      <Navbar open={this.state.open} onToggle={this.onToggle} />
-    </div>
+    return (
+      <div>
+        <Landing />
+      </div>
+    );
   }
 }
 // withRoot で export
