@@ -26,7 +26,7 @@ interface State {
 }
 
 // App Component を定義
-class App extends Component<{}, State> {
+class App extends Component<Props, State> {
   constructor(props: any) {
     super(props);
     this.state = {
@@ -46,4 +46,5 @@ class App extends Component<{}, State> {
   }
 }
 // withRoot で export
+// これによってアプリケーション全体に設定が適用される
 export default withRoot(withStyles(styles)(App));
