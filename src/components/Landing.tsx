@@ -8,6 +8,7 @@ import createStyles from "@material-ui/core/styles/createStyles";
 // ランディングページのTop画像
 import landingImgPath from "../assets/images/landing-theme.jpg";
 import { Button, Typography } from "@material-ui/core";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -44,20 +45,31 @@ const styles = (theme: Theme): StyleRules =>
     }
   });
 
-interface Props extends WithStyles<typeof styles> {}
+interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
 class Landing extends Component<Props> {
+  constructor(props: Props) {
+    super(props);
+    this.goToLoginPage = this.goToLoginPage.bind(this);
+  }
+  /**
+   * ログインページへ遷移する
+   */
+  goToLoginPage(): void {
+    this.props.history.push("/nav");
+  }
   public render() {
     const { classes } = this.props;
     return (
       <article className={classes.landingView}>
         <section className={classes.landingSection}>
-          <Typography variant="title" paragraph className={classes.paragraph}>
+          <Typography variant="h6" paragraph className={classes.paragraph}>
             あなたのペットの素晴らしさをみんなに知ってもらいましょう
           </Typography>
           <Button
             variant="contained"
             className={classes.button}
             color="primary"
+            onClick={this.goToLoginPage}
           >
             始めましょう！
           </Button>
@@ -67,4 +79,4 @@ class Landing extends Component<Props> {
   }
 }
 
-export default withStyles(styles)(Landing);
+export default withStyles(styles)(withRouter(Landing));

@@ -43,8 +43,7 @@ class Navbar extends Component<Props> {
     ));
   }
   public render() {
-    const { open, onToggle } = this.props;
-    console.log(onToggle);
+    const { open } = this.props;
     return (
       <div>
         <Drawer open={open}>{this.createMenuItem()}</Drawer>
