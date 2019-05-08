@@ -45,7 +45,7 @@ class Login extends Component<Props, State> {
   }
 
   login(provider: any) {
-    firebase.auth().signInWithRedirect(provider);
+    firebase.auth().signInWithPopup(provider);
   }
 
   logout() {
