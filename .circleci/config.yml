@@ -12,7 +12,7 @@ jobs:
             - v1-dependencies-
       - run:
           name: 'Decode .env file'
-          command: echo $ENV_FILE | base64 --decode > .env
+          command: echo ${ENV} > .env
       - run: 'yarn install'
       - save_cache:
           paths:
