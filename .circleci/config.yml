@@ -17,6 +17,9 @@ jobs:
           key: 'v1-dependencies-{{ checksum "package.json" }}'
       - run: 'yarn test'
       - run:
+          name: 'Decode .env file'
+          command: echo $ENV_FILE | base64 --decode > .env
+      - run:
           name: 'Build Project'
           command: 'yarn build'
       - run:
