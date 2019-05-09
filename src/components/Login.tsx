@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
   WithStyles,
@@ -6,9 +6,17 @@ import withStyles, {
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 // ランディングページのTop画像
-import { Button, Typography, Paper } from "@material-ui/core";
+import {
+  Button,
+  Typography,
+  Paper,
+  List,
+  ListItem,
+  TextField
+} from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
+import SignInScreen from "./SignInScreen";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -16,68 +24,61 @@ const styles = (theme: Theme): StyleRules =>
       margin: theme.spacing.unit
     },
     paper: {
-      textAlign: "center"
+      textAlign: "center",
+      padding: theme.spacing.unit
+    },
+    listItemInner: {
+      margin: "auto"
     }
   });
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
 interface State {
   user: any;
+  loading: boolean;
 }
 class Login extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      loading: true,
       user: null
     };
-    this.loginGoogle = this.loginGoogle.bind(this);
-    this.logout = this.logout.bind(this);
   }
   componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
-      this.setState({ user });
+      this.setState({
+        loading: false,
+        user: user
+      });
     });
-  }
-
-  loginGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    this.login(provider);
-  }
-
-  login(provider: any) {
-    firebase.auth().signInWithPopup(provider);
   }
 
   logout() {
     firebase.auth().signOut();
   }
-  public render() {
+
+  render() {
+    if (this.state.loading) return <div>loading</div>;
     const { classes } = this.props;
     return (
       <Paper className={classes.paper}>
-        {/* <div className="App"> */}
-        <Typography>UID: {this.state.user && this.state.user.uid}</Typography>
-
+        <Typography>
+          Username: {this.state.user && this.state.user.displayName}
+        </Typography>
+        <br />
         {this.state.user ? (
           <Button
+            onClick={this.logout}
             className={classes.button}
             color="secondary"
             variant="contained"
-            onClick={this.logout}
           >
-            ログアウト
+            Logout
           </Button>
         ) : (
-          <Button
-            className={classes.button}
-            color="secondary"
-            variant="contained"
-            onClick={this.loginGoogle}
-          >
-            Google ログイン
-          </Button>
+          <SignInScreen />
         )}
-        {/* </div> */}
       </Paper>
     );
   }
