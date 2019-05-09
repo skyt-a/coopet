@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
   WithStyles,
@@ -6,14 +6,7 @@ import withStyles, {
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 // ランディングページのTop画像
-import {
-  Button,
-  Typography,
-  Paper,
-  List,
-  ListItem,
-  TextField
-} from "@material-ui/core";
+import { Button, Typography, Paper } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
 import SignInScreen from "./SignInScreen";
