@@ -14,8 +14,8 @@ import withRoot from "./utils/withRoot";
 // robotoフォントをインポート
 import "typeface-roboto";
 // Routing設定をインポート
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Login from "./components/Login";
+import { Route, Switch } from "react-router-dom";
+import Auth from "./containers/Auth";
 
 // styles を定義
 const styles = (theme: Theme): StyleRules =>
@@ -46,19 +46,17 @@ class App extends Component<Props, State> {
   }
   render() {
     return (
-      <BrowserRouter>
-        <Switch>
-          <Route exact path="/" render={() => <Landing />} />
-          <Route path="/top" component={Landing} />
-          <Route path="/login" component={Login} />
-          <Route
-            path="/nav"
-            render={() => (
-              <Navbar open={this.state.open} onToggle={this.onToggle} />
-            )}
-          />
-        </Switch>
-      </BrowserRouter>
+      <Switch>
+        <Route exact path="/" render={() => <Landing />} />
+        <Route path="/top" component={Landing} />
+        <Route path="/auth" component={Auth} />
+        <Route
+          path="/nav"
+          render={() => (
+            <Navbar open={this.state.open} onToggle={this.onToggle} />
+          )}
+        />
+      </Switch>
     );
   }
 }

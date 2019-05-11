@@ -55,7 +55,7 @@ class Landing extends Component<Props> {
    * ログインページへ遷移する
    */
   goToLoginPage(): void {
-    this.props.history.push("/login");
+    this.props.history.push("/auth");
   }
   public render() {
     const { classes } = this.props;
