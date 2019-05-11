@@ -25,7 +25,11 @@ const styles = (theme: Theme): StyleRules =>
     }
   });
 
-interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
+interface Props extends WithStyles<typeof styles>, RouteComponentProps {
+  auth: any;
+  onLogin: (user: any) => void;
+  onLogout: () => void;
+}
 interface State {
   user: any;
   loading: boolean;
@@ -37,30 +41,31 @@ class Login extends Component<Props, State> {
       loading: true,
       user: null
     };
+    this.logout = this.logout.bind(this);
   }
+
   componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
+      this.props.onLogin(user);
       this.setState({
-        loading: false,
-        user: user
+        loading: false
       });
     });
   }
 
   logout() {
+    this.props.onLogout();
     firebase.auth().signOut();
   }
 
   render() {
     if (this.state.loading) return <div>loading</div>;
     const { classes } = this.props;
+    const user = this.props.auth.user;
     return (
       <Paper className={classes.paper}>
-        <Typography>
-          Username: {this.state.user && this.state.user.displayName}
-        </Typography>
-        <br />
-        {this.state.user ? (
+        <Typography>Username: {user && user.displayName}</Typography>
+        {user ? (
           <Button
             onClick={this.logout}
             className={classes.button}
