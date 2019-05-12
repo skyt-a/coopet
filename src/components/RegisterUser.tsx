@@ -7,7 +7,6 @@ import withStyles, {
 import createStyles from "@material-ui/core/styles/createStyles";
 import { Button, Typography, Paper, TextField } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import firebase from "../firebase";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
