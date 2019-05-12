@@ -32,34 +32,32 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
 }
 interface State {
   user: any;
-  loading: boolean;
 }
 class Login extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      loading: true,
       user: null
     };
-    this.logout = this.logout.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     firebase.auth().onAuthStateChanged(user => {
+      console.log(user);
       this.props.onLogin(user);
-      this.setState({
-        loading: false
-      });
+      if (user != null) {
+        this.props.history.push("/registerUser");
+      }
     });
-  }
+  };
 
-  logout() {
+  logout = () => {
     this.props.onLogout();
     firebase.auth().signOut();
-  }
+  };
 
   render() {
-    if (this.state.loading) return <div>loading</div>;
+    // if (this.state.loading) return <div>loading</div>;
     const { classes } = this.props;
     const user = this.props.auth.user;
     return (

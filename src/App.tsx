@@ -9,13 +9,14 @@ import createStyles from "@material-ui/core/styles/createStyles";
 // Components
 import Landing from "./components/Landing";
 import Navbar from "./components/Navbar";
+import Auth from "./containers/Auth";
+import RegisterUser from "./containers/RegisterUser";
 // withRoot を import
 import withRoot from "./utils/withRoot";
 // robotoフォントをインポート
 import "typeface-roboto";
 // Routing設定をインポート
 import { Route, Switch } from "react-router-dom";
-import Auth from "./containers/Auth";
 
 // styles を定義
 const styles = (theme: Theme): StyleRules =>
@@ -50,6 +51,7 @@ class App extends Component<Props, State> {
         <Route exact path="/" render={() => <Landing />} />
         <Route path="/top" component={Landing} />
         <Route path="/auth" component={Auth} />
+        <Route path="/registerUser" component={RegisterUser} />
         <Route
           path="/nav"
           render={() => (
