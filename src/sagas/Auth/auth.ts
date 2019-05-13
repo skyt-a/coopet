@@ -1,4 +1,8 @@
-// tslint:disable no-else-after-return
+// tslint:disable: no-else-after-return
+// tslint:disable
+/* eslint no-throw-literal: 0 */
+/* eslint require-yield: 0 */
+
 import { Action } from "typescript-fsa";
 import { delay } from "redux-saga/effects";
 import { put, call, fork, join } from "redux-saga/effects";

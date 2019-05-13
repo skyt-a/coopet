@@ -17,10 +17,8 @@ import {
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
-import SignInScreen from "./SignInScreen";
-import { UserInfo, toProviderIds } from "../models/UserInfo";
+import { UserInfo } from "../models/UserInfo";
 import IconUtil from "../utils/IconUtil";
-import { authActions } from "../actions";
 import classNames from "classnames";
 
 const styles = (theme: Theme): StyleRules =>
