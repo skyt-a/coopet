@@ -3,6 +3,7 @@ import { Action, Dispatch } from "redux";
 
 import { actionCreator, RootState } from "../modules";
 import RegisterUser from "../components/RegisterUser";
+import { authActions } from "../actions/index";
 
 const mapStateToProps = () => (state: RootState) => {
   return {
@@ -14,7 +15,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
   return {
     onRegisterUser: (registerInfo: any) => {
       dispatch(
-        actionCreator.registerUser.confirmRegister({
+        authActions.updateUserInfo.started({
           userName: registerInfo.userName,
           petName: registerInfo.petName
         })
