@@ -4,6 +4,7 @@ import { Action } from "redux";
 export type ConfirmRegisterPayload = {
   userName: string;
   petName: string;
+  photoURL: string;
 };
 
 export interface ConfirmRegisterAction extends Action {
