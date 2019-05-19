@@ -6,13 +6,19 @@ export type State = {
   userName: string;
   petName: string;
   photoURL: string;
+  uploadedImage: any;
+  follow: any[];
+  follower: any[];
 };
 
 const init = (): State => {
   return {
     userName: "",
     petName: "",
-    photoURL: ""
+    photoURL: "",
+    uploadedImage: null,
+    follow: [],
+    follower: []
   };
 };
 
@@ -22,7 +28,10 @@ export const reducer = (state: State = init(), action: Actions) => {
       return {
         userName: action.payload.userName,
         petName: action.payload.petName,
-        photoURL: action.payload.photoURL
+        photoURL: action.payload.photoURL,
+        uploadedImage: action.payload.uploadedImage,
+        follow: action.payload.follow,
+        follower: action.payload.follower
       };
     default:
       return state;

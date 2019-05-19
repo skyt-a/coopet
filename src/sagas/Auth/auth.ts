@@ -4,12 +4,14 @@
 /* eslint require-yield: 0 */
 
 import { Action } from "typescript-fsa";
+import { eventChannel } from "redux-saga";
 import { delay } from "redux-saga/effects";
-import { put, call, fork, join } from "redux-saga/effects";
+import { put, call, fork, join, take } from "redux-saga/effects";
 import firebase, {
   authProviders,
   emailAuthProvider,
-  database
+  database,
+  storage
 } from "../../firebase";
 import { appActions, authActions } from "../../actions";
 import { SigningInfo } from "../../models/SigningInfo";
@@ -29,6 +31,25 @@ import {
   AUTH_SHOW_USER_NOT_FOUND_AT_SEND_PASSWORD_RESET_EMAIL,
   AUTH_RELOAD_TIMEOUT
 } from "../../const/const";
+
+const data = (type: any, payload: any) => {
+  const _data = {
+    type: type,
+    payload: payload
+  };
+
+  return _data;
+};
+
+const authChannel = () => {
+  const channel = eventChannel(emit => {
+    const unsubscribe = firebase
+      .auth()
+      .onAuthStateChanged(user => emit({ user }), error => emit({ error }));
+    return unsubscribe;
+  });
+  return channel;
+};
 
 const authSaga = {
   signUp: function*(action: Action<SigningInfo>): IterableIterator<any> {
@@ -622,7 +643,7 @@ const authSaga = {
   updateUserInfo: function*(action: Action<any>): IterableIterator<any> {
     console.log("authSaga: updateProfile start.");
     // try {
-    const profile = action.payload;
+    let profile = action.payload;
     const currentUser = firebase.auth().currentUser;
     if (!currentUser) {
       console.log(`user not signed in`);
@@ -631,72 +652,51 @@ const authSaga = {
         message: "this operation requires user to be signed in."
       };
     }
-
-    database.ref("/users/" + currentUser.uid).set(profile, function(error) {
+    console.log(profile);
+    const profileRef: any = {};
+    if (profile.uploadedImage) {
+      const ref = storage.ref().child(`photoURL:${currentUser.uid}`);
+      yield ref.put(profile.uploadedImage);
+      let targetURL;
+      yield ref.getDownloadURL().then(url => {
+        targetURL = url;
+      });
+      profileRef["photoURL"] = targetURL;
+    }
+    yield database.ref(`/users/${currentUser.uid}`).set(profile, error => {
       console.log(error);
       if (error) {
-        console.log(error);
+        console.error(error);
       } else {
-        // Data saved successfully!
       }
     });
-    // database.ref("users").set({
-    //   name: "test",
-    //   password: "test"
-    // });
-    //   if (!profile) {
-    //     throw { code: "profile not set", message: "profile is empty." };
-    //   }
-    //   if (!currentUser) {
-    //     console.log(`user not signed in`);
-    //     throw {
-    //       code: "user not signed in",
-    //       message: "this operation requires user to be signed in."
-    //     };
-    //   }
+    profileRef["displayName"] = profile.userName;
 
-    //   console.log(`updateProfile start`);
+    yield currentUser.updateProfile(profileRef);
 
-    //   // プロフィール更新
-    //   // ※以下の処理では、onAuthStateChanged イベントは発火されない
-    //   yield currentUser.updateProfile(profile);
+    // Firebase 側と同期(更新内容がカレントユーザに反映されるまで多少時間がかかる)
+    // 暫く待ってからカレントユーザを再取得し、store(redux) に認証情報を再セット
+    const task = yield fork(
+      authSaga.syncState,
+      authActions.syncState.started(AUTH_RELOAD_TIMEOUT)
+    );
+    yield join(task);
 
-    //   // Firebase 側と同期(更新内容がカレントユーザに反映されるまで多少時間がかかる)
-    //   // 暫く待ってからカレントユーザを再取得し、store(redux) に認証情報を再セット
-    //   const task = yield fork(
-    //     authSaga.syncState,
-    //     authActions.syncState.started(AUTH_RELOAD_TIMEOUT)
-    //   );
-    //   yield join(task);
+    // 成功時のメッセージ
+    yield put(
+      appActions.pushInfos([
+        AppInfoUtil.createAppInfo({
+          level: InfoLevel.SUCCESS,
+          title: "Success",
+          message: "Profile changed successfully."
+        })
+      ])
+    );
 
-    //   // 成功時のメッセージ
-    //   yield put(
-    //     appActions.pushInfos([
-    //       AppInfoUtil.createAppInfo({
-    //         level: InfoLevel.SUCCESS,
-    //         title: "Success",
-    //         message: "Profile changed successfully."
-    //       })
-    //     ])
-    //   );
-
-    //   // 処理完了
-    //   yield put(
-    //     authActions.updateProfile.done({ params: action.payload, result: true })
-    //   );
-    // } catch (err) {
-    //   yield put(
-    //     authActions.updateProfile.failed({ params: action.payload, error: err })
-    //   );
-    //   const appError = AppErrorUtil.toAppError(err, {
-    //     name: "updateProfile",
-    //     stack: JSON.stringify(err),
-    //     severity: isIAuthError(err) ? Severity.WARNING : Severity.FATAL
-    //   });
-    //   yield put(appActions.pushErrors([appError]));
-    // } finally {
-    //   console.log("authSaga: updateProfile end.");
-    // }
+    // 処理完了
+    yield put(
+      authActions.updateProfile.done({ params: action.payload, result: true })
+    );
   },
 
   updatePassword: function*(action: Action<string>): IterableIterator<any> {
@@ -878,6 +878,78 @@ const authSaga = {
     } finally {
       console.log("authSaga: withdraw end.");
     }
+  },
+  checkUserStateSaga: function* checkUserStateSaga() {
+    const channel = yield call(authChannel);
+    while (true) {
+      const { user, error } = yield take(channel);
+
+      if (user && !error) {
+        yield put(data("REDUCER_SET_UID", user.uid));
+        yield put(data("REDUCER_GET_PROFILE_REQUEST", null));
+      } else {
+        yield put(data("REDUCER_SET_UID", null));
+      }
+    }
+  },
+
+  getFollower: function*(action: Action<any>): IterableIterator<any> {
+    console.log("authSaga: updateProfile start.");
+    // try {
+    let profile = action.payload;
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) {
+      console.log(`user not signed in`);
+      throw {
+        code: "user not signed in",
+        message: "this operation requires user to be signed in."
+      };
+    }
+    console.log(profile);
+    const profileRef: any = {};
+    if (profile.uploadedImage) {
+      const ref = storage.ref().child(`photoURL:${currentUser.uid}`);
+      yield ref.put(profile.uploadedImage);
+      let targetURL;
+      yield ref.getDownloadURL().then(url => {
+        targetURL = url;
+      });
+      profileRef["photoURL"] = targetURL;
+    }
+    yield database.ref(`/users/${currentUser.uid}`).set(profile, error => {
+      console.log(error);
+      if (error) {
+        console.error(error);
+      } else {
+      }
+    });
+    profileRef["displayName"] = profile.userName;
+
+    yield currentUser.updateProfile(profileRef);
+
+    // Firebase 側と同期(更新内容がカレントユーザに反映されるまで多少時間がかかる)
+    // 暫く待ってからカレントユーザを再取得し、store(redux) に認証情報を再セット
+    const task = yield fork(
+      authSaga.syncState,
+      authActions.syncState.started(AUTH_RELOAD_TIMEOUT)
+    );
+    yield join(task);
+
+    // 成功時のメッセージ
+    yield put(
+      appActions.pushInfos([
+        AppInfoUtil.createAppInfo({
+          level: InfoLevel.SUCCESS,
+          title: "Success",
+          message: "Profile changed successfully."
+        })
+      ])
+    );
+
+    // 処理完了
+    yield put(
+      authActions.updateProfile.done({ params: action.payload, result: true })
+    );
   }
 };
 export default authSaga;

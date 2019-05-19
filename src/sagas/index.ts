@@ -5,6 +5,7 @@ import authSaga from "./Auth/auth";
 
 export default function* rootSaga(): IterableIterator<any> {
   yield all([
+    authSaga.checkUserStateSaga(),
     takeLatest(ActionTypes.APP_INITIALIZE, appSaga.initialize),
 
     takeEvery(`${ActionTypes.AUTH_SIGN_UP}_STARTED`, authSaga.signUp),

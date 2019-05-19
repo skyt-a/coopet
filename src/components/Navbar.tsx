@@ -7,7 +7,8 @@ import withStyles, {
 import createStyles from "@material-ui/core/styles/createStyles";
 import { AppBar, MenuItem, Drawer } from "@material-ui/core";
 import { Toolbar, IconButton, Typography } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
+import MenuIcon from "@material-ui/icons/Menu";
+import classNames from "classnames";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -17,33 +18,57 @@ const styles = (theme: Theme): StyleRules =>
     paragraph: {
       fontFamily: "serif",
       padding: theme.spacing.unit * 2
+    },
+    menuButton: {
+      marginLeft: theme.spacing.unit
     }
   });
 
 interface Props extends WithStyles<typeof styles> {
-  open: boolean;
-  onToggle: Function;
+  onLogout: () => void;
+  title: string;
 }
-const menuItems = ["React", "Redux", "React Router"];
+interface State {
+  open: boolean;
+}
+interface MenuItem {
+  menuLabel: string;
+  func: () => void;
+}
+
 // Component を定義: React.PureComponent<Props> で拡張する
-class Navbar extends Component<Props> {
+class Navbar extends Component<Props, State> {
+  menuItems: MenuItem[] = [
+    {
+      menuLabel: "ログアウト",
+      func: () => {
+        this.props.onLogout();
+        this.onToggle();
+      }
+    }
+  ];
   constructor(props: any) {
     super(props);
-    this.onToggle = this.onToggle.bind(this);
+    this.state = {
+      open: false
+    };
   }
-  onToggle() {
-    this.props.onToggle();
-  }
+  onToggle = () => {
+    this.setState({
+      open: !this.state.open
+    });
+  };
 
   createMenuItem() {
-    return menuItems.map((item, index) => (
-      <MenuItem onClick={this.onToggle} key={index}>
-        {item}
+    return this.menuItems.map((item, index) => (
+      <MenuItem onClick={item.func} key={index}>
+        {item.menuLabel}
       </MenuItem>
     ));
   }
   public render() {
-    const { open } = this.props;
+    const { open } = this.state;
+    const { classes } = this.props;
     return (
       <div>
         <Drawer open={open}>{this.createMenuItem()}</Drawer>
@@ -53,11 +78,12 @@ class Navbar extends Component<Props> {
               onClick={this.onToggle}
               color="inherit"
               aria-label="Menu"
+              className={classes.menuButton}
             >
-              <DeleteIcon />
+              <MenuIcon />
             </IconButton>
             <Typography variant="h5" color="inherit">
-              React Study
+              {this.props.title}
             </Typography>
           </Toolbar>
         </AppBar>

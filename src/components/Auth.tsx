@@ -77,6 +77,7 @@ class Auth extends Component<Props, State> {
       this.setState({
         loading: false
       });
+      console.log(user);
       if (user != null) {
         this.props.history.push("/registerUser");
       }

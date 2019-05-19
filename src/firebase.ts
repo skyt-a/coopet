@@ -1,6 +1,8 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
+import "firebase/storage";
+
 import { AuthProvider } from "./models/AuthProvider";
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -25,7 +27,6 @@ export const authProviders = new Map<AuthProvider, firebase.auth.AuthProvider>([
   ["Twitter", new firebase.auth.TwitterAuthProvider()]
 ]);
 export const emailAuthProvider = firebase.auth.EmailAuthProvider; //
-console.log(firebase.database);
-
 export const database = firebase.database();
+export const storage = firebase.storage();
 export default firebase;

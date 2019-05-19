@@ -18,7 +18,11 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
       dispatch(
         authActions.updateUserInfo.started({
           userName: registerInfo.userName,
-          petName: registerInfo.petName
+          petName: registerInfo.petName,
+          photoURL: registerInfo.photoURL,
+          uploadedImage: registerInfo.uploadedImage,
+          follow: registerInfo.follow,
+          follower: registerInfo.follower
         })
       );
     }
