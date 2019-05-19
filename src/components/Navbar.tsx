@@ -8,7 +8,6 @@ import createStyles from "@material-ui/core/styles/createStyles";
 import { AppBar, MenuItem, Drawer } from "@material-ui/core";
 import { Toolbar, IconButton, Typography } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import classNames from "classnames";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({

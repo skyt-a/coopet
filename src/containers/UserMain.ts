@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 
-import { actionCreator, RootState } from "../modules";
+import { RootState } from "../modules";
 import UserMain from "../components/UserMain";
 import { authActions } from "../actions";
 

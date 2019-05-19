@@ -5,17 +5,7 @@ import withStyles, {
   StyleRules
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
-import {
-  Button,
-  Typography,
-  Paper,
-  TextField,
-  Card,
-  CardActionArea,
-  CardMedia,
-  CardContent,
-  Avatar
-} from "@material-ui/core";
+import { Typography, Paper, Avatar } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
 import Navbar from "../containers/Navbar";
