@@ -86,8 +86,8 @@ const authSaga = {
             provider: signing.authProvider
           });
 
-          // 行ってこい(Redirect)
-          yield firebase.auth().signInWithRedirect(authProvider);
+          // 行ってこい(Popup)
+          yield firebase.auth().signInWithPopup(authProvider);
           break;
         }
 
@@ -187,8 +187,8 @@ const authSaga = {
             provider: signing.authProvider
           });
 
-          // 行ってこい(Redirect)
-          yield firebase.auth().signInWithRedirect(authProvider);
+          // 行ってこい(Popup)
+          yield firebase.auth().signInWithPopup(authProvider);
           break;
         }
 
@@ -339,8 +339,8 @@ const authSaga = {
             provider: signing.authProvider
           });
 
-          // 行ってこい(Redirect)
-          yield currentUser.linkWithRedirect(authProvider);
+          // 行ってこい(Popup)
+          yield currentUser.linkWithPopup(authProvider);
           // ※以下の処理では、onAuthStateChanged イベントは発火されない
           // yield currentUser.linkWithPopup(authProvider);
 
