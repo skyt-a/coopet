@@ -1,8 +1,8 @@
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 
-import { actionCreator, RootState } from "../modules";
-import Auth from "../components/Auth";
+import { RootState } from "../modules";
+import Navbar from "../components/Navbar";
 import { authActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
@@ -13,12 +13,6 @@ const mapStateToProps = () => (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
   return {
-    onAuth: (signing: any) => {
-      dispatch(authActions.signIn.started(signing));
-    },
-    onUpdateUser: (user: any) => {
-      dispatch(actionCreator.auth.updateUser(user));
-    },
     onLogout: () => {
       dispatch(authActions.signOut.started());
     }
@@ -28,4 +22,4 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Auth);
+)(Navbar);

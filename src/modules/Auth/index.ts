@@ -1,7 +1,6 @@
-import { login, LoginAction } from "./Login";
-import { logout, LogoutAction } from "./Logout";
+import { updateUser, UpdateUserAction } from "./UpdateUser";
 
-type Actions = LoginAction | LogoutAction;
+type Actions = UpdateUserAction;
 
 export type State = {
   user: any;
@@ -14,14 +13,11 @@ const init = (): State => {
 };
 
 export const reducer = (state: State = init(), action: Actions) => {
+  console.log(action);
   switch (action.type) {
-    case "LOGIN":
+    case "UPDATE_USER":
       return {
-        user: action.payload.user
-      };
-    case "LOGOUT":
-      return {
-        user: null
+        user: action.payload
       };
     default:
       return state;
@@ -29,6 +25,5 @@ export const reducer = (state: State = init(), action: Actions) => {
 };
 
 export const actionCreator = {
-  login,
-  logout
+  updateUser
 };

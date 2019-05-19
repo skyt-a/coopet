@@ -11,6 +11,7 @@ import Landing from "./components/Landing";
 import Navbar from "./components/Navbar";
 import Auth from "./containers/Auth";
 import RegisterUser from "./containers/RegisterUser";
+import UserMain from "./containers/UserMain";
 // withRoot を import
 import withRoot from "./utils/withRoot";
 // robotoフォントをインポート
@@ -52,6 +53,7 @@ class App extends Component<Props, State> {
         <Route path="/top" component={Landing} />
         <Route path="/auth" component={Auth} />
         <Route path="/registerUser" component={RegisterUser} />
+        <Route path="/userMain" component={UserMain} />
         <Route
           path="/nav"
           render={() => (
