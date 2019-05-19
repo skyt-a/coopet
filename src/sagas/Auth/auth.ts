@@ -891,65 +891,6 @@ const authSaga = {
         yield put(data("REDUCER_SET_UID", null));
       }
     }
-  },
-
-  getFollower: function*(action: Action<any>): IterableIterator<any> {
-    console.log("authSaga: updateProfile start.");
-    // try {
-    let profile = action.payload;
-    const currentUser = firebase.auth().currentUser;
-    if (!currentUser) {
-      console.log(`user not signed in`);
-      throw {
-        code: "user not signed in",
-        message: "this operation requires user to be signed in."
-      };
-    }
-    console.log(profile);
-    const profileRef: any = {};
-    if (profile.uploadedImage) {
-      const ref = storage.ref().child(`photoURL:${currentUser.uid}`);
-      yield ref.put(profile.uploadedImage);
-      let targetURL;
-      yield ref.getDownloadURL().then(url => {
-        targetURL = url;
-      });
-      profileRef["photoURL"] = targetURL;
-    }
-    yield database.ref(`/users/${currentUser.uid}`).set(profile, error => {
-      console.log(error);
-      if (error) {
-        console.error(error);
-      } else {
-      }
-    });
-    profileRef["displayName"] = profile.userName;
-
-    yield currentUser.updateProfile(profileRef);
-
-    // Firebase 側と同期(更新内容がカレントユーザに反映されるまで多少時間がかかる)
-    // 暫く待ってからカレントユーザを再取得し、store(redux) に認証情報を再セット
-    const task = yield fork(
-      authSaga.syncState,
-      authActions.syncState.started(AUTH_RELOAD_TIMEOUT)
-    );
-    yield join(task);
-
-    // 成功時のメッセージ
-    yield put(
-      appActions.pushInfos([
-        AppInfoUtil.createAppInfo({
-          level: InfoLevel.SUCCESS,
-          title: "Success",
-          message: "Profile changed successfully."
-        })
-      ])
-    );
-
-    // 処理完了
-    yield put(
-      authActions.updateProfile.done({ params: action.payload, result: true })
-    );
   }
 };
 export default authSaga;

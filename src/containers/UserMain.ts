@@ -3,7 +3,7 @@ import { Action, Dispatch } from "redux";
 
 import { RootState } from "../modules";
 import UserMain from "../components/UserMain";
-import { authActions } from "../actions";
+import { authActions, uploadActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
   return {
@@ -15,6 +15,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
   return {
     onLogout: () => {
       dispatch(authActions.signOut.started());
+    },
+    onUploadImage: (param: any) => {
+      dispatch(uploadActions.uploadImage.started(param));
     }
   };
 };

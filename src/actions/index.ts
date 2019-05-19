@@ -38,7 +38,9 @@ export enum ActionTypes {
   AUTH_WITHDRAW = "AUTH/WITHDRAW",
 
   AUTH_STATE_CHANGED = "AUTH/STATE_CHANGED",
-  AUTH_INITIALIZE = "AUTH/INITIALIZE"
+  AUTH_INITIALIZE = "AUTH/INITIALIZE",
+  UPLOAD_IMAGE = "UPLOAD_IMAGE",
+  UPLOAD_INITIALIZE = "UPLOAD_INITIALIZE"
 }
 
 // app
@@ -104,4 +106,9 @@ export const authActions = {
   stateChanged: actionCreator<UserInfo>(ActionTypes.AUTH_STATE_CHANGED),
 
   initialize: actionCreator(ActionTypes.AUTH_INITIALIZE)
+};
+
+export const uploadActions = {
+  uploadImage: actionCreator.async<any, boolean, any>(ActionTypes.UPLOAD_IMAGE),
+  initialize: actionCreator(ActionTypes.UPLOAD_INITIALIZE)
 };

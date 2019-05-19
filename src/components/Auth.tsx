@@ -12,7 +12,6 @@ import {
   Paper,
   ListItem,
   List,
-  CircularProgress,
   TextField
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
@@ -20,6 +19,7 @@ import firebase from "../firebase";
 import { UserInfo } from "../models/UserInfo";
 import IconUtil from "../utils/IconUtil";
 import classNames from "classnames";
+import Loading from "./Loading";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -106,11 +106,7 @@ class Auth extends Component<Props, State> {
   render() {
     const { classes } = this.props;
     if (this.state.loading) {
-      return (
-        <section className={classes.progressWrapper}>
-          <CircularProgress className={classes.progress} />
-        </section>
-      );
+      return <Loading />;
     }
     const user = this.props.auth.user;
     return (

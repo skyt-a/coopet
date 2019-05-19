@@ -13,12 +13,12 @@ import {
   Card,
   CardActionArea,
   CardMedia,
-  CardContent,
-  CircularProgress
+  CardContent
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
 import User from "../utils/User";
+import Loading from "./Loading";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -106,8 +106,16 @@ class RegisterUser extends Component<Props, State> {
   };
 
   confirmRegister = () => {
+    this.setState({
+      loading: true
+    });
     this.props.onRegisterUser(this.state);
-    this.props.history.push("/userMain");
+    setTimeout(() => {
+      this.props.history.push("/userMain");
+      this.setState({
+        loading: false
+      });
+    }, 2000);
   };
 
   handleChangeFile = (e: any) => {
@@ -120,11 +128,7 @@ class RegisterUser extends Component<Props, State> {
   render() {
     const { classes } = this.props;
     if (this.state.loading) {
-      return (
-        <section className={classes.progressWrapper}>
-          <CircularProgress className={classes.progress} />
-        </section>
-      );
+      return <Loading />;
     }
     return (
       <Paper className={classes.paper}>
