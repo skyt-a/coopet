@@ -99,6 +99,7 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   registerUser: State;
   auth: any;
   onUploadImage: (param: { uploadedImage: any; comment: string }) => void;
+  onLogout: () => void;
 }
 
 type UploadedImageInfo = {
@@ -119,6 +120,7 @@ interface State {
   uploadedImages: UploadedImageInfo[];
   selectedImageURL: string;
   selectedComment: string;
+  isMenuOpen: boolean;
 }
 
 const createObjectURL =
@@ -126,6 +128,23 @@ const createObjectURL =
   (window as any).createObjectURL;
 let userInfo: any;
 class UserMain extends Component<Props, State> {
+  menuItems = [
+    {
+      menuLabel: "ログアウト",
+      func: () => {
+        this.props.onLogout();
+        this.props.history.push("/auth");
+        this.onMenuClose();
+      }
+    },
+    {
+      menuLabel: "会員情報変更",
+      func: () => {
+        this.props.history.push("/registerUser");
+        this.onMenuClose();
+      }
+    }
+  ];
   constructor(props: Props) {
     super(props);
     let userName = "";
@@ -145,7 +164,8 @@ class UserMain extends Component<Props, State> {
       comment: "",
       uploadedImages: [],
       selectedImageURL: "",
-      selectedComment: ""
+      selectedComment: "",
+      isMenuOpen: false
     };
   }
 
@@ -235,11 +255,28 @@ class UserMain extends Component<Props, State> {
     this.handleCloseUploadImageModal();
   };
 
+  onMenuOpen = () => {
+    this.setState({
+      isMenuOpen: true
+    });
+  };
+
+  onMenuClose = () => {
+    this.setState({
+      isMenuOpen: false
+    });
+  };
+
   render() {
     const { classes } = this.props;
     return (
       <Fragment>
-        <Navbar title={this.state.userName} />
+        <Navbar
+          title={this.state.userName}
+          menuItems={this.menuItems}
+          open={this.state.isMenuOpen}
+          onOpen={this.onMenuOpen}
+        />
         <Paper className={classNames(classes.paper, classes.fullWidth)}>
           <section className={classNames(classes.flex, classes.betweenAround)}>
             <Avatar

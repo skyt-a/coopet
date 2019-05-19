@@ -13,12 +13,14 @@ import {
   Card,
   CardActionArea,
   CardMedia,
-  CardContent
+  CardContent,
+  MenuItem
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
 import User from "../utils/User";
 import Loading from "./Loading";
+import animalSpecies from "../assets/data/animalSpecies.json";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -60,6 +62,7 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
 interface State {
   userName: string;
   petName: string;
+  petSpecies: any;
   photoURL: string;
   uploadedImage: any;
   follow: any[];
@@ -82,6 +85,7 @@ class RegisterUser extends Component<Props, State> {
     this.state = {
       userName: userName,
       petName: props.registerUser.petName,
+      petSpecies: props.registerUser.petSpecies,
       photoURL: "",
       uploadedImage: null,
       follow: [],
@@ -152,6 +156,19 @@ class RegisterUser extends Component<Props, State> {
             margin="normal"
             variant="outlined"
           />
+          <TextField
+            select
+            label="ペットの種類"
+            className={classes.textField}
+            value={this.state.petSpecies}
+            onChange={this.handleChange("petSpecies")}
+          >
+            {animalSpecies.map(option => (
+              <MenuItem key={option.id} value={option.id}>
+                {option.name}
+              </MenuItem>
+            ))}
+          </TextField>
           <Card className={classes.card}>
             <CardActionArea>
               <CardMedia
