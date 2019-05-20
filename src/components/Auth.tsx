@@ -6,14 +6,7 @@ import withStyles, {
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 // ランディングページのTop画像
-import {
-  Button,
-  Typography,
-  Paper,
-  ListItem,
-  List,
-  TextField
-} from "@material-ui/core";
+import { Button, Paper, ListItem, List, TextField } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
 import { UserInfo } from "../models/UserInfo";
@@ -47,6 +40,7 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   onAuth: (signing: any) => void;
   onUpdateUser: (user: any) => void;
   onLogout: () => void;
+  onStoreUserInfo: (p: any) => void;
 }
 interface State {
   email: string;
@@ -73,7 +67,7 @@ class Auth extends Component<Props, State> {
   componentDidMount = () => {
     firebase.auth().onAuthStateChanged(user => {
       console.log(user);
-      this.props.onUpdateUser(user);
+      // this.props.onUpdateUser(user);
       this.setState({
         loading: false
       });
@@ -108,73 +102,61 @@ class Auth extends Component<Props, State> {
     if (this.state.loading) {
       return <Loading />;
     }
-    const user = this.props.auth.user;
     return (
       <Paper className={classes.paper}>
-        <Typography>Username: {user && user.displayName}</Typography>
-        {user ? (
-          <Button
-            onClick={this.logout}
-            className={classes.button}
-            color="secondary"
-            variant="contained"
-          >
-            Logout
-          </Button>
-        ) : (
-          <List>
-            {providers.map((p: any, i: number) => {
-              return (
-                <Fragment>
-                  {p.providerName === "Password" && (
-                    <Fragment>
-                      <ListItem key="mail">
-                        <TextField
-                          label="メールアドレス"
-                          className={classNames(
-                            classes.button,
-                            classes.listItemInner
-                          )}
-                          value={this.state.email}
-                          onChange={this.handleChange("email")}
-                          margin="normal"
-                          variant="outlined"
-                        />
-                      </ListItem>
-                      <ListItem key="pass">
-                        <TextField
-                          label="パスワード"
-                          className={classNames(
-                            classes.button,
-                            classes.listItemInner
-                          )}
-                          value={this.state.password}
-                          onChange={this.handleChange("password")}
-                          margin="normal"
-                          variant="outlined"
-                        />
-                      </ListItem>
-                    </Fragment>
-                  )}
-                  <ListItem key={i}>
-                    <Button
-                      className={classNames(
-                        classes.button,
-                        classes.listItemInner
-                      )}
-                      color="secondary"
-                      variant="contained"
-                      onClick={() => this.authByProvider(p.providerName)}
-                    >
-                      {IconUtil.renderAuthProviderIcon(p.providerName)}
-                      {p.providerName}でログイン
-                    </Button>
-                  </ListItem>
-                </Fragment>
-              );
-            })}
-          </List>
-        )}
+        {/* <Typography>Username: {user && user.displayName}</Typography> */}
+        <List>
+          {providers.map((p: any, i: number) => {
+            return (
+              <Fragment key={i}>
+                {p.providerName === "Password" && (
+                  <Fragment>
+                    <ListItem>
+                      <TextField
+                        label="メールアドレス"
+                        className={classNames(
+                          classes.button,
+                          classes.listItemInner
+                        )}
+                        value={this.state.email}
+                        onChange={this.handleChange("email")}
+                        margin="normal"
+                        variant="outlined"
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <TextField
+                        label="パスワード"
+                        className={classNames(
+                          classes.button,
+                          classes.listItemInner
+                        )}
+                        value={this.state.password}
+                        onChange={this.handleChange("password")}
+                        margin="normal"
+                        variant="outlined"
+                      />
+                    </ListItem>
+                  </Fragment>
+                )}
+                <ListItem>
+                  <Button
+                    className={classNames(
+                      classes.button,
+                      classes.listItemInner
+                    )}
+                    color="secondary"
+                    variant="contained"
+                    onClick={() => this.authByProvider(p.providerName)}
+                  >
+                    {IconUtil.renderAuthProviderIcon(p.providerName)}
+                    {p.providerName}でログイン
+                  </Button>
+                </ListItem>
+              </Fragment>
+            );
+          })}
+        </List>
       </Paper>
     );
   }

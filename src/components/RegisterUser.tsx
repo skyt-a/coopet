@@ -50,6 +50,9 @@ const styles = (theme: Theme): StyleRules =>
     },
     progressWrapper: {
       textAlign: "center"
+    },
+    select: {
+      width: "60vw"
     }
   });
 
@@ -84,8 +87,8 @@ class RegisterUser extends Component<Props, State> {
     }
     this.state = {
       userName: userName,
-      petName: props.registerUser.petName,
-      petSpecies: props.registerUser.petSpecies,
+      petName: props.registerUser ? props.registerUser.petName : "",
+      petSpecies: props.registerUser ? props.registerUser.petSpecies : "",
       photoURL: "",
       uploadedImage: null,
       follow: [],
@@ -148,6 +151,7 @@ class RegisterUser extends Component<Props, State> {
             margin="normal"
             variant="outlined"
           />
+
           <TextField
             label="ペットのお名前"
             className={classes.textField}
@@ -159,8 +163,10 @@ class RegisterUser extends Component<Props, State> {
           <TextField
             select
             label="ペットの種類"
-            className={classes.textField}
-            value={this.state.petSpecies}
+            className={classes.select}
+            value={this.state.petSpecies || animalSpecies[0].id}
+            margin="normal"
+            variant="outlined"
             onChange={this.handleChange("petSpecies")}
           >
             {animalSpecies.map(option => (

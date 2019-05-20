@@ -34,6 +34,7 @@ export default function* rootSaga(): IterableIterator<any> {
       authSaga.sendPasswordResetEmail
     ),
     takeEvery(`${ActionTypes.AUTH_WITHDRAW}_STARTED`, authSaga.withdraw),
+    takeEvery(`${ActionTypes.STORE_USERINFO}_STARTED`, authSaga.storeUserInfo),
     takeEvery(`${ActionTypes.UPLOAD_IMAGE}_STARTED`, uploadSaga.uploadImage)
   ]);
 }

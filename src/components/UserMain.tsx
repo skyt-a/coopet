@@ -16,7 +16,8 @@ import {
   CardMedia,
   CardContent,
   Button,
-  TextField
+  TextField,
+  CardHeader
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
@@ -25,6 +26,9 @@ import Follow from "../utils/Follow";
 import AddAPhotoRoundedIcon from "@material-ui/icons/AddAPhotoRounded";
 import classNames from "classnames";
 import UploadedImage from "../utils/UploadedImage";
+import Loading from "./Loading";
+import User from "../utils/User";
+import animalSpecies from "../assets/data/animalSpecies.json";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -100,6 +104,7 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   auth: any;
   onUploadImage: (param: { uploadedImage: any; comment: string }) => void;
   onLogout: () => void;
+  onStoreUserInfo: (p: any) => void;
 }
 
 type UploadedImageInfo = {
@@ -127,6 +132,7 @@ const createObjectURL =
   (window.URL || (window as any).webkitURL).createObjectURL ||
   (window as any).createObjectURL;
 let userInfo: any;
+let additionalUserInfo: any;
 class UserMain extends Component<Props, State> {
   menuItems = [
     {
@@ -147,13 +153,9 @@ class UserMain extends Component<Props, State> {
   ];
   constructor(props: Props) {
     super(props);
-    let userName = "";
     userInfo = firebase.auth().currentUser;
-    if (userInfo != null) {
-      userName = userInfo.displayName || "";
-    }
     this.state = {
-      userName: userName,
+      userName: "",
       photoURL: "",
       uploadedImage: null,
       followingNumber: 0,
@@ -195,12 +197,25 @@ class UserMain extends Component<Props, State> {
         uploadedImages: Object.values(snap.val())
       });
     });
+    User.isInitAuthedRef(userInfo.uid).on("value", snap => {
+      if (!snap || !snap.val()) {
+        return;
+      }
+      this.props.onStoreUserInfo(snap.val());
+      additionalUserInfo = snap.val();
+    });
     setTimeout(() => {
       this.setState({
         loading: false
       });
     }, 1000);
   };
+
+  componentWillUnmount() {
+    Follow.getFollowingRef(userInfo.uid).off();
+    Follow.getFollowerRef(userInfo.uid).off();
+    UploadedImage.getMyUploadedImageRef(userInfo.uid).off();
+  }
 
   handleChange = (name: string) => (event: any) => {
     const obj: any = {};
@@ -268,6 +283,10 @@ class UserMain extends Component<Props, State> {
   };
 
   render() {
+    console.log(animalSpecies);
+    if (!additionalUserInfo) {
+      return <Loading />;
+    }
     const { classes } = this.props;
     return (
       <Fragment>
@@ -278,39 +297,47 @@ class UserMain extends Component<Props, State> {
           onOpen={this.onMenuOpen}
         />
         <Paper className={classNames(classes.paper, classes.fullWidth)}>
-          <section className={classNames(classes.flex, classes.betweenAround)}>
-            <Avatar
-              alt="Remy Sharp"
-              src={userInfo.photoURL}
-              className={classes.avatar}
+          <Card className={classes.card}>
+            <CardHeader
+              avatar={
+                <Avatar
+                  alt="Remy Sharp"
+                  src={userInfo.photoURL}
+                  className={classes.avatar}
+                />
+              }
+              action={
+                <IconButton component="label">
+                  <input
+                    type="file"
+                    onChange={this.handleChangeFile}
+                    className={classes.fileUpload}
+                  />
+                  <AddAPhotoRoundedIcon className={classes.addPhotoIcon} />{" "}
+                </IconButton>
+              }
+              title={userInfo.displayName}
+              subheader={
+                additionalUserInfo.petName +
+                ":" +
+                animalSpecies.filter(
+                  ele => ele.id === additionalUserInfo.petSpecies
+                )[0].name
+              }
             />
-            <Typography variant="h5" color="inherit">
-              {userInfo.displayName}
-            </Typography>
-          </section>
-          <section className={classNames(classes.flex, classes.betweenAround)}>
-            <div>
+            <CardContent>
               <Typography color="inherit">
                 フォロー: {this.state.followingNumber}
               </Typography>
               <Typography color="inherit">
                 フォロワー: {this.state.followerNumber}
               </Typography>
-            </div>
-
-            <IconButton component="label">
-              <input
-                type="file"
-                onChange={this.handleChangeFile}
-                className={classes.fileUpload}
-              />
-              <AddAPhotoRoundedIcon className={classes.addPhotoIcon} />{" "}
-            </IconButton>
-          </section>
+            </CardContent>
+          </Card>
           <Card className={classes.flex}>
             <Fragment>
               {this.state.uploadedImages.map((uploaded, i) => (
-                <div className={classes.uploadedImageWrap}>
+                <div className={classes.uploadedImageWrap} key={i}>
                   <img
                     onClick={() =>
                       this.handleOpenSelectedImageModal(
@@ -319,7 +346,6 @@ class UserMain extends Component<Props, State> {
                       )
                     }
                     alt={uploaded.comment}
-                    key={i}
                     className={classes.uploadedImage}
                     src={uploaded.url}
                   />

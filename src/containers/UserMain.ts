@@ -16,6 +16,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
     onLogout: () => {
       dispatch(authActions.signOut.started());
     },
+    onStoreUserInfo: (p: any) => {
+      dispatch(authActions.storeUserInfo.started(p));
+    },
     onUploadImage: (param: any) => {
       dispatch(uploadActions.uploadImage.started(param));
     }

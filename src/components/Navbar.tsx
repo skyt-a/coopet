@@ -37,10 +37,6 @@ interface MenuItem {
 
 // Component を定義: React.PureComponent<Props> で拡張する
 class Navbar extends Component<Props> {
-  constructor(props: any) {
-    super(props);
-  }
-
   createMenuItem() {
     return this.props.menuItems.map((item, index) => (
       <MenuItem onClick={item.func} key={index}>

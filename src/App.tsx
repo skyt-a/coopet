@@ -8,7 +8,6 @@ import createStyles from "@material-ui/core/styles/createStyles";
 
 // Components
 import Landing from "./components/Landing";
-import Navbar from "./components/Navbar";
 import Auth from "./containers/Auth";
 import RegisterUser from "./containers/RegisterUser";
 import UserMain from "./containers/UserMain";
@@ -54,12 +53,6 @@ class App extends Component<Props, State> {
         <Route path="/auth" component={Auth} />
         <Route path="/registerUser" component={RegisterUser} />
         <Route path="/userMain" component={UserMain} />
-        <Route
-          path="/nav"
-          render={() => (
-            <Navbar open={this.state.open} onToggle={this.onToggle} />
-          )}
-        />
       </Switch>
     );
   }

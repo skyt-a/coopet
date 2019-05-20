@@ -189,6 +189,10 @@ const authSaga = {
 
           // 行ってこい(Popup)
           yield firebase.auth().signInWithPopup(authProvider);
+          // 処理完了
+          yield put(
+            authActions.signIn.done({ params: action.payload, result: true })
+          );
           break;
         }
 
@@ -878,6 +882,47 @@ const authSaga = {
     } finally {
       console.log("authSaga: withdraw end.");
     }
+  },
+  storeUserInfo: function*(action: Action<any>): IterableIterator<any> {
+    console.log("authSaga: storeUserInfo start.");
+    // try {
+    let profile = action.payload;
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) {
+      console.log(`user not signed in`);
+      throw {
+        code: "user not signed in",
+        message: "this operation requires user to be signed in."
+      };
+    }
+    console.log(profile);
+    let additionalUserInfo;
+    yield database.ref(`/users/${currentUser.uid}`).on("value", snap => {
+      if (!snap) {
+        return;
+      }
+      additionalUserInfo = snap.val();
+      console.log(additionalUserInfo);
+    });
+    // 成功時のメッセージ
+    yield put(
+      appActions.pushInfos([
+        AppInfoUtil.createAppInfo({
+          level: InfoLevel.SUCCESS,
+          title: "Success",
+          message: "Profile changed successfully."
+        })
+      ])
+    );
+    yield put(
+      authActions.storeUserInfo.done({
+        params: {
+          additionalUserInfo: profile,
+          currentUser
+        },
+        result: true
+      })
+    );
   },
   checkUserStateSaga: function* checkUserStateSaga() {
     const channel = yield call(authChannel);
