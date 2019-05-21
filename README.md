@@ -1,44 +1,28 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## アプリケーション概要
+ペットでつながるSNSサービス「Coopet」です。ペットの画像投稿とその画像へのコメントを通じて交流を図ります。
+インスタグラムと違い、ペット(動物)にフォーカスしたSNSです。
 
-## Available Scripts
+## アプリケーションの機能一覧
+・ログイン機能(SNS(Google・Twitter）によるログインと匿名ログインが可能になっています)
+・画像投稿機能
+・画像閲覧機能
+・コメント機能
+※匿名ログインでは画像投稿機能は利用できません
 
-In the project directory, you can run:
+## アプリケーション内で使用している技術一覧
 
-### `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+### フロントエンド
+- React
+  * Redux
+  * Material-UI
+  * redux-saga
+  * redux-logger
+  
+### サーバーサイド
+- Firebase
+  * Authentication
+  * Database(Realtime Database)
+    + ユーザー情報保存
+  * Storage
+    + 画像保存
+    
