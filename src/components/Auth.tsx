@@ -55,6 +55,7 @@ const providers: {
   { providerName: "Password" }
 ];
 class Auth extends Component<Props, State> {
+  unsubscribe: any;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -65,7 +66,7 @@ class Auth extends Component<Props, State> {
   }
 
   componentDidMount = () => {
-    firebase.auth().onAuthStateChanged(user => {
+    this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
       console.log(user);
       // this.props.onUpdateUser(user);
       this.setState({
@@ -96,6 +97,13 @@ class Auth extends Component<Props, State> {
     };
     this.props.onAuth(signing);
   };
+
+  componentWillUnmount() {
+    if (!this.unsubscribe) {
+      return;
+    }
+    this.unsubscribe();
+  }
 
   render() {
     const { classes } = this.props;

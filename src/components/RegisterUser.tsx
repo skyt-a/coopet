@@ -88,7 +88,9 @@ class RegisterUser extends Component<Props, State> {
     this.state = {
       userName: userName,
       petName: props.registerUser ? props.registerUser.petName : "",
-      petSpecies: props.registerUser ? props.registerUser.petSpecies : "",
+      petSpecies: props.registerUser
+        ? props.registerUser.petSpecies
+        : animalSpecies[0].id,
       photoURL: "",
       uploadedImage: null,
       follow: [],

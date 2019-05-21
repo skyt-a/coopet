@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
   WithStyles,
@@ -16,7 +16,8 @@ import withRoot from "./utils/withRoot";
 // robotoフォントをインポート
 import "typeface-roboto";
 // Routing設定をインポート
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, RouteComponentProps } from "react-router-dom";
+import RouterRelatedBottomNavigation from "./components/RouterRelatedBottomNavigation";
 
 // styles を定義
 const styles = (theme: Theme): StyleRules =>
@@ -25,7 +26,7 @@ const styles = (theme: Theme): StyleRules =>
   });
 
 // 型定義 Props を定義
-type Props = WithStyles<typeof styles>;
+interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
 
 interface State {
   open: boolean;
@@ -45,15 +46,19 @@ class App extends Component<Props, State> {
       open: !this.state.open
     });
   }
+
   render() {
     return (
-      <Switch>
-        <Route exact path="/" render={() => <Landing />} />
-        <Route path="/top" component={Landing} />
-        <Route path="/auth" component={Auth} />
-        <Route path="/registerUser" component={RegisterUser} />
-        <Route path="/userMain" component={UserMain} />
-      </Switch>
+      <Fragment>
+        <Switch>
+          <Route exact path="/" render={() => <Landing />} />
+          <Route path="/top" component={Landing} />
+          <Route path="/auth" component={Auth} />
+          <Route path="/registerUser" component={RegisterUser} />
+          <Route path="/userMain" component={UserMain} />
+        </Switch>
+        <RouterRelatedBottomNavigation />
+      </Fragment>
     );
   }
 }

@@ -49,7 +49,7 @@ class Navbar extends Component<Props> {
     return (
       <div>
         <Drawer open={this.props.open}>{this.createMenuItem()}</Drawer>
-        <AppBar color="primary">
+        <AppBar color="secondary">
           <Toolbar>
             <IconButton
               onClick={this.props.onOpen}

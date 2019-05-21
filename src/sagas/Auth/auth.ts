@@ -674,6 +674,15 @@ const authSaga = {
       } else {
       }
     });
+    yield database
+      .ref(`/speciesCategory/${profile.petSpecies}/${currentUser.uid}`)
+      .set(true, error => {
+        console.log(error);
+        if (error) {
+          console.error(error);
+        } else {
+        }
+      });
     profileRef["displayName"] = profile.userName;
 
     yield currentUser.updateProfile(profileRef);

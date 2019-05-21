@@ -17,7 +17,10 @@ import {
   CardContent,
   Button,
   TextField,
-  CardHeader
+  CardHeader,
+  Chip,
+  CardActions,
+  Badge
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
@@ -88,6 +91,21 @@ const styles = (theme: Theme): StyleRules =>
       width: "100%",
       height: "100%",
       objectFit: "scale-down"
+    },
+    chip: {
+      margin: theme.spacing.unit
+    },
+    card: {
+      margin: theme.spacing.unit,
+      padding: theme.spacing.unit
+    },
+    cardComponent: {
+      padding: "1px"
+    },
+    actions: {
+      display: "flex",
+      justifyContent: "flex-end",
+      paddingRight: "10px"
     }
   });
 
@@ -172,6 +190,10 @@ class UserMain extends Component<Props, State> {
   }
 
   componentDidMount = () => {
+    if (!userInfo) {
+      this.props.history.push("/auth");
+      return;
+    }
     Follow.getFollowingRef(userInfo.uid).on("value", snap => {
       if (!snap || !snap.val()) {
         return;
@@ -212,6 +234,9 @@ class UserMain extends Component<Props, State> {
   };
 
   componentWillUnmount() {
+    if (!userInfo) {
+      return;
+    }
     Follow.getFollowingRef(userInfo.uid).off();
     Follow.getFollowerRef(userInfo.uid).off();
     UploadedImage.getMyUploadedImageRef(userInfo.uid).off();
@@ -316,25 +341,42 @@ class UserMain extends Component<Props, State> {
                   <AddAPhotoRoundedIcon className={classes.addPhotoIcon} />{" "}
                 </IconButton>
               }
+              className={classes.cardComponent}
               title={userInfo.displayName}
-              subheader={
-                additionalUserInfo.petName +
-                ":" +
-                animalSpecies.filter(
-                  ele => ele.id === additionalUserInfo.petSpecies
-                )[0].name
-              }
+              subheader={additionalUserInfo.petName}
             />
-            <CardContent>
-              <Typography color="inherit">
-                フォロー: {this.state.followingNumber}
-              </Typography>
-              <Typography color="inherit">
-                フォロワー: {this.state.followerNumber}
-              </Typography>
+            <CardContent className={classes.cardComponent}>
+              <Chip
+                color="primary"
+                label={
+                  animalSpecies.filter(
+                    ele => ele.id === additionalUserInfo.petSpecies
+                  )[0].name
+                }
+                className={classes.chip}
+                variant="outlined"
+              />
             </CardContent>
+            <CardActions className={classes.actions}>
+              <Badge
+                color="primary"
+                showZero
+                badgeContent={this.state.followingNumber}
+                className={classes.margin}
+              >
+                <Chip label="フォロー" variant="outlined" color="secondary" />
+              </Badge>
+              <Badge
+                color="primary"
+                showZero
+                badgeContent={this.state.followerNumber}
+                className={classes.margin}
+              >
+                <Chip label="フォロワー" variant="outlined" color="secondary" />
+              </Badge>
+            </CardActions>
           </Card>
-          <Card className={classes.flex}>
+          <Card className={classNames(classes.flex, classes.card)}>
             <Fragment>
               {this.state.uploadedImages.map((uploaded, i) => (
                 <div className={classes.uploadedImageWrap} key={i}>
