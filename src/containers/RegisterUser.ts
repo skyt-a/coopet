@@ -7,8 +7,8 @@ import { authActions } from "../actions/index";
 
 const mapStateToProps = () => (state: RootState) => {
   return {
-    auth: state.auth,
-    registerUser: state.registerUser
+    auth: state.Auth,
+    registerUser: state.ResgisterUser
   };
 };
 

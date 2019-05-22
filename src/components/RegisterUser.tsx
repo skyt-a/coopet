@@ -70,12 +70,12 @@ interface State {
   uploadedImage: any;
   follow: any[];
   follower: any[];
-  loading: boolean;
 }
 const createObjectURL =
   (window.URL || (window as any).webkitURL).createObjectURL ||
   (window as any).createObjectURL;
 let userInfo: any;
+let loading = true;
 class RegisterUser extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -94,16 +94,13 @@ class RegisterUser extends Component<Props, State> {
       photoURL: "",
       uploadedImage: null,
       follow: [],
-      follower: [],
-      loading: true
+      follower: []
     };
     User.isInitAuthedRef(userInfo.uid).on("value", snap => {
       if (snap && snap.val()) {
         this.props.history.push("/userMain");
       } else {
-        this.setState({
-          loading: false
-        });
+        loading = false;
       }
     });
   }
@@ -115,15 +112,11 @@ class RegisterUser extends Component<Props, State> {
   };
 
   confirmRegister = () => {
-    this.setState({
-      loading: true
-    });
+    loading = true;
     this.props.onRegisterUser(this.state);
     setTimeout(() => {
       this.props.history.push("/userMain");
-      this.setState({
-        loading: false
-      });
+      loading = false;
     }, 2000);
   };
 
@@ -136,7 +129,7 @@ class RegisterUser extends Component<Props, State> {
 
   render() {
     const { classes } = this.props;
-    if (this.state.loading) {
+    if (loading) {
       return <Loading />;
     }
     return (

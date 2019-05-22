@@ -666,6 +666,9 @@ const authSaga = {
         targetURL = url;
       });
       profileRef["photoURL"] = targetURL;
+      profile.photoURL = targetURL;
+    } else {
+      profile.photoURL = currentUser.photoURL;
     }
     yield database.ref(`/users/${currentUser.uid}`).set(profile, error => {
       console.log(error);
@@ -676,7 +679,7 @@ const authSaga = {
     });
     yield database
       .ref(`/speciesCategory/${profile.petSpecies}/${currentUser.uid}`)
-      .set(true, error => {
+      .set(profile, error => {
         console.log(error);
         if (error) {
           console.error(error);

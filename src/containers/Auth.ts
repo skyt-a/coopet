@@ -7,7 +7,7 @@ import { authActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
   return {
-    auth: state.auth
+    auth: state.Auth
   };
 };
 
@@ -19,6 +19,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
     // onUpdateUser: (user: any) => {
     //   dispatch(actionCreator.auth.updateUser(user));
     // },
+    onStoreUserInfo: (p: any) => {
+      dispatch(authActions.storeUserInfo.started(p));
+    },
     onLogout: () => {
       dispatch(authActions.signOut.started());
     }

@@ -5,8 +5,9 @@ import BottomNavigation from "@material-ui/core/BottomNavigation";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 
 // Material-UIアイコン取得
-import HomeIcon from "@material-ui/icons/Home";
+import ImageIcon from "@material-ui/icons/Image";
 import InfoIcon from "@material-ui/icons/Info";
+import AccountCircle from "@material-ui/icons/AccountCircle";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import createStyles from "@material-ui/core/styles/createStyles";
 
@@ -40,10 +41,16 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
 class RouteRelatedBottomNavigation extends Component<Props> {
   navButtons = [
     {
-      label: "トップ",
-      icon: <HomeIcon />,
-      link_to: "/auth",
-      onclick: () => this.props.history.push("/top")
+      label: "画像",
+      icon: <ImageIcon />,
+      link_to: "/imageView",
+      onclick: () => this.props.history.push("/imageView")
+    },
+    {
+      label: "ユーザー",
+      icon: <AccountCircle />,
+      link_to: "/userView",
+      onclick: () => this.props.history.push("/userView")
     },
     {
       label: "会員情報",
@@ -57,7 +64,9 @@ class RouteRelatedBottomNavigation extends Component<Props> {
     if (!this.props.location) {
       return false;
     }
-    return ["/userMain"].includes(this.props.location.pathname);
+    return ["/userMain", "/userView", "/imageView"].includes(
+      this.props.location.pathname
+    );
   }
 
   buttons = this.navButtons.map((button_info, index) => {

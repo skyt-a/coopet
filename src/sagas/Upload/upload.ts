@@ -32,6 +32,23 @@ const uploadSaga = {
         yield ref.getDownloadURL().then(url => {
           targetURL = url;
         });
+        yield database
+          .ref(
+            `/uploadedImage/${profile.petSpecies}/${key}/${currentUser.uid}/`
+          )
+          .set(
+            {
+              url: targetURL,
+              comment: profile.comment
+            },
+            error => {
+              console.log(error);
+              if (error) {
+                console.error(error);
+              } else {
+              }
+            }
+          );
         yield database.ref(`/users/${currentUser.uid}/uploadImage/${key}`).set(
           {
             url: targetURL,

@@ -120,7 +120,11 @@ function getModalStyle() {
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   registerUser: State;
   auth: any;
-  onUploadImage: (param: { uploadedImage: any; comment: string }) => void;
+  onUploadImage: (param: {
+    uploadedImage: any;
+    comment: string;
+    petSpecies: string;
+  }) => void;
   onLogout: () => void;
   onStoreUserInfo: (p: any) => void;
 }
@@ -210,6 +214,13 @@ class UserMain extends Component<Props, State> {
         followerNumber: Object.keys(snap.val()).length
       });
     });
+    User.isInitAuthedRef(userInfo.uid).on("value", snap => {
+      if (!snap || !snap.val()) {
+        return;
+      }
+      this.props.onStoreUserInfo(snap.val());
+      additionalUserInfo = snap.val();
+    });
     UploadedImage.getMyUploadedImageRef(userInfo.uid).on("value", snap => {
       if (!snap || !snap.val()) {
         return;
@@ -218,13 +229,6 @@ class UserMain extends Component<Props, State> {
       this.setState({
         uploadedImages: Object.values(snap.val())
       });
-    });
-    User.isInitAuthedRef(userInfo.uid).on("value", snap => {
-      if (!snap || !snap.val()) {
-        return;
-      }
-      this.props.onStoreUserInfo(snap.val());
-      additionalUserInfo = snap.val();
     });
     setTimeout(() => {
       this.setState({
@@ -239,6 +243,7 @@ class UserMain extends Component<Props, State> {
     }
     Follow.getFollowingRef(userInfo.uid).off();
     Follow.getFollowerRef(userInfo.uid).off();
+    User.isInitAuthedRef(userInfo.uid).off();
     UploadedImage.getMyUploadedImageRef(userInfo.uid).off();
   }
 
@@ -290,7 +295,8 @@ class UserMain extends Component<Props, State> {
   uploadImage = () => {
     this.props.onUploadImage({
       uploadedImage: this.state.uploadedImage,
-      comment: this.state.comment
+      comment: this.state.comment,
+      petSpecies: additionalUserInfo.petSpecies
     });
     this.handleCloseUploadImageModal();
   };

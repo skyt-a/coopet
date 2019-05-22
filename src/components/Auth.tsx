@@ -74,7 +74,7 @@ class Auth extends Component<Props, State> {
       });
       console.log(user);
       if (user != null) {
-        this.props.history.push("/registerUser");
+        this.props.history.push("/afterAuth");
       }
     });
   };

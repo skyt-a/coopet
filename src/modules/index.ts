@@ -1,11 +1,12 @@
 import { combineReducers } from "redux";
 import Auth, { IAuthState } from "./Auth";
 import RegisterUser, { State } from "./RegisterUser";
-import App from "./app";
+import App, { IAppState } from "./app";
 
 export type RootState = {
-  auth: IAuthState;
-  registerUser: State;
+  App: IAppState;
+  Auth: IAuthState;
+  ResgisterUser: State;
 };
 
 export const rootReducer = combineReducers({

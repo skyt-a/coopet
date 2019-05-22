@@ -7,7 +7,7 @@ import { authActions, uploadActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
   return {
-    auth: state.auth
+    auth: state.Auth
   };
 };
 
