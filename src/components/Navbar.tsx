@@ -26,9 +26,9 @@ const styles = (theme: Theme): StyleRules =>
 interface Props extends WithStyles<typeof styles> {
   onLogout: () => void;
   title: string;
-}
-interface State {
+  menuItems: any[];
   open: boolean;
+  onOpen: () => void;
 }
 interface MenuItem {
   menuLabel: string;
@@ -36,45 +36,23 @@ interface MenuItem {
 }
 
 // Component を定義: React.PureComponent<Props> で拡張する
-class Navbar extends Component<Props, State> {
-  menuItems: MenuItem[] = [
-    {
-      menuLabel: "ログアウト",
-      func: () => {
-        this.props.onLogout();
-        this.onToggle();
-      }
-    }
-  ];
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      open: false
-    };
-  }
-  onToggle = () => {
-    this.setState({
-      open: !this.state.open
-    });
-  };
-
+class Navbar extends Component<Props> {
   createMenuItem() {
-    return this.menuItems.map((item, index) => (
+    return this.props.menuItems.map((item, index) => (
       <MenuItem onClick={item.func} key={index}>
         {item.menuLabel}
       </MenuItem>
     ));
   }
   public render() {
-    const { open } = this.state;
     const { classes } = this.props;
     return (
       <div>
-        <Drawer open={open}>{this.createMenuItem()}</Drawer>
-        <AppBar color="primary">
+        <Drawer open={this.props.open}>{this.createMenuItem()}</Drawer>
+        <AppBar color="secondary">
           <Toolbar>
             <IconButton
-              onClick={this.onToggle}
+              onClick={this.props.onOpen}
               color="inherit"
               aria-label="Menu"
               className={classes.menuButton}

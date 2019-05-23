@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
   WithStyles,
@@ -8,16 +8,20 @@ import createStyles from "@material-ui/core/styles/createStyles";
 
 // Components
 import Landing from "./components/Landing";
-import Navbar from "./components/Navbar";
 import Auth from "./containers/Auth";
 import RegisterUser from "./containers/RegisterUser";
 import UserMain from "./containers/UserMain";
+import ImageView from "./containers/ImageView";
+import UserView from "./containers/UserView";
+
 // withRoot を import
 import withRoot from "./utils/withRoot";
 // robotoフォントをインポート
 import "typeface-roboto";
 // Routing設定をインポート
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, RouteComponentProps } from "react-router-dom";
+import RouterRelatedBottomNavigation from "./components/RouterRelatedBottomNavigation";
+import AfterAuthLoading from "./containers/AfterAuthLoading";
 
 // styles を定義
 const styles = (theme: Theme): StyleRules =>
@@ -26,7 +30,7 @@ const styles = (theme: Theme): StyleRules =>
   });
 
 // 型定義 Props を定義
-type Props = WithStyles<typeof styles>;
+interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
 
 interface State {
   open: boolean;
@@ -41,26 +45,28 @@ class App extends Component<Props, State> {
     };
     this.onToggle = this.onToggle.bind(this);
   }
+
   onToggle() {
     this.setState({
       open: !this.state.open
     });
   }
+
   render() {
     return (
-      <Switch>
-        <Route exact path="/" render={() => <Landing />} />
-        <Route path="/top" component={Landing} />
-        <Route path="/auth" component={Auth} />
-        <Route path="/registerUser" component={RegisterUser} />
-        <Route path="/userMain" component={UserMain} />
-        <Route
-          path="/nav"
-          render={() => (
-            <Navbar open={this.state.open} onToggle={this.onToggle} />
-          )}
-        />
-      </Switch>
+      <Fragment>
+        <Switch>
+          <Route exact path="/" render={() => <Landing />} />
+          <Route path="/top" component={Landing} />
+          <Route path="/auth" component={Auth} />
+          <Route path="/registerUser" component={RegisterUser} />
+          <Route path="/userMain" component={UserMain} />
+          <Route path="/imageView" component={ImageView} />
+          <Route path="/userView" component={UserView} />
+          <Route path="/afterAuth" component={AfterAuthLoading} />
+        </Switch>
+        <RouterRelatedBottomNavigation />
+      </Fragment>
     );
   }
 }

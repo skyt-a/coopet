@@ -2,10 +2,11 @@ import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 
 import { RootState } from "../modules";
-import Navbar from "../components/Navbar";
-import { authActions } from "../actions";
+import UserView from "../components/UserView";
+import { authActions, uploadActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
+  console.log(state);
   return {
     auth: state.Auth
   };
@@ -13,8 +14,11 @@ const mapStateToProps = () => (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
   return {
-    onLogout: () => {
-      dispatch(authActions.signOut.started());
+    onStoreUserInfo: (p: any) => {
+      dispatch(authActions.storeUserInfo.started(p));
+    },
+    onUploadImage: (param: any) => {
+      dispatch(uploadActions.uploadImage.started(param));
     }
   };
 };
@@ -22,4 +26,4 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Navbar);
+)(UserView);

@@ -2,6 +2,7 @@ import { takeEvery, takeLatest, all } from "redux-saga/effects";
 import { ActionTypes } from "../actions";
 import appSaga from "./App/app";
 import authSaga from "./Auth/auth";
+import uploadSaga from "./Upload/upload";
 
 export default function* rootSaga(): IterableIterator<any> {
   yield all([
@@ -32,6 +33,8 @@ export default function* rootSaga(): IterableIterator<any> {
       `${ActionTypes.AUTH_SEND_PASSWORD_RESET_EMAIL}_STARTED`,
       authSaga.sendPasswordResetEmail
     ),
-    takeEvery(`${ActionTypes.AUTH_WITHDRAW}_STARTED`, authSaga.withdraw)
+    takeEvery(`${ActionTypes.AUTH_WITHDRAW}_STARTED`, authSaga.withdraw),
+    takeEvery(`${ActionTypes.STORE_USERINFO}_STARTED`, authSaga.storeUserInfo),
+    takeEvery(`${ActionTypes.UPLOAD_IMAGE}_STARTED`, uploadSaga.uploadImage)
   ]);
 }

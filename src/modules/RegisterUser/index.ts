@@ -41,3 +41,5 @@ export const reducer = (state: State = init(), action: Actions) => {
 export const actionCreator = {
   confirmRegister
 };
+
+export default reducer;

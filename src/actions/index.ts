@@ -12,7 +12,6 @@ import { AppError } from "../models/AppError";
 import { AppInfo } from "../models/AppInfo";
 import { SigningInfo } from "../models/SigningInfo";
 import { Profile } from "../models/Profile";
-import { UserInfo } from "../models/UserInfo";
 
 const actionCreator = actionCreatorFactory();
 
@@ -38,7 +37,10 @@ export enum ActionTypes {
   AUTH_WITHDRAW = "AUTH/WITHDRAW",
 
   AUTH_STATE_CHANGED = "AUTH/STATE_CHANGED",
-  AUTH_INITIALIZE = "AUTH/INITIALIZE"
+  AUTH_INITIALIZE = "AUTH/INITIALIZE",
+  UPLOAD_IMAGE = "UPLOAD_IMAGE",
+  UPLOAD_INITIALIZE = "UPLOAD_INITIALIZE",
+  STORE_USERINFO = "STORE_USERINFO"
 }
 
 // app
@@ -101,7 +103,16 @@ export const authActions = {
     ActionTypes.AUTH_WITHDRAW
   ),
 
-  stateChanged: actionCreator<UserInfo>(ActionTypes.AUTH_STATE_CHANGED),
+  stateChanged: actionCreator<any>(ActionTypes.AUTH_STATE_CHANGED),
 
-  initialize: actionCreator(ActionTypes.AUTH_INITIALIZE)
+  initialize: actionCreator(ActionTypes.AUTH_INITIALIZE),
+
+  storeUserInfo: actionCreator.async<any, boolean, any>(
+    ActionTypes.STORE_USERINFO
+  )
+};
+
+export const uploadActions = {
+  uploadImage: actionCreator.async<any, boolean, any>(ActionTypes.UPLOAD_IMAGE),
+  initialize: actionCreator(ActionTypes.UPLOAD_INITIALIZE)
 };

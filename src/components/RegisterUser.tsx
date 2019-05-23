@@ -14,11 +14,13 @@ import {
   CardActionArea,
   CardMedia,
   CardContent,
-  CircularProgress
+  MenuItem
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
 import User from "../utils/User";
+import Loading from "./Loading";
+import animalSpecies from "../assets/data/animalSpecies.json";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -48,6 +50,9 @@ const styles = (theme: Theme): StyleRules =>
     },
     progressWrapper: {
       textAlign: "center"
+    },
+    select: {
+      width: "60vw"
     }
   });
 
@@ -60,16 +65,17 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
 interface State {
   userName: string;
   petName: string;
+  petSpecies: any;
   photoURL: string;
   uploadedImage: any;
   follow: any[];
   follower: any[];
-  loading: boolean;
 }
 const createObjectURL =
   (window.URL || (window as any).webkitURL).createObjectURL ||
   (window as any).createObjectURL;
 let userInfo: any;
+let loading = true;
 class RegisterUser extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -81,20 +87,20 @@ class RegisterUser extends Component<Props, State> {
     }
     this.state = {
       userName: userName,
-      petName: props.registerUser.petName,
+      petName: props.registerUser ? props.registerUser.petName : "",
+      petSpecies: props.registerUser
+        ? props.registerUser.petSpecies
+        : animalSpecies[0].id,
       photoURL: "",
       uploadedImage: null,
       follow: [],
-      follower: [],
-      loading: true
+      follower: []
     };
     User.isInitAuthedRef(userInfo.uid).on("value", snap => {
       if (snap && snap.val()) {
         this.props.history.push("/userMain");
       } else {
-        this.setState({
-          loading: false
-        });
+        loading = false;
       }
     });
   }
@@ -106,8 +112,12 @@ class RegisterUser extends Component<Props, State> {
   };
 
   confirmRegister = () => {
+    loading = true;
     this.props.onRegisterUser(this.state);
-    this.props.history.push("/userMain");
+    setTimeout(() => {
+      this.props.history.push("/userMain");
+      loading = false;
+    }, 2000);
   };
 
   handleChangeFile = (e: any) => {
@@ -119,12 +129,8 @@ class RegisterUser extends Component<Props, State> {
 
   render() {
     const { classes } = this.props;
-    if (this.state.loading) {
-      return (
-        <section className={classes.progressWrapper}>
-          <CircularProgress className={classes.progress} />
-        </section>
-      );
+    if (loading) {
+      return <Loading />;
     }
     return (
       <Paper className={classes.paper}>
@@ -140,6 +146,7 @@ class RegisterUser extends Component<Props, State> {
             margin="normal"
             variant="outlined"
           />
+
           <TextField
             label="ペットのお名前"
             className={classes.textField}
@@ -148,6 +155,21 @@ class RegisterUser extends Component<Props, State> {
             margin="normal"
             variant="outlined"
           />
+          <TextField
+            select
+            label="ペットの種類"
+            className={classes.select}
+            value={this.state.petSpecies || animalSpecies[0].id}
+            margin="normal"
+            variant="outlined"
+            onChange={this.handleChange("petSpecies")}
+          >
+            {animalSpecies.map(option => (
+              <MenuItem key={option.id} value={option.id}>
+                {option.name}
+              </MenuItem>
+            ))}
+          </TextField>
           <Card className={classes.card}>
             <CardActionArea>
               <CardMedia

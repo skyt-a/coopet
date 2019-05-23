@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 
 import { RootState } from "../modules";
-import Navbar from "../components/Navbar";
+import AfterAuthLoading from "../components/AfterAuthLoading";
 import { authActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
@@ -13,8 +13,8 @@ const mapStateToProps = () => (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
   return {
-    onLogout: () => {
-      dispatch(authActions.signOut.started());
+    onStoreUserInfo: (p: any) => {
+      dispatch(authActions.storeUserInfo.started(p));
     }
   };
 };
@@ -22,4 +22,4 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Navbar);
+)(AfterAuthLoading);
