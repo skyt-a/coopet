@@ -1,0 +1,157 @@
+.ajax-loader,
+.ajax-loader2,
+.ajax-loader3,
+.ajax-loader4 {
+  position: absolute;
+  transform-origin: 50% 50%;
+  font-size: 80px;
+  width: 1em;
+  height: 3em;
+  color: #d31145;
+
+  .paw {
+    width: 1.5em;
+    height: 1em;
+    animation: 3050ms pawAnimation ease-in-out infinite;
+    opacity: 0;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .icon {
+      fill: #d31145;
+    }
+
+    &:nth-child(odd) {
+      transform: rotate(0deg);
+    }
+
+    &:nth-child(even) {
+      transform: rotate(0deg) scaleX(-1) translate(15%, -50%);
+    }
+
+    @for $i from 1 through 10 {
+      @if ($i % 2 == 0) {
+        &:nth-child(#{$i}) {
+          animation-delay: #{(($i * -1)+10) * 0.25}s;
+          transform: rotate(0deg) scaleX(-1) translate3d($i * 5%, $i * -50%, 0);
+          //animation: ($i/2)*0.5s path1 ease-in-out;
+        }
+      } @else {
+        &:nth-child(#{$i}) {
+          animation-delay: #{(($i * -1)+10) * 0.25}s;
+          transform: rotate(0deg) translate3d($i * -4%, $i * -48%, 0);
+        }
+      }
+
+      @if ($i == 1) {
+        &:nth-child(#{$i}) {
+          animation-delay: #{(($i * -1)+10) * 0.25}s;
+          transform: rotate(-8deg) translate3d($i * 30%, $i * -50%, 0);
+        }
+      }
+      @if ($i == 2) {
+        &:nth-child(#{$i}) {
+          animation-delay: #{(($i * -1)+10) * 0.25}s;
+          transform: rotate(-8deg) scaleX(-1) translate3d($i * -15%, $i * -60%, 0);
+          //animation: ($i/2)*0.5s path1 ease-in-out;
+        }
+      }
+
+      @if ($i == 3) {
+        &:nth-child(#{$i}) {
+          animation-delay: #{(($i * -1)+10) * 0.25}s;
+          transform: rotate(0deg) translate3d($i * 15%, $i * -48%, 0);
+        }
+      }
+      @if ($i == 4) {
+        &:nth-child(#{$i}) {
+          animation-delay: #{(($i * -1)+10) * 0.25}s;
+          transform: rotate(0deg) scaleX(-1) translate3d($i * -8%, $i * -50%, 0);
+          //animation: ($i/2)*0.5s path1 ease-in-out;
+        }
+      }
+
+      @if ($i == 5) {
+        &:nth-child(#{$i}) {
+          animation-delay: #{(($i * -1)+10) * 0.25}s;
+          transform: rotate(0deg) translate3d($i * 8%, $i * -48%, 0);
+        }
+      }
+      @if ($i == 6) {
+        &:nth-child(#{$i}) {
+          animation-delay: #{(($i * -1)+10) * 0.25}s;
+          transform: rotate(0deg) scaleX(-1) translate3d($i * -5%, $i * -50%, 0);
+          //animation: ($i/2)*0.5s path1 ease-in-out;
+        }
+      }
+
+      @if ($i == 7) {
+        &:nth-child(#{$i}) {
+          animation-delay: #{(($i * -1)+10) * 0.25}s;
+          transform: rotate(1deg) translate3d($i * 1%, $i * -48%, 0);
+        }
+      }
+      @if ($i == 8) {
+        &:nth-child(#{$i}) {
+          animation-delay: #{(($i * -1)+10) * 0.25}s;
+          transform: rotate(1deg) scaleX(-1) translate3d($i * 1%, $i * -50%, 0);
+          //animation: ($i/2)*0.5s path1 ease-in-out;
+        }
+      }
+    } //for loop ends
+
+    .no-cssanimations & {
+      opacity: 1;
+    }
+  }
+}
+
+.ajax-loader {
+  top: 15%;
+  left: 50%;
+  transform: rotate(10deg) translate(-50%, 0%);
+}
+.ajax-loader2 {
+  top: 15%;
+  right: 20%;
+  transform: rotate(-10deg) translate(-50%, 0%);
+}
+
+.ajax-loader3 {
+  top: 45%;
+  left: 30%;
+  transform: rotate(150deg) translate(-50%, 0%);
+}
+
+.ajax-loader4 {
+  top: 45%;
+  right: 35%;
+  transform: rotate(200deg) translate(-50%, 0%);
+}
+
+@keyframes pawAnimation {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes path1 {
+  0% {
+    transform: rotate(0deg) scaleX(-1) translate3d(0%, -50%, 0);
+  }
+  30% {
+    transform: rotate(20deg) scaleX(-1) translate3d(-35%, -60%, 0);
+  }
+  100% {
+    transform: rotate(20deg) scaleX(-1) translate3d(-0%, -80%, 0);
+  }
+}

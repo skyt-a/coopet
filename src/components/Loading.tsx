@@ -1,11 +1,13 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
   WithStyles,
   StyleRules
 } from "@material-ui/core/styles/withStyles";
-import { CircularProgress, createStyles } from "@material-ui/core";
+import { createStyles } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router";
+import "./Loading.scss";
+import footPrint from "../assets/images/footprint.png";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -19,11 +21,77 @@ const styles = (theme: Theme): StyleRules =>
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
 class Loading extends Component<Props> {
   render() {
-    const { classes } = this.props;
     return (
-      <section className={classes.progressWrapper}>
-        <CircularProgress className={classes.progress} />
-      </section>
+      // <section className={classes.progressWrapper}>
+      //   <CircularProgress className={classes.progress} />
+      // </section>
+      <Fragment>
+        <svg id="svg-sprite">
+          <symbol id="paw" viewBox="0 0 249 209.32">
+            <image
+              xlinkHref={footPrint}
+              x="0"
+              y="0"
+              height="100px"
+              width="100px"
+            />
+          </symbol>
+        </svg>
+
+        <div className="ajax-loader">
+          <div className="paw">
+            <svg className="icon">
+              <use xlinkHref="#paw" />
+            </svg>
+          </div>
+          <div className="paw">
+            <svg className="icon">
+              <use xlinkHref="#paw" />
+            </svg>
+          </div>
+          <div className="paw">
+            <svg className="icon">
+              <use xlinkHref="#paw" />
+            </svg>
+          </div>
+          <div className="paw">
+            <svg className="icon">
+              <use xlinkHref="#paw" />
+            </svg>
+          </div>
+          <div className="paw">
+            <svg className="icon">
+              <use xlinkHref="#paw" />
+            </svg>
+          </div>
+          <div className="paw">
+            <svg className="icon">
+              <use xlinkHref="#paw" />
+            </svg>
+          </div>
+
+          <div className="paw">
+            <svg className="icon">
+              <use xlinkHref="#paw" />
+            </svg>
+          </div>
+          <div className="paw">
+            <svg className="icon">
+              <use xlinkHref="#paw" />
+            </svg>
+          </div>
+          <div className="paw">
+            <svg className="icon">
+              <use xlinkHref="#paw" />
+            </svg>
+          </div>
+          <div className="paw">
+            <svg className="icon">
+              <use xlinkHref="#paw" />
+            </svg>
+          </div>
+        </div>
+      </Fragment>
     );
   }
 }
