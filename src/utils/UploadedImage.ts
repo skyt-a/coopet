@@ -8,4 +8,16 @@ export default class UploadedImage {
   static getUploadedImageBySpeciesRef(speciesId: string) {
     return database.ref(`/uploadedImage/${speciesId}`);
   }
+
+  static getUploadedImageRef(speciesId: string, key: string, uid: string) {
+    return database.ref(`/uploadedImage/${speciesId}/${key}/${uid}`);
+  }
+
+  static getUploadedImageCommentedsRef(
+    speciesId: string,
+    key: string,
+    uid: string
+  ) {
+    return database.ref(`/uploadedImage/${speciesId}/${key}/${uid}/commenteds`);
+  }
 }

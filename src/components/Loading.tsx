@@ -38,7 +38,7 @@ class Loading extends Component<Props> {
           </symbol>
         </svg>
 
-        <div className="ajax-loader">
+        <div className="footprints">
           <div className="paw">
             <svg className="icon">
               <use xlinkHref="#paw" />

@@ -35,6 +35,7 @@ export default function* rootSaga(): IterableIterator<any> {
     ),
     takeEvery(`${ActionTypes.AUTH_WITHDRAW}_STARTED`, authSaga.withdraw),
     takeEvery(`${ActionTypes.STORE_USERINFO}_STARTED`, authSaga.storeUserInfo),
-    takeEvery(`${ActionTypes.UPLOAD_IMAGE}_STARTED`, uploadSaga.uploadImage)
+    takeEvery(`${ActionTypes.UPLOAD_IMAGE}_STARTED`, uploadSaga.uploadImage),
+    takeEvery(`${ActionTypes.COMMENT_IMAGE}_STARTED`, uploadSaga.commentImage)
   ]);
 }

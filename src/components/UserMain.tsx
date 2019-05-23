@@ -429,7 +429,7 @@ class UserMain extends Component<Props, State> {
           onClose={this.handleCloseUploadImageModal}
         >
           <div style={getModalStyle()} className={classes.paper}>
-            <CardActionArea>
+            <Card>
               <CardMedia
                 component="img"
                 className={classes.media}
@@ -448,11 +448,15 @@ class UserMain extends Component<Props, State> {
                   margin="normal"
                   variant="outlined"
                 />
-                <Button variant="contained" onClick={this.uploadImage}>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={this.uploadImage}
+                >
                   投稿
                 </Button>
               </CardContent>
-            </CardActionArea>
+            </Card>
           </div>
         </Modal>
       </Fragment>

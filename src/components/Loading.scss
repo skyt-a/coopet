@@ -1,7 +1,7 @@
-.ajax-loader,
-.ajax-loader2,
-.ajax-loader3,
-.ajax-loader4 {
+.footprints,
+.footprints2,
+.footprints3,
+.footprints4 {
   position: absolute;
   transform-origin: 50% 50%;
   font-size: 80px;
@@ -109,24 +109,24 @@
   }
 }
 
-.ajax-loader {
+.footprints {
   top: 15%;
   left: 50%;
   transform: rotate(10deg) translate(-50%, 0%);
 }
-.ajax-loader2 {
+.footprints2 {
   top: 15%;
   right: 20%;
   transform: rotate(-10deg) translate(-50%, 0%);
 }
 
-.ajax-loader3 {
+.footprints3 {
   top: 45%;
   left: 30%;
   transform: rotate(150deg) translate(-50%, 0%);
 }
 
-.ajax-loader4 {
+.footprints4 {
   top: 45%;
   right: 35%;
   transform: rotate(200deg) translate(-50%, 0%);
