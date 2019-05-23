@@ -137,9 +137,8 @@ class UserView extends Component<Props, State> {
             return key !== userInfo.uid;
           })
           .map(key => {
-            const inner = result[key];
-            const user = inner[Object.keys(inner)[0]];
-            user["uid"] = Object.keys(inner)[0];
+            const user = result[key];
+            user["uid"] = key;
             return user;
           })
       });
