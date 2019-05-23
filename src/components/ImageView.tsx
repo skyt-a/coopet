@@ -37,7 +37,9 @@ const styles = (theme: Theme): StyleRules =>
       padding: theme.spacing.unit
     },
     cardContent: {
-      textAlign: "center"
+      textAlign: "center",
+      height: "30vh",
+      overflow: "auto"
     },
     flex: {
       display: "flex",
@@ -79,8 +81,32 @@ const styles = (theme: Theme): StyleRules =>
         borderLeft: "15px solid #e0edff"
       }
     },
-    commentWrapper: {
-      textAlign: "left"
+    balloonLeft: {
+      position: "relative",
+      display: "inline-block",
+      padding: "7px 10px",
+      minWidth: "120px",
+      maxWidth: "100%",
+      color: "#555",
+      fontSize: "16px",
+      background: "#ff8e9d",
+      "&::before": {
+        content: '""',
+        position: "absolute",
+        top: "50%",
+        left: "-30px",
+        marginTop: "-15px",
+        border: "15px solid transparent",
+        borderRight: "15px solid #e0edff"
+      }
+    },
+    commentWrapperLeft: {
+      textAlign: "left",
+      margin: "10px"
+    },
+    commentWrapperRight: {
+      textAlign: "right",
+      margin: "10px"
     }
   });
 
@@ -242,8 +268,9 @@ class ImageView extends Component<Props, State> {
           comment["key"] = key;
           return comment;
         });
-        selectedImageDetail["commenteds"] = commenteds;
-        console.log("result", commenteds);
+      }
+      selectedImageDetail["commenteds"] = commenteds;
+      if (!this.state.isOpenImageDetailModal) {
         this.setState({
           selectedImageDetail: selectedImageDetail,
           isOpenImageDetailModal: true
@@ -327,13 +354,25 @@ class ImageView extends Component<Props, State> {
                 {this.state.selectedImageDetail &&
                   this.state.selectedImageDetail.commenteds &&
                   this.state.selectedImageDetail.commenteds.map(
-                    (commented: any, i: number) => (
-                      <div className={classes.commentWrapper} key={i}>
-                        <div className={classes.balloonRight}>
-                          <Typography>{commented.comment}</Typography>
-                        </div>
-                      </div>
-                    )
+                    (commented: any, i: number) => {
+                      if (commented.uid === userInfo.uid) {
+                        return (
+                          <div className={classes.commentWrapperRight} key={i}>
+                            <div className={classes.balloonLeft}>
+                              <Typography>{commented.comment}</Typography>
+                            </div>
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div className={classes.commentWrapperLeft} key={i}>
+                            <div className={classes.balloonRight}>
+                              <Typography>{commented.comment}</Typography>
+                            </div>
+                          </div>
+                        );
+                      }
+                    }
                   )}
                 <div>
                   <TextField

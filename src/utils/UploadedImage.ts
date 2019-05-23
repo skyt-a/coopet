@@ -5,6 +5,10 @@ export default class UploadedImage {
     return database.ref(`/users/${userId}/uploadImage`);
   }
 
+  static getMyUploadedImageDetailRef(userId: string, key: string) {
+    return database.ref(`/users/${userId}/uploadImage/${key}`);
+  }
+
   static getUploadedImageBySpeciesRef(speciesId: string) {
     return database.ref(`/uploadedImage/${speciesId}`);
   }

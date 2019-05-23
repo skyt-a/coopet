@@ -108,6 +108,24 @@ const uploadSaga = {
             }
           }
         );
+      yield database
+        .ref(
+          `/users/${profile.uid}/uploadImage/${profile.key}/commenteds/${key}/${
+            currentUser.uid
+          }`
+        )
+        .set(
+          {
+            comment: profile.comment
+          },
+          error => {
+            console.log(error);
+            if (error) {
+              console.error(error);
+            } else {
+            }
+          }
+        );
     } catch (err) {
       yield put(
         uploadActions.uploadImage.failed({ params: action.payload, error: err })

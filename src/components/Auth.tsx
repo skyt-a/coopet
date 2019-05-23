@@ -67,15 +67,13 @@ class Auth extends Component<Props, State> {
 
   componentDidMount = () => {
     this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
-      console.log(user);
       // this.props.onUpdateUser(user);
-      this.setState({
-        loading: false
-      });
-      console.log(user);
       if (user != null) {
         this.props.history.push("/afterAuth");
       }
+      this.setState({
+        loading: false
+      });
     });
   };
 
