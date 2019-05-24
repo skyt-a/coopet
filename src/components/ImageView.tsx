@@ -21,6 +21,8 @@ import classNames from "classnames";
 import UploadedImage from "../utils/UploadedImage";
 import Loading from "./Loading";
 import animalSpecies from "../assets/data/animalSpecies.json";
+import CommentsView from "./CommentsView";
+import User from "../utils/User";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -46,10 +48,11 @@ const styles = (theme: Theme): StyleRules =>
       flexWrap: "wrap"
     },
     uploadedImageWrap: {
-      flexBasis: "calc(100% / 3)",
+      flexBasis: "calc(100% / 3.1)",
       position: "relative",
       height: "150px",
-      border: "1px solid rgba(0, 0, 0, 0.12)"
+      border: "1px solid rgba(0, 0, 0, 0.12)",
+      margin: "1px"
     },
     uploadedImage: {
       width: "100%",
@@ -57,10 +60,11 @@ const styles = (theme: Theme): StyleRules =>
       objectFit: "scale-down"
     },
     media: {
-      objectFit: "cover",
+      objectFit: "contain",
       width: "80vw",
       margin: "auto",
-      padding: "20px"
+      padding: "20px",
+      maxHeight: "35vh"
     },
     balloonRight: {
       position: "relative",
@@ -97,7 +101,7 @@ const styles = (theme: Theme): StyleRules =>
         left: "-30px",
         marginTop: "-15px",
         border: "15px solid transparent",
-        borderRight: "15px solid #e0edff"
+        borderRight: "15px solid #ff8e9d"
       }
     },
     commentWrapperLeft: {
@@ -107,6 +111,10 @@ const styles = (theme: Theme): StyleRules =>
     commentWrapperRight: {
       textAlign: "right",
       margin: "10px"
+    },
+    postArea: {
+      textAlign: "center",
+      padding: "3px"
     }
   });
 
@@ -139,6 +147,7 @@ interface State {
   isOpenImageDetailModal: boolean;
   selectedImageDetail: any;
   postComment: string;
+  commentUserMast: any;
 }
 
 function getModalStyle() {
@@ -166,7 +175,8 @@ class ImageView extends Component<Props, State> {
       viewedImages: [],
       isOpenImageDetailModal: false,
       selectedImageDetail: {},
-      postComment: ""
+      postComment: "",
+      commentUserMast: {}
     };
     UploadedImage.getUploadedImageBySpeciesRef(this.state.selectedSpecies).on(
       "value",
@@ -257,25 +267,57 @@ class ImageView extends Component<Props, State> {
       selectedImageDetail.key,
       selectedImageDetail.uid
     ).on("value", snap => {
-      let commenteds = [];
+      let commenteds: any[] = [];
+      let promises: Promise<any>[] = [];
+      let result: any;
       if (snap && snap.val()) {
-        const result = snap.val();
-        console.log("result", result);
-        commenteds = Object.keys(result).map(key => {
-          const inner = result[key];
-          const comment = inner[Object.keys(inner)[0]];
-          comment["uid"] = Object.keys(inner)[0];
-          comment["key"] = key;
-          return comment;
-        });
+        result = snap.val();
+        if (result) {
+          const targetCommentsProp = result;
+          const userIds = Object.keys(targetCommentsProp)
+            .map((key: any) => {
+              const inner = targetCommentsProp[key];
+              return Object.keys(inner)[0];
+            })
+            // 重複を削除する
+            .filter(function(x, i, self) {
+              return self.indexOf(x) === i;
+            });
+          promises = userIds.map(v => User.getUserByIdRef(v).once("value"));
+        }
       }
-      selectedImageDetail["commenteds"] = commenteds;
-      if (!this.state.isOpenImageDetailModal) {
-        this.setState({
+      Promise.all(promises).then(users => {
+        const targetCommentsProp = result;
+        let userMast: any = {};
+        if (targetCommentsProp) {
+          commenteds = Object.keys(targetCommentsProp).map((key: any) => {
+            const inner = targetCommentsProp[key];
+            const comment = inner[Object.keys(inner)[0]];
+            comment["uid"] = Object.keys(inner)[0];
+            comment["key"] = key;
+            return comment;
+          });
+          console.log(users);
+          users.forEach(user => {
+            if (user && user.val()) {
+              userMast[user.val().uid] = user.val();
+            }
+          });
+        }
+        selectedImageDetail["commenteds"] = commenteds;
+        console.log({
           selectedImageDetail: selectedImageDetail,
+          commentUserMast: userMast,
           isOpenImageDetailModal: true
         });
-      }
+        if (!this.state.isOpenImageDetailModal) {
+          this.setState({
+            selectedImageDetail: selectedImageDetail,
+            commentUserMast: userMast,
+            isOpenImageDetailModal: true
+          });
+        }
+      });
     });
   };
 
@@ -286,12 +328,17 @@ class ImageView extends Component<Props, State> {
   };
 
   commentUploadedImage = () => {
-    console.log(this.state.selectedImageDetail);
+    if (!this.state.postComment) {
+      return;
+    }
     this.props.onCommentImage({
       comment: this.state.postComment,
       uid: this.state.selectedImageDetail.uid,
       key: this.state.selectedImageDetail.key,
       petSpecies: this.state.selectedSpecies
+    });
+    this.setState({
+      postComment: ""
     });
   };
 
@@ -347,54 +394,38 @@ class ImageView extends Component<Props, State> {
                 src={this.state.selectedImageDetail.url}
                 title="Contemplative Reptile"
               />
-              <CardContent className={classes.cardContent}>
+              <CardContent>
                 <Typography>
                   {this.state.selectedImageDetail.comment}
                 </Typography>
-                {this.state.selectedImageDetail &&
-                  this.state.selectedImageDetail.commenteds &&
-                  this.state.selectedImageDetail.commenteds.map(
-                    (commented: any, i: number) => {
-                      if (commented.uid === userInfo.uid) {
-                        return (
-                          <div className={classes.commentWrapperRight} key={i}>
-                            <div className={classes.balloonLeft}>
-                              <Typography>{commented.comment}</Typography>
-                            </div>
-                          </div>
-                        );
-                      } else {
-                        return (
-                          <div className={classes.commentWrapperLeft} key={i}>
-                            <div className={classes.balloonRight}>
-                              <Typography>{commented.comment}</Typography>
-                            </div>
-                          </div>
-                        );
-                      }
-                    }
-                  )}
-                <div>
-                  <TextField
-                    id="outlined-multiline-static"
-                    label="コメント"
-                    multiline
-                    rows="2"
-                    defaultValue=""
-                    onChange={this.handleChange("postComment")}
-                    className={classes.textField}
-                    margin="normal"
-                    variant="outlined"
-                  />
-                </div>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={this.commentUploadedImage}
-                >
-                  投稿
-                </Button>
               </CardContent>
+              <CommentsView
+                commenteds={this.state.selectedImageDetail.commenteds}
+                userInfo={userInfo}
+                commentUserMast={this.state.commentUserMast}
+              />
+              <div className={classes.postArea}>
+                <TextField
+                  id="outlined-multiline-static"
+                  label="コメント"
+                  multiline
+                  rows="2"
+                  defaultValue=""
+                  onChange={this.handleChange("postComment")}
+                  className={classes.textField}
+                  margin="normal"
+                  variant="outlined"
+                />
+                <div>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={this.commentUploadedImage}
+                  >
+                    投稿
+                  </Button>
+                </div>
+              </div>
             </Card>
           </div>
         </Modal>
