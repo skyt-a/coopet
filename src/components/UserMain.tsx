@@ -102,10 +102,60 @@ const styles = (theme: Theme): StyleRules =>
     cardComponent: {
       padding: "1px"
     },
+    cardContent: {
+      overflow: "auto",
+      height: "30vh"
+    },
     actions: {
       display: "flex",
       justifyContent: "flex-end",
       paddingRight: "10px"
+    },
+    balloonRight: {
+      position: "relative",
+      display: "inline-block",
+      padding: "7px 10px",
+      minWidth: "120px",
+      maxWidth: "100%",
+      color: "#555",
+      fontSize: "16px",
+      background: "#e0edff",
+      "&::before": {
+        content: '""',
+        position: "absolute",
+        top: "50%",
+        left: "100%",
+        marginTop: "-15px",
+        border: "15px solid transparent",
+        borderLeft: "15px solid #e0edff"
+      }
+    },
+    balloonLeft: {
+      position: "relative",
+      display: "inline-block",
+      padding: "7px 10px",
+      minWidth: "120px",
+      maxWidth: "100%",
+      color: "#555",
+      fontSize: "16px",
+      background: "#ff8e9d",
+      "&::before": {
+        content: '""',
+        position: "absolute",
+        top: "50%",
+        left: "-30px",
+        marginTop: "-15px",
+        border: "15px solid transparent",
+        borderRight: "15px solid #e0edff"
+      }
+    },
+    commentWrapperLeft: {
+      textAlign: "left",
+      margin: "10px"
+    },
+    commentWrapperRight: {
+      textAlign: "right",
+      margin: "10px"
     }
   });
 
@@ -146,6 +196,7 @@ interface State {
   comment: string;
   uploadedImages: UploadedImageInfo[];
   selectedImageURL: string;
+  selectedImageDetail: any;
   selectedComment: string;
   isMenuOpen: boolean;
 }
@@ -189,6 +240,7 @@ class UserMain extends Component<Props, State> {
       uploadedImages: [],
       selectedImageURL: "",
       selectedComment: "",
+      selectedImageDetail: {},
       isMenuOpen: false
     };
   }
@@ -225,9 +277,16 @@ class UserMain extends Component<Props, State> {
       if (!snap || !snap.val()) {
         return;
       }
+      const result = snap.val();
       console.log(snap.val());
       this.setState({
-        uploadedImages: Object.values(snap.val())
+        uploadedImages: Object.keys(result).map(key => {
+          const image = result[key];
+          image["uid"] = userInfo.uid;
+          image["key"] = key;
+          return image;
+        })
+        //Object.values(snap.val())
       });
     });
     setTimeout(() => {
@@ -273,22 +332,42 @@ class UserMain extends Component<Props, State> {
     });
   };
 
-  handleOpenSelectedImageModal = (
-    selectedURL: string,
-    selectedComment: string
-  ) => {
-    this.setState({
-      isOpenSelectedImageModal: true,
-      selectedImageURL: selectedURL,
-      selectedComment: selectedComment
+  handleOpenSelectedImageModal = (selectedImageDetail: any) => {
+    console.log("modal");
+    UploadedImage.getMyUploadedImageDetailRef(
+      selectedImageDetail.uid,
+      selectedImageDetail.key
+    ).on("value", snap => {
+      let commenteds = [];
+      if (snap && snap.val()) {
+        const result = snap.val();
+        console.log("result", result);
+        if (result.commenteds) {
+          const targetCommentsProp = result.commenteds;
+          commenteds = Object.keys(targetCommentsProp).map((key: any) => {
+            const inner = targetCommentsProp[key];
+            const comment = inner[Object.keys(inner)[0]];
+            comment["uid"] = Object.keys(inner)[0];
+            comment["key"] = key;
+            return comment;
+          });
+          console.log(commenteds);
+        }
+      }
+      selectedImageDetail["commenteds"] = commenteds;
+      if (!this.state.isOpenSelectedImageModal) {
+        this.setState({
+          selectedImageDetail: selectedImageDetail,
+          isOpenSelectedImageModal: true
+        });
+      }
     });
   };
 
   handleCloseSelectedImageModal = () => {
     this.setState({
       isOpenSelectedImageModal: false,
-      selectedImageURL: "",
-      selectedComment: ""
+      selectedImageDetail: {}
     });
   };
 
@@ -387,12 +466,7 @@ class UserMain extends Component<Props, State> {
               {this.state.uploadedImages.map((uploaded, i) => (
                 <div className={classes.uploadedImageWrap} key={i}>
                   <img
-                    onClick={() =>
-                      this.handleOpenSelectedImageModal(
-                        uploaded.url,
-                        uploaded.comment
-                      )
-                    }
+                    onClick={() => this.handleOpenSelectedImageModal(uploaded)}
                     alt={uploaded.comment}
                     className={classes.uploadedImage}
                     src={uploaded.url}
@@ -413,11 +487,36 @@ class UserMain extends Component<Props, State> {
               <CardMedia
                 component="img"
                 className={classes.media}
-                src={this.state.selectedImageURL}
+                src={this.state.selectedImageDetail.url}
                 title="Contemplative Reptile"
               />
-              <CardContent>
-                <Typography>{this.state.selectedComment}</Typography>
+              <CardContent className={classes.cardContent}>
+                <Typography>
+                  {this.state.selectedImageDetail.comment}
+                </Typography>
+                {this.state.selectedImageDetail &&
+                  this.state.selectedImageDetail.commenteds &&
+                  this.state.selectedImageDetail.commenteds.map(
+                    (commented: any, i: number) => {
+                      if (commented.uid === userInfo.uid) {
+                        return (
+                          <div className={classes.commentWrapperRight} key={i}>
+                            <div className={classes.balloonLeft}>
+                              <Typography>{commented}</Typography>
+                            </div>
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div className={classes.commentWrapperLeft} key={i}>
+                            <div className={classes.balloonRight}>
+                              <Typography>{commented.comment}</Typography>
+                            </div>
+                          </div>
+                        );
+                      }
+                    }
+                  )}
               </CardContent>
             </CardActionArea>
           </div>
@@ -429,7 +528,7 @@ class UserMain extends Component<Props, State> {
           onClose={this.handleCloseUploadImageModal}
         >
           <div style={getModalStyle()} className={classes.paper}>
-            <CardActionArea>
+            <Card>
               <CardMedia
                 component="img"
                 className={classes.media}
@@ -448,11 +547,15 @@ class UserMain extends Component<Props, State> {
                   margin="normal"
                   variant="outlined"
                 />
-                <Button variant="contained" onClick={this.uploadImage}>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={this.uploadImage}
+                >
                   投稿
                 </Button>
               </CardContent>
-            </CardActionArea>
+            </Card>
           </div>
         </Modal>
       </Fragment>

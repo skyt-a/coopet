@@ -76,6 +76,69 @@ const uploadSaga = {
     } finally {
       console.log("uploadSaga: uploadImage end.");
     }
+  },
+  commentImage: function*(action: Action<any>): IterableIterator<any> {
+    console.log("uploadSaga: uploadImage start.");
+    let profile = action.payload;
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) {
+      console.log(`user not signed in`);
+      throw {
+        code: "user not signed in",
+        message: "this operation requires user to be signed in."
+      };
+    }
+    const key = new Date().getTime();
+    try {
+      yield database
+        .ref(
+          `/uploadedImage/${profile.petSpecies}/${profile.key}/${
+            profile.uid
+          }/commenteds/${key}/${currentUser.uid}`
+        )
+        .set(
+          {
+            comment: profile.comment
+          },
+          error => {
+            console.log(error);
+            if (error) {
+              console.error(error);
+            } else {
+            }
+          }
+        );
+      yield database
+        .ref(
+          `/users/${profile.uid}/uploadImage/${profile.key}/commenteds/${key}/${
+            currentUser.uid
+          }`
+        )
+        .set(
+          {
+            comment: profile.comment
+          },
+          error => {
+            console.log(error);
+            if (error) {
+              console.error(error);
+            } else {
+            }
+          }
+        );
+    } catch (err) {
+      yield put(
+        uploadActions.uploadImage.failed({ params: action.payload, error: err })
+      );
+      const appError = AppErrorUtil.toAppError(err, {
+        name: "uploadImage",
+        stack: JSON.stringify(err),
+        severity: isIAuthError(err) ? Severity.WARNING : Severity.FATAL
+      });
+      yield put(appActions.pushErrors([appError]));
+    } finally {
+      console.log("uploadSaga: uploadImage end.");
+    }
   }
 };
 export default uploadSaga;

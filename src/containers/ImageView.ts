@@ -19,6 +19,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
     },
     onUploadImage: (param: any) => {
       dispatch(uploadActions.uploadImage.started(param));
+    },
+    onCommentImage: (param: any) => {
+      dispatch(uploadActions.commentImage.started(param));
     }
   };
 };
