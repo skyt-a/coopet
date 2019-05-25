@@ -148,6 +148,7 @@ interface State {
   selectedImageDetail: any;
   postComment: string;
   commentUserMast: any;
+  loading: boolean;
 }
 
 function getModalStyle() {
@@ -176,11 +177,12 @@ class ImageView extends Component<Props, State> {
       isOpenImageDetailModal: false,
       selectedImageDetail: {},
       postComment: "",
-      commentUserMast: {}
+      commentUserMast: {},
+      loading: false
     };
-    UploadedImage.getUploadedImageBySpeciesRef(this.state.selectedSpecies).orderByKey().on(
-      "value",
-      snap => {
+    UploadedImage.getUploadedImageBySpeciesRef(this.state.selectedSpecies)
+      .orderByKey()
+      .on("value", snap => {
         if (!snap || !snap.val()) {
           return;
         }
@@ -200,8 +202,7 @@ class ImageView extends Component<Props, State> {
               return image;
             })
         });
-      }
-    );
+      });
   }
 
   componentDidMount = () => {
@@ -228,6 +229,10 @@ class ImageView extends Component<Props, State> {
   };
 
   handleSpeciesSelectChange = () => (event: any) => {
+    this.setState({
+      viewedImages: [],
+      loading: true
+    });
     const selectedValue = event.target.value;
     UploadedImage.getUploadedImageBySpeciesRef(
       this.state.selectedSpecies
@@ -235,13 +240,10 @@ class ImageView extends Component<Props, State> {
     UploadedImage.getUploadedImageBySpeciesRef(selectedValue).on(
       "value",
       snap => {
-        if (!snap || !snap.val()) {
-          return;
-        }
-        console.log(snap);
-        const result = snap.val();
-        this.setState({
-          viewedImages: Object.keys(result)
+        let thisViewedImages = [];
+        if (snap && snap.val()) {
+          const result = snap.val();
+          thisViewedImages = Object.keys(result)
             .filter(key => {
               const inner = Object.keys(result[key])[0];
               return inner !== userInfo.uid;
@@ -253,6 +255,10 @@ class ImageView extends Component<Props, State> {
               image["key"] = key;
               return image;
             })
+        }
+        this.setState({
+          viewedImages: thisViewedImages,
+          loading: false
         });
       }
     );
@@ -266,59 +272,61 @@ class ImageView extends Component<Props, State> {
       this.state.selectedSpecies,
       selectedImageDetail.key,
       selectedImageDetail.uid
-    ).orderByKey().on("value", snap => {
-      let commenteds: any[] = [];
-      let promises: Promise<any>[] = [];
-      let result: any;
-      if (snap && snap.val()) {
-        result = snap.val();
-        if (result) {
+    )
+      .orderByKey()
+      .on("value", snap => {
+        let commenteds: any[] = [];
+        let promises: Promise<any>[] = [];
+        let result: any;
+        if (snap && snap.val()) {
+          result = snap.val();
+          if (result) {
+            const targetCommentsProp = result;
+            const userIds = Object.keys(targetCommentsProp)
+              .map((key: any) => {
+                const inner = targetCommentsProp[key];
+                return Object.keys(inner)[0];
+              })
+              // 重複を削除する
+              .filter(function(x, i, self) {
+                return self.indexOf(x) === i;
+              });
+            promises = userIds.map(v => User.getUserByIdRef(v).once("value"));
+          }
+        }
+        Promise.all(promises).then(users => {
           const targetCommentsProp = result;
-          const userIds = Object.keys(targetCommentsProp)
-            .map((key: any) => {
+          let userMast: any = {};
+          if (targetCommentsProp) {
+            commenteds = Object.keys(targetCommentsProp).map((key: any) => {
               const inner = targetCommentsProp[key];
-              return Object.keys(inner)[0];
-            })
-            // 重複を削除する
-            .filter(function(x, i, self) {
-              return self.indexOf(x) === i;
+              const comment = inner[Object.keys(inner)[0]];
+              comment["uid"] = Object.keys(inner)[0];
+              comment["key"] = key;
+              return comment;
             });
-          promises = userIds.map(v => User.getUserByIdRef(v).once("value"));
-        }
-      }
-      Promise.all(promises).then(users => {
-        const targetCommentsProp = result;
-        let userMast: any = {};
-        if (targetCommentsProp) {
-          commenteds = Object.keys(targetCommentsProp).map((key: any) => {
-            const inner = targetCommentsProp[key];
-            const comment = inner[Object.keys(inner)[0]];
-            comment["uid"] = Object.keys(inner)[0];
-            comment["key"] = key;
-            return comment;
-          });
-          console.log(users);
-          users.forEach(user => {
-            if (user && user.val()) {
-              userMast[user.val().uid] = user.val();
-            }
-          });
-        }
-        selectedImageDetail["commenteds"] = commenteds;
-        if (!this.state.isOpenImageDetailModal) {
-          this.setState({
-            selectedImageDetail: selectedImageDetail,
-            commentUserMast: userMast,
-            isOpenImageDetailModal: true
-          });
-        } else {
-          this.setState({
-            selectedImageDetail: selectedImageDetail,
-            commentUserMast: userMast
-          });
-        }
+            console.log(users);
+            users.forEach(user => {
+              if (user && user.val()) {
+                userMast[user.val().uid] = user.val();
+              }
+            });
+          }
+          selectedImageDetail["commenteds"] = commenteds;
+          if (!this.state.isOpenImageDetailModal) {
+            this.setState({
+              selectedImageDetail: selectedImageDetail,
+              commentUserMast: userMast,
+              isOpenImageDetailModal: true
+            });
+          } else {
+            this.setState({
+              selectedImageDetail: selectedImageDetail,
+              commentUserMast: userMast
+            });
+          }
+        });
       });
-    });
   };
 
   handleCloseImageDetailModal = () => {
@@ -344,7 +352,7 @@ class ImageView extends Component<Props, State> {
   };
 
   render() {
-    if (!additionalUserInfo) {
+    if (!additionalUserInfo || this.state.loading) {
       return <Loading />;
     }
     const { classes } = this.props;
