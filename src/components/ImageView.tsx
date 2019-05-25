@@ -178,7 +178,7 @@ class ImageView extends Component<Props, State> {
       postComment: "",
       commentUserMast: {}
     };
-    UploadedImage.getUploadedImageBySpeciesRef(this.state.selectedSpecies).on(
+    UploadedImage.getUploadedImageBySpeciesRef(this.state.selectedSpecies).orderByKey().on(
       "value",
       snap => {
         if (!snap || !snap.val()) {
@@ -266,7 +266,7 @@ class ImageView extends Component<Props, State> {
       this.state.selectedSpecies,
       selectedImageDetail.key,
       selectedImageDetail.uid
-    ).on("value", snap => {
+    ).orderByKey().on("value", snap => {
       let commenteds: any[] = [];
       let promises: Promise<any>[] = [];
       let result: any;
@@ -305,16 +305,16 @@ class ImageView extends Component<Props, State> {
           });
         }
         selectedImageDetail["commenteds"] = commenteds;
-        console.log({
-          selectedImageDetail: selectedImageDetail,
-          commentUserMast: userMast,
-          isOpenImageDetailModal: true
-        });
         if (!this.state.isOpenImageDetailModal) {
           this.setState({
             selectedImageDetail: selectedImageDetail,
             commentUserMast: userMast,
             isOpenImageDetailModal: true
+          });
+        } else {
+          this.setState({
+            selectedImageDetail: selectedImageDetail,
+            commentUserMast: userMast
           });
         }
       });
@@ -340,6 +340,7 @@ class ImageView extends Component<Props, State> {
     this.setState({
       postComment: ""
     });
+    this.handleOpenImageDetailModal(this.state.selectedImageDetail);
   };
 
   render() {
@@ -410,7 +411,7 @@ class ImageView extends Component<Props, State> {
                   label="コメント"
                   multiline
                   rows="2"
-                  defaultValue=""
+                  value={this.state.postComment}
                   onChange={this.handleChange("postComment")}
                   className={classes.textField}
                   margin="normal"

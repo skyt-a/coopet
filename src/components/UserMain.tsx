@@ -277,7 +277,7 @@ class UserMain extends Component<Props, State> {
       this.props.onStoreUserInfo(snap.val());
       additionalUserInfo = snap.val();
     });
-    UploadedImage.getMyUploadedImageRef(userInfo.uid).on("value", snap => {
+    UploadedImage.getMyUploadedImageRef(userInfo.uid).orderByKey().on("value", snap => {
       if (!snap || !snap.val()) {
         return;
       }

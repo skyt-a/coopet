@@ -10,10 +10,10 @@ import { appActions, uploadActions } from "../../actions";
 import { isIAuthError } from "../../models/AuthError";
 import { Severity } from "../../models/Severity";
 import AppErrorUtil from "../../utils/AppErrorUtil";
+import KeyCreater from "../../utils/KeyCreater";
 
 const uploadSaga = {
   uploadImage: function*(action: Action<any>): IterableIterator<any> {
-    console.log("uploadSaga: uploadImage start.");
     let profile = action.payload;
     const currentUser = firebase.auth().currentUser;
     if (!currentUser) {
@@ -25,7 +25,7 @@ const uploadSaga = {
     }
     try {
       if (profile.uploadedImage) {
-        const key = new Date().getTime();
+        const key = KeyCreater.create();
         const ref = storage.ref().child(`photoURL:${currentUser.uid}:${key}`);
         yield ref.put(profile.uploadedImage);
         let targetURL;
@@ -88,7 +88,9 @@ const uploadSaga = {
         message: "this operation requires user to be signed in."
       };
     }
-    const key = new Date().getTime();
+    const now = new Date();
+    // 投稿降順にするための処理
+    const key = KeyCreater.create();
     try {
       yield database
         .ref(
@@ -98,7 +100,8 @@ const uploadSaga = {
         )
         .set(
           {
-            comment: profile.comment
+            comment: profile.comment,
+            date: now
           },
           error => {
             console.log(error);
@@ -116,7 +119,8 @@ const uploadSaga = {
         )
         .set(
           {
-            comment: profile.comment
+            comment: profile.comment,
+            date: now
           },
           error => {
             console.log(error);
