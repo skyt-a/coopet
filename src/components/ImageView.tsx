@@ -240,13 +240,10 @@ class ImageView extends Component<Props, State> {
     UploadedImage.getUploadedImageBySpeciesRef(selectedValue).on(
       "value",
       snap => {
-        if (!snap || !snap.val()) {
-          return;
-        }
-        console.log(snap);
-        const result = snap.val();
-        this.setState({
-          viewedImages: Object.keys(result)
+        let thisViewedImages = [];
+        if (snap && snap.val()) {
+          const result = snap.val();
+          thisViewedImages = Object.keys(result)
             .filter(key => {
               const inner = Object.keys(result[key])[0];
               return inner !== userInfo.uid;
@@ -257,7 +254,10 @@ class ImageView extends Component<Props, State> {
               image["uid"] = Object.keys(inner)[0];
               image["key"] = key;
               return image;
-            }),
+            })
+        }
+        this.setState({
+          viewedImages: thisViewedImages,
           loading: false
         });
       }
