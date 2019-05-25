@@ -670,6 +670,7 @@ const authSaga = {
     } else {
       profile.photoURL = currentUser.photoURL;
     }
+    profile["uid"] = currentUser.uid;
     yield database.ref(`/users/${currentUser.uid}`).set(profile, error => {
       console.log(error);
       if (error) {

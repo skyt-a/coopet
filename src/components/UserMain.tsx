@@ -12,7 +12,6 @@ import {
   Modal,
   IconButton,
   Card,
-  CardActionArea,
   CardMedia,
   CardContent,
   Button,
@@ -32,6 +31,7 @@ import UploadedImage from "../utils/UploadedImage";
 import Loading from "./Loading";
 import User from "../utils/User";
 import animalSpecies from "../assets/data/animalSpecies.json";
+import CommentsView from "./CommentsView";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -82,15 +82,16 @@ const styles = (theme: Theme): StyleRules =>
       width: "80vw"
     },
     uploadedImageWrap: {
-      flexBasis: "calc(100% / 3)",
+      flexBasis: "calc(100% / 3.1)",
       position: "relative",
       height: "150px",
-      border: "1px solid rgba(0, 0, 0, 0.12)"
+      border: "1px solid rgba(0, 0, 0, 0.12)",
+      margin: "1px"
     },
     uploadedImage: {
       width: "100%",
       height: "100%",
-      objectFit: "scale-down"
+      objectFit: "contain"
     },
     chip: {
       margin: theme.spacing.unit
@@ -102,6 +103,7 @@ const styles = (theme: Theme): StyleRules =>
     cardComponent: {
       padding: "1px"
     },
+    mainCommentContent: {},
     cardContent: {
       overflow: "auto",
       height: "30vh"
@@ -146,7 +148,7 @@ const styles = (theme: Theme): StyleRules =>
         left: "-30px",
         marginTop: "-15px",
         border: "15px solid transparent",
-        borderRight: "15px solid #e0edff"
+        borderRight: "15px solid #ff8e9d"
       }
     },
     commentWrapperLeft: {
@@ -197,6 +199,7 @@ interface State {
   uploadedImages: UploadedImageInfo[];
   selectedImageURL: string;
   selectedImageDetail: any;
+  commentUserMast: any;
   selectedComment: string;
   isMenuOpen: boolean;
 }
@@ -241,6 +244,7 @@ class UserMain extends Component<Props, State> {
       selectedImageURL: "",
       selectedComment: "",
       selectedImageDetail: {},
+      commentUserMast: {},
       isMenuOpen: false
     };
   }
@@ -273,7 +277,7 @@ class UserMain extends Component<Props, State> {
       this.props.onStoreUserInfo(snap.val());
       additionalUserInfo = snap.val();
     });
-    UploadedImage.getMyUploadedImageRef(userInfo.uid).on("value", snap => {
+    UploadedImage.getMyUploadedImageRef(userInfo.uid).orderByKey().on("value", snap => {
       if (!snap || !snap.val()) {
         return;
       }
@@ -338,27 +342,49 @@ class UserMain extends Component<Props, State> {
       selectedImageDetail.uid,
       selectedImageDetail.key
     ).on("value", snap => {
-      let commenteds = [];
+      let commenteds: any[] = [];
+      let promises: Promise<any>[] = [];
       if (snap && snap.val()) {
         const result = snap.val();
-        console.log("result", result);
         if (result.commenteds) {
           const targetCommentsProp = result.commenteds;
-          commenteds = Object.keys(targetCommentsProp).map((key: any) => {
-            const inner = targetCommentsProp[key];
-            const comment = inner[Object.keys(inner)[0]];
-            comment["uid"] = Object.keys(inner)[0];
-            comment["key"] = key;
-            return comment;
-          });
-          console.log(commenteds);
+          const userIds = Object.keys(targetCommentsProp)
+            .map((key: any) => {
+              const inner = targetCommentsProp[key];
+              return Object.keys(inner)[0];
+            })
+            // 重複を削除する
+            .filter(function(x, i, self) {
+              return self.indexOf(x) === i;
+            });
+          promises = userIds.map(v => User.getUserByIdRef(v).once("value"));
         }
-      }
-      selectedImageDetail["commenteds"] = commenteds;
-      if (!this.state.isOpenSelectedImageModal) {
-        this.setState({
-          selectedImageDetail: selectedImageDetail,
-          isOpenSelectedImageModal: true
+        Promise.all(promises).then(users => {
+          const targetCommentsProp = result.commenteds;
+          let userMast: any = {};
+          if (targetCommentsProp) {
+            commenteds = Object.keys(targetCommentsProp).map((key: any) => {
+              const inner = targetCommentsProp[key];
+              const comment = inner[Object.keys(inner)[0]];
+              comment["uid"] = Object.keys(inner)[0];
+              comment["key"] = key;
+              return comment;
+            });
+            userMast = {};
+            users.forEach(user => {
+              if (user && user.val()) {
+                userMast[user.val().uid] = user.val();
+              }
+            });
+          }
+          selectedImageDetail["commenteds"] = commenteds;
+          if (!this.state.isOpenSelectedImageModal) {
+            this.setState({
+              selectedImageDetail: selectedImageDetail,
+              commentUserMast: userMast,
+              isOpenSelectedImageModal: true
+            });
+          }
         });
       }
     });
@@ -483,42 +509,24 @@ class UserMain extends Component<Props, State> {
           onClose={this.handleCloseSelectedImageModal}
         >
           <div style={getModalStyle()} className={classes.paper}>
-            <CardActionArea>
+            <Card>
               <CardMedia
                 component="img"
                 className={classes.media}
                 src={this.state.selectedImageDetail.url}
                 title="Contemplative Reptile"
               />
-              <CardContent className={classes.cardContent}>
+              <CardContent>
                 <Typography>
                   {this.state.selectedImageDetail.comment}
                 </Typography>
-                {this.state.selectedImageDetail &&
-                  this.state.selectedImageDetail.commenteds &&
-                  this.state.selectedImageDetail.commenteds.map(
-                    (commented: any, i: number) => {
-                      if (commented.uid === userInfo.uid) {
-                        return (
-                          <div className={classes.commentWrapperRight} key={i}>
-                            <div className={classes.balloonLeft}>
-                              <Typography>{commented}</Typography>
-                            </div>
-                          </div>
-                        );
-                      } else {
-                        return (
-                          <div className={classes.commentWrapperLeft} key={i}>
-                            <div className={classes.balloonRight}>
-                              <Typography>{commented.comment}</Typography>
-                            </div>
-                          </div>
-                        );
-                      }
-                    }
-                  )}
               </CardContent>
-            </CardActionArea>
+              <CommentsView
+                commenteds={this.state.selectedImageDetail.commenteds}
+                userInfo={userInfo}
+                commentUserMast={this.state.commentUserMast}
+              />
+            </Card>
           </div>
         </Modal>
         <Modal
