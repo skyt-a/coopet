@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
   WithStyles,
@@ -28,6 +28,7 @@ import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 
 import { RootState } from "./modules";
+import { SnackbarProvider } from "notistack";
 
 // styles を定義
 const styles = (theme: Theme): StyleRules =>
@@ -62,7 +63,7 @@ class App extends Component<Props, State> {
 
   render() {
     return (
-      <Fragment>
+      <SnackbarProvider maxSnack={3}>
         <Switch>
           <Route path="/reload" component={() => null} key="reload" />
           <Route exact path="/" render={() => <Landing />} />
@@ -81,7 +82,7 @@ class App extends Component<Props, State> {
           <Route path="/afterAuth" component={AfterAuthLoading} />
         </Switch>
         <RouterRelatedBottomNavigation />
-      </Fragment>
+      </SnackbarProvider>
     );
   }
 }
