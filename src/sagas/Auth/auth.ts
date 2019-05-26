@@ -90,7 +90,13 @@ const authSaga = {
           yield firebase.auth().signInWithPopup(authProvider);
           break;
         }
-
+        case "Unknown":
+          yield firebase.auth().signInAnonymously();
+          // 処理完了
+          yield put(
+            authActions.signIn.done({ params: action.payload, result: true })
+          );
+          break;
         case "Password":
         default: {
           console.log(`${signing.authProvider} signUp start`);
@@ -195,7 +201,13 @@ const authSaga = {
           );
           break;
         }
-
+        case "Unknown":
+          yield firebase.auth().signInAnonymously();
+          // 処理完了
+          yield put(
+            authActions.signIn.done({ params: action.payload, result: true })
+          );
+          break;
         case "Password":
         default: {
           if (signing.email && signing.password) {

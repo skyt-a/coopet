@@ -101,6 +101,16 @@ class RegisterUser extends Component<Props, State> {
       follow: [],
       follower: []
     };
+    // 匿名ユーザーならそのままメイン画面に遷移
+    if (userInfo.isAnonymous) {
+      this.setState({
+        userName: "匿名ユーザー",
+        petName: "匿名ペット",
+        petSpecies: "other"
+      });
+      this.confirmRegister();
+      return;
+    }
     User.isInitAuthedRef(userInfo.uid).on("value", snap => {
       if (snap && snap.val()) {
         this.props.history.push("/userMain");

@@ -14,13 +14,13 @@ const mapStateToProps = () => (state: RootState) => {
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
   return {
     onAuth: (signing: any) => {
-      dispatch(authActions.signIn.started(signing));
+      dispatch(authActions.signUp.started(signing));
     },
     onSignUp: (signing: any) => {
       dispatch(authActions.signUp.started(signing));
     },
     // onUpdateUser: (user: any) => {
-    //   dispatch(actionCreator.auth.updateUser(user));
+    //   dispatch(authActions.updateUserInfo.started(user));
     // },
     onStoreUserInfo: (p: any) => {
       dispatch(authActions.storeUserInfo.started(p));
