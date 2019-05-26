@@ -11,12 +11,12 @@ import {
   Paper,
   TextField,
   Card,
-  CardActionArea,
   CardMedia,
   CardContent,
   MenuItem
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import { withSnackbar, WithSnackbarProps } from "notistack";
 import firebase from "../firebase";
 import User from "../utils/User";
 import Loading from "./Loading";
@@ -56,7 +56,10 @@ const styles = (theme: Theme): StyleRules =>
     }
   });
 
-interface Props extends WithStyles<typeof styles>, RouteComponentProps {
+interface Props
+  extends WithStyles<typeof styles>,
+    RouteComponentProps,
+    WithSnackbarProps {
   registerUser: any;
   auth: any;
   onRegisterUser: (registerInfo: State) => void;
@@ -81,9 +84,11 @@ class RegisterUser extends Component<Props, State> {
     super(props);
     let userName = "";
     userInfo = firebase.auth().currentUser;
-    console.log(userInfo);
     if (userInfo != null) {
       userName = userInfo.displayName || "";
+    } else {
+      this.props.history.push("/auth");
+      return;
     }
     this.state = {
       userName: userName,
@@ -122,9 +127,82 @@ class RegisterUser extends Component<Props, State> {
 
   handleChangeFile = (e: any) => {
     const files = e.target.files;
-    const src = files.length === 0 ? "" : createObjectURL(files[0]);
-    console.log(files[0]);
-    this.setState({ photoURL: src, uploadedImage: files[0] });
+    const file = files[0];
+    if (file.type !== "image/jpeg" && file.type !== "image/png") {
+      this.props.enqueueSnackbar("画像ファイル(.jpg,.png)を選択してください", {
+        variant: "error",
+        autoHideDuration: 3000
+      });
+      return;
+    }
+    const image = new Image();
+    const reader = new FileReader();
+    let blob;
+    const THUMBNAIL_WIDTH = 500; // 画像リサイズ後の横の長さの最大値
+    const THUMBNAIL_HEIGHT = 500; // 画像リサイズ後の縦の長さの最大値
+    reader.onload = (event: any) => {
+      image.onload = () => {
+        let width, height;
+        if (image.width > image.height) {
+          // 横長の画像は横のサイズを指定値にあわせる
+          let ratio = image.height / image.width;
+          width = THUMBNAIL_WIDTH;
+          height = THUMBNAIL_WIDTH * ratio;
+        } else {
+          // 縦長の画像は縦のサイズを指定値にあわせる
+          let ratio = image.width / image.height;
+          width = THUMBNAIL_HEIGHT * ratio;
+          height = THUMBNAIL_HEIGHT;
+        }
+        // サムネ描画用canvasのサイズを上で算出した値に変更
+        const canvas: any = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        var ctx = canvas.getContext("2d");
+        // canvasに既に描画されている画像をクリア
+        ctx.clearRect(0, 0, width, height);
+        // canvasにサムネイルを描画
+        ctx.drawImage(
+          image,
+          0,
+          0,
+          image.width,
+          image.height,
+          0,
+          0,
+          width,
+          height
+        );
+
+        // canvasからbase64画像データを取得
+        const base64 = canvas.toDataURL("image/jpeg");
+        // base64からBlobデータを作成
+        const bin = atob(base64.split("base64,")[1]);
+        const len = bin.length;
+        const barr = new Uint8Array(len);
+        let i = 0;
+        while (i < len) {
+          barr[i] = bin.charCodeAt(i);
+          i++;
+        }
+        blob = new Blob([barr], { type: "image/jpeg" });
+        // blobデータからurlを生成
+        let src = createObjectURL(blob);
+        if (blob) {
+          this.setState({ photoURL: src, uploadedImage: blob });
+        }
+      };
+      image.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  hasValidateError = () => {
+    return (
+      !this.state.userName ||
+      !this.state.petName ||
+      (!this.state.photoURL && !userInfo.photoURL)
+    );
   };
 
   render() {
@@ -139,28 +217,31 @@ class RegisterUser extends Component<Props, State> {
         </Typography>
         <form className={classes.container} noValidate autoComplete="off">
           <TextField
+            required
             label="あなたのお名前"
             className={classes.textField}
             defaultValue={this.state.userName}
             onChange={this.handleChange("userName")}
-            margin="normal"
+            margin="dense"
             variant="outlined"
           />
 
           <TextField
+            required
             label="ペットのお名前"
             className={classes.textField}
             value={this.state.petName}
             onChange={this.handleChange("petName")}
-            margin="normal"
+            margin="dense"
             variant="outlined"
           />
           <TextField
             select
+            required
             label="ペットの種類"
             className={classes.select}
             value={this.state.petSpecies || animalSpecies[0].id}
-            margin="normal"
+            margin="dense"
             variant="outlined"
             onChange={this.handleChange("petSpecies")}
           >
@@ -171,37 +252,49 @@ class RegisterUser extends Component<Props, State> {
             ))}
           </TextField>
           <Card className={classes.card}>
-            <CardActionArea>
+            {(this.state.photoURL || userInfo.photoURL) && (
               <CardMedia
                 component="img"
                 className={classes.media}
                 src={this.state.photoURL || userInfo.photoURL}
                 title="Contemplative Reptile"
               />
-              <CardContent>
-                <Button component="label" variant="contained" color="secondary">
-                  サムネイル画像を変更する
-                  <input
-                    type="file"
-                    onChange={this.handleChangeFile}
-                    className={classes.fileUpload}
-                  />
-                </Button>
-              </CardContent>
-            </CardActionArea>
+            )}
+            <CardContent>
+              <Button component="label" variant="contained" color="secondary">
+                サムネイル画像を設定する
+                <input
+                  type="file"
+                  required
+                  onChange={this.handleChangeFile}
+                  className={classes.fileUpload}
+                />
+              </Button>
+            </CardContent>
           </Card>
         </form>
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.button}
-          onClick={this.confirmRegister}
-        >
-          登録
-        </Button>
+        {!this.hasValidateError() ? (
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={this.confirmRegister}
+          >
+            登録
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            disabled
+            color="primary"
+            className={classes.button}
+          >
+            登録
+          </Button>
+        )}
       </Paper>
     );
   }
 }
 
-export default withStyles(styles)(withRouter(RegisterUser));
+export default withStyles(styles)(withRouter(withSnackbar(RegisterUser)));

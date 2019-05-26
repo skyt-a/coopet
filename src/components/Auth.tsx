@@ -38,6 +38,7 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   auth: any;
   authenticatedUser: UserInfo;
   onAuth: (signing: any) => void;
+  onSignUp: (signing: any) => void;
   onUpdateUser: (user: any) => void;
   onLogout: () => void;
   onStoreUserInfo: (p: any) => void;
@@ -52,7 +53,8 @@ const providers: {
 }[] = [
   { providerName: "Google" },
   { providerName: "Twitter" },
-  { providerName: "Password" }
+  { providerName: "Password" },
+  { providerName: "Unknown" }
 ];
 class Auth extends Component<Props, State> {
   unsubscribe: any;
@@ -93,6 +95,9 @@ class Auth extends Component<Props, State> {
       password: this.state.password,
       authProvider: providerName
     };
+    if (providerName === "Password") {
+      this.props.onSignUp(signing);
+    }
     this.props.onAuth(signing);
   };
 
@@ -126,7 +131,7 @@ class Auth extends Component<Props, State> {
                         )}
                         value={this.state.email}
                         onChange={this.handleChange("email")}
-                        margin="normal"
+                        margin="dense"
                         variant="outlined"
                       />
                     </ListItem>
@@ -139,7 +144,8 @@ class Auth extends Component<Props, State> {
                         )}
                         value={this.state.password}
                         onChange={this.handleChange("password")}
-                        margin="normal"
+                        type="password"
+                        margin="dense"
                         variant="outlined"
                       />
                     </ListItem>

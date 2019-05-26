@@ -190,7 +190,7 @@ class UserView extends Component<Props, State> {
             label="ペットの種類"
             className={classes.select}
             value={this.state.selectedSpecies}
-            margin="normal"
+            margin="dense"
             variant="outlined"
             onChange={this.handleSpeciesSelectChange()}
           >
