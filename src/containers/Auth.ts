@@ -20,7 +20,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
       dispatch(authActions.signUp.started(signing));
     },
     // onUpdateUser: (user: any) => {
-    //   dispatch(actionCreator.auth.updateUser(user));
+    //   dispatch(authActions.updateUserInfo.started(user));
     // },
     onStoreUserInfo: (p: any) => {
       dispatch(authActions.storeUserInfo.started(p));

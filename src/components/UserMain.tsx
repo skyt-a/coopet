@@ -235,7 +235,10 @@ class UserMain extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     userInfo = firebase.auth().currentUser;
-    this.props.userInfo && console.log("userddddd", userInfo);
+    if (!userInfo) {
+      this.props.history.push("/auth");
+      return;
+    }
     this.state = {
       userName: "",
       photoURL: "",
@@ -316,6 +319,8 @@ class UserMain extends Component<Props, State> {
     Follow.getFollowerRef(userInfo.uid).off();
     User.isInitAuthedRef(userInfo.uid).off();
     UploadedImage.getMyUploadedImageRef(userInfo.uid).off();
+    userInfo = null;
+    additionalUserInfo = null;
   }
 
   handleChange = (name: string) => (event: any) => {
@@ -327,7 +332,6 @@ class UserMain extends Component<Props, State> {
   handleChangeFile = (e: any) => {
     const files = e.target.files;
     const file = files[0];
-    console.log(file);
     if (file.type !== "image/jpeg" && file.type !== "image/png") {
       this.props.enqueueSnackbar("画像ファイル(.jpg,.png)を選択してください", {
         variant: "error",
@@ -410,7 +414,6 @@ class UserMain extends Component<Props, State> {
   };
 
   handleOpenSelectedImageModal = (selectedImageDetail: any) => {
-    console.log("modal");
     UploadedImage.getMyUploadedImageDetailRef(
       selectedImageDetail.uid,
       selectedImageDetail.key
@@ -536,6 +539,8 @@ class UserMain extends Component<Props, State> {
               <Chip
                 color="primary"
                 label={
+                  additionalUserInfo &&
+                  additionalUserInfo.petSpecies &&
                   animalSpecies.filter(
                     ele => ele.id === additionalUserInfo.petSpecies
                   )[0].name
