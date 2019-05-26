@@ -21,7 +21,7 @@ import classNames from "classnames";
 import UploadedImage from "../utils/UploadedImage";
 import Loading from "./Loading";
 import animalSpecies from "../assets/data/animalSpecies.json";
-import CommentsView from "./CommentsView";
+import CommentsView from "../containers/CommentsView";
 import User from "../utils/User";
 
 const styles = (theme: Theme): StyleRules =>
@@ -254,7 +254,7 @@ class ImageView extends Component<Props, State> {
               image["uid"] = Object.keys(inner)[0];
               image["key"] = key;
               return image;
-            })
+            });
         }
         this.setState({
           viewedImages: thisViewedImages,
@@ -410,7 +410,6 @@ class ImageView extends Component<Props, State> {
               </CardContent>
               <CommentsView
                 commenteds={this.state.selectedImageDetail.commenteds}
-                userInfo={userInfo}
                 commentUserMast={this.state.commentUserMast}
               />
               <div className={classes.postArea}>

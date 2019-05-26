@@ -2,24 +2,15 @@ import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 
 import { RootState } from "../modules";
-import UserView from "../components/UserView";
-import { authActions, uploadActions, appActions } from "../actions";
+import CommentsView from "../components/CommentsView";
+import { appActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
-  console.log(state);
-  return {
-    auth: state.Auth
-  };
+  return {};
 };
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
   return {
-    onStoreUserInfo: (p: any) => {
-      dispatch(authActions.storeUserInfo.started(p));
-    },
-    onUploadImage: (param: any) => {
-      dispatch(uploadActions.uploadImage.started(param));
-    },
     onSelectUser: (user: any) => {
       dispatch(appActions.selectUser(user));
     }
@@ -29,4 +20,4 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(UserView);
+)(CommentsView);

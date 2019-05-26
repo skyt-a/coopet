@@ -1,12 +1,14 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
   WithStyles,
   StyleRules
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
-import { Typography, CardContent, Avatar } from "@material-ui/core";
+import { Typography, CardContent, Avatar, Modal } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import firebase from "../firebase";
+import UserMain from "../containers/UserMain";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -80,58 +82,115 @@ const styles = (theme: Theme): StyleRules =>
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   commenteds: any[];
-  userInfo: any;
   commentUserMast?: any;
+  onSelectUser?: (user: any) => void;
 }
 
-interface State {}
+interface State {
+  isOpenUserDetailModal: boolean;
+  selectedUserInfo: any;
+}
 
+let userInfo: any;
 class CommentsView extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isOpenUserDetailModal: false,
+      selectedUserInfo: {}
+    };
+    userInfo = firebase.auth().currentUser;
+  }
+
+  handleOpenUserDetailModal = (selectedUserInfo: any) => (e: any) => {
+    // this.setState({
+    //   isOpenUserDetailModal: true,
+    //   selectedUserInfo: selectedUserInfo
+    // });
+    console.log(selectedUserInfo);
+    if (!this.props.onSelectUser) {
+      return;
+    }
+    console.log("test", this.props.onSelectUser);
+    this.props.onSelectUser(selectedUserInfo);
+    this.props.history.replace("/reload");
+    setTimeout(() => {
+      this.props.history.replace("/otherView");
+    });
+  };
+
+  handleCloseUserDetailModal = () => {
+    this.setState({
+      isOpenUserDetailModal: false,
+      selectedUserInfo: {}
+    });
+  };
   render() {
     const { classes } = this.props;
-    console.log(this.props.commentUserMast, this.props.commentUserMast);
     return (
-      <CardContent className={classes.cardContent}>
-        {this.props.commenteds &&
-          this.props.commenteds.map((commented: any, i: number) => {
-            if (!commented) {
-              return null;
-            }
-            if (commented.uid === this.props.userInfo.uid) {
-              return (
-                <div className={classes.commentWrapperRight} key={i}>
-                  <Typography>
-                    {this.props.commentUserMast[commented.uid].userName}
-                  </Typography>
-                  <div className={classes.balloonRight}>
-                    <Typography>{commented.comment}</Typography>
+      <Fragment>
+        <CardContent className={classes.cardContent}>
+          {this.props.commenteds &&
+            this.props.commenteds.map((commented: any, i: number) => {
+              if (!commented) {
+                return null;
+              }
+              if (commented.uid === userInfo.uid) {
+                return (
+                  <div
+                    className={classes.commentWrapperRight}
+                    key={i}
+                    onClick={this.handleOpenUserDetailModal(
+                      this.props.commentUserMast[commented.uid]
+                    )}
+                  >
+                    <Typography>
+                      {this.props.commentUserMast[commented.uid].userName}
+                    </Typography>
+                    <div className={classes.balloonRight}>
+                      <Typography>{commented.comment}</Typography>
+                    </div>
+                    <Avatar
+                      alt="Remy Sharp"
+                      src={this.props.commentUserMast[commented.uid].photoURL}
+                      className={classes.avatarRight}
+                    />
                   </div>
-                  <Avatar
-                    alt="Remy Sharp"
-                    src={this.props.commentUserMast[commented.uid].photoURL}
-                    className={classes.avatarRight}
-                  />
-                </div>
-              );
-            } else {
-              return (
-                <div className={classes.commentWrapperLeft} key={i}>
-                  <Typography>
-                    {this.props.commentUserMast[commented.uid].userName}
-                  </Typography>
-                  <Avatar
-                    alt="Remy Sharp"
-                    src={this.props.commentUserMast[commented.uid].photoURL}
-                    className={classes.avatarLeft}
-                  />
-                  <div className={classes.balloonLeft}>
-                    <Typography>{commented.comment}</Typography>
+                );
+              } else {
+                return (
+                  <div
+                    className={classes.commentWrapperLeft}
+                    key={i}
+                    onClick={this.handleOpenUserDetailModal(
+                      this.props.commentUserMast[commented.uid]
+                    )}
+                  >
+                    <Typography>
+                      {this.props.commentUserMast[commented.uid].userName}
+                    </Typography>
+                    <Avatar
+                      alt="Remy Sharp"
+                      src={this.props.commentUserMast[commented.uid].photoURL}
+                      className={classes.avatarLeft}
+                    />
+                    <div className={classes.balloonLeft}>
+                      <Typography>{commented.comment}</Typography>
+                    </div>
                   </div>
-                </div>
-              );
-            }
-          })}
-      </CardContent>
+                );
+              }
+            })}
+        </CardContent>
+        <Modal
+          aria-labelledby="simple-modal-title2"
+          aria-describedby="simple-modal-description2"
+          open={this.state.isOpenUserDetailModal}
+          onClose={this.handleCloseUserDetailModal}
+        >
+          <UserMain userInfo={this.state.selectedUserInfo} />
+        </Modal>
+      </Fragment>
     );
   }
 }

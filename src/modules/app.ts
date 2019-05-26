@@ -7,10 +7,12 @@ import { AppInfo } from "../models/AppInfo";
 export interface IAppState {
   errors: AppError[];
   infos: AppInfo[];
+  selectedUserInfo: any;
 }
 const INITIAL_APP_STATE: IAppState = {
   errors: [] as AppError[],
-  infos: [] as AppInfo[]
+  infos: [] as AppInfo[],
+  selectedUserInfo: []
 };
 
 export const reducer = reducerWithInitialState(INITIAL_APP_STATE)
@@ -40,6 +42,27 @@ export const reducer = reducerWithInitialState(INITIAL_APP_STATE)
   })
   .case(appActions.initialize, state => {
     return INITIAL_APP_STATE;
+  })
+  .case(appActions.selectUser, (state: any, action: any) => {
+    const nowUserInfo = state.selectedUserInfo;
+    const index = nowUserInfo.map((n: any) => n.uid).indexOf(action.uid);
+    if (index >= 0) {
+      nowUserInfo.splice(index, 1);
+    }
+    nowUserInfo.push(action);
+    console.log("nowUserInfo", index, nowUserInfo);
+    return {
+      ...state,
+      selectedUserInfo: nowUserInfo
+    };
+  })
+  .case(appActions.unselectUser, (state: any, action: any) => {
+    const nowUserInfo = state.selectedUserInfo;
+    nowUserInfo.pop();
+    return {
+      ...state,
+      selectedUserInfo: nowUserInfo
+    };
   });
 
 export default reducer;

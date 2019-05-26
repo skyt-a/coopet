@@ -36,7 +36,8 @@ const styles = (theme: Theme): StyleRules =>
     },
     flex: {
       display: "flex",
-      flexWrap: "wrap"
+      flexWrap: "wrap",
+      justifyContent: "center"
     },
     uploadedImageWrap: {
       flexBasis: "calc(100% / 3)",
@@ -61,11 +62,15 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   }) => void;
   onLogout: () => void;
   onStoreUserInfo: (p: any) => void;
+  onSelectUser: (user: any) => void;
 }
 
 interface State {
   selectedSpecies: string;
   viewedUser: any[];
+  isOpenUserDetailModal: boolean;
+  selectedUserInfo: any;
+  loading: boolean;
 }
 
 let userInfo: any;
@@ -81,7 +86,10 @@ class UserView extends Component<Props, State> {
     additionalUserInfo = this.props.auth.additionalUserInfo;
     this.state = {
       selectedSpecies: additionalUserInfo.petSpecies,
-      viewedUser: []
+      viewedUser: [],
+      isOpenUserDetailModal: false,
+      selectedUserInfo: {},
+      loading: false
     };
     User.getUsersBySpeciesRef(this.state.selectedSpecies).on("value", snap => {
       if (!snap || !snap.val()) {
@@ -125,14 +133,15 @@ class UserView extends Component<Props, State> {
 
   handleSpeciesSelectChange = () => (event: any) => {
     const selectedValue = event.target.value;
+    this.setState({
+      loading: true
+    });
     User.getUsersBySpeciesRef(this.state.selectedSpecies).off();
     User.getUsersBySpeciesRef(selectedValue).on("value", snap => {
-      if (!snap || !snap.val()) {
-        return;
-      }
-      const result = snap.val();
-      this.setState({
-        viewedUser: Object.keys(result)
+      let thisViewedUser = [];
+      if (snap && snap.val()) {
+        const result = snap.val();
+        thisViewedUser = Object.keys(result)
           .filter(key => {
             return key !== userInfo.uid;
           })
@@ -140,7 +149,11 @@ class UserView extends Component<Props, State> {
             const user = result[key];
             user["uid"] = key;
             return user;
-          })
+          });
+      }
+      this.setState({
+        viewedUser: thisViewedUser,
+        loading: false
       });
     });
     this.setState({
@@ -148,8 +161,24 @@ class UserView extends Component<Props, State> {
     });
   };
 
+  handleOpenUserDetailModal = (selectedUserInfo: any) => (e: any) => {
+    // this.setState({
+    //   isOpenUserDetailModal: true,
+    //   selectedUserInfo: selectedUserInfo
+    // });
+    this.props.onSelectUser(selectedUserInfo);
+    this.props.history.push("/otherView");
+  };
+
+  handleCloseUserDetailModal = () => {
+    this.setState({
+      isOpenUserDetailModal: false,
+      selectedUserInfo: {}
+    });
+  };
+
   render() {
-    if (!additionalUserInfo) {
+    if (!additionalUserInfo || this.state.loading) {
       return <Loading />;
     }
     const { classes } = this.props;
@@ -174,30 +203,32 @@ class UserView extends Component<Props, State> {
           {this.state.viewedUser && this.state.viewedUser.length !== 0 && (
             <Card className={classNames(classes.flex, classes.card)}>
               {this.state.viewedUser.map((user, i) => (
-                <CardHeader
-                  avatar={
-                    <Avatar
-                      alt="Remy Sharp"
-                      src={user.photoURL}
-                      className={classes.avatar}
-                    />
-                  }
-                  action={
-                    <Chip
-                      color="primary"
-                      label={
-                        animalSpecies.filter(
-                          ele => ele.id === user.petSpecies
-                        )[0].name
-                      }
-                      className={classes.chip}
-                      variant="outlined"
-                    />
-                  }
-                  title={user.userName}
-                  subheader={user.petName}
-                  key={i}
-                />
+                <Card onClick={this.handleOpenUserDetailModal(user)}>
+                  <CardHeader
+                    avatar={
+                      <Avatar
+                        alt="Remy Sharp"
+                        src={user.photoURL}
+                        className={classes.avatar}
+                      />
+                    }
+                    action={
+                      <Chip
+                        color="primary"
+                        label={
+                          animalSpecies.filter(
+                            ele => ele.id === user.petSpecies
+                          )[0].name
+                        }
+                        className={classes.chip}
+                        variant="outlined"
+                      />
+                    }
+                    title={user.userName}
+                    subheader={user.petName}
+                    key={i}
+                  />
+                </Card>
               ))}
             </Card>
           )}

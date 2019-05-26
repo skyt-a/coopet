@@ -41,7 +41,9 @@ export enum ActionTypes {
   UPLOAD_IMAGE = "UPLOAD_IMAGE",
   COMMENT_IMAGE = "COMMENT_IMAGE",
   UPLOAD_INITIALIZE = "UPLOAD_INITIALIZE",
-  STORE_USERINFO = "STORE_USERINFO"
+  STORE_USERINFO = "STORE_USERINFO",
+  SELECT_USER = "SELECT_USER",
+  UNSELECT_USER = "UNSELECT_USER"
 }
 
 // app
@@ -50,7 +52,9 @@ export const appActions = {
   pushErrors: actionCreator<AppError[]>(ActionTypes.APP_PUSH_ERRORS),
   clearErrors: actionCreator(ActionTypes.APP_CLEAR_ERRORS),
   pushInfos: actionCreator<AppInfo[]>(ActionTypes.APP_PUSH_INFOS),
-  clearInfos: actionCreator(ActionTypes.APP_CLEAR_INFOS)
+  clearInfos: actionCreator(ActionTypes.APP_CLEAR_INFOS),
+  selectUser: actionCreator(ActionTypes.SELECT_USER),
+  unselectUser: actionCreator(ActionTypes.UNSELECT_USER)
 };
 
 // auth

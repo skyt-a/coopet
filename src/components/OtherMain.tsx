@@ -10,28 +10,26 @@ import {
   Paper,
   Avatar,
   Modal,
-  IconButton,
   Card,
   CardMedia,
   CardContent,
-  Button,
-  TextField,
   CardHeader,
   Chip,
   CardActions,
-  Badge
+  Badge,
+  AppBar,
+  Toolbar,
+  IconButton
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import firebase from "../firebase";
-import Navbar from "../containers/Navbar";
 import Follow from "../utils/Follow";
-import AddAPhotoRoundedIcon from "@material-ui/icons/AddAPhotoRounded";
 import classNames from "classnames";
 import UploadedImage from "../utils/UploadedImage";
 import Loading from "./Loading";
 import User from "../utils/User";
 import animalSpecies from "../assets/data/animalSpecies.json";
 import CommentsView from "../containers/CommentsView";
+import ReplyIcon from "@material-ui/icons/Reply";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -46,7 +44,6 @@ const styles = (theme: Theme): StyleRules =>
     paper: {
       textAlign: "center",
       padding: theme.spacing.unit,
-      marginTop: "60px",
       overflowX: "hidden"
     },
     listItemInner: {
@@ -173,13 +170,8 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   registerUser?: State;
   userInfo?: any;
   auth?: any;
-  onUploadImage: (param: {
-    uploadedImage: any;
-    comment: string;
-    petSpecies: string;
-  }) => void;
-  onLogout: () => void;
   onStoreUserInfo: (p: any) => void;
+  onUnSelectUser: () => void;
 }
 
 type UploadedImageInfo = {
@@ -205,32 +197,13 @@ interface State {
   isMenuOpen: boolean;
 }
 
-const createObjectURL =
-  (window.URL || (window as any).webkitURL).createObjectURL ||
-  (window as any).createObjectURL;
 let userInfo: any;
 let additionalUserInfo: any;
-class UserMain extends Component<Props, State> {
-  menuItems = [
-    {
-      menuLabel: "ログアウト",
-      func: () => {
-        this.props.onLogout();
-        this.props.history.push("/auth");
-        this.onMenuClose();
-      }
-    },
-    {
-      menuLabel: "会員情報変更",
-      func: () => {
-        this.props.history.push("/registerUser");
-        this.onMenuClose();
-      }
-    }
-  ];
+class OtherMain extends Component<Props, State> {
+  menuItems = [];
   constructor(props: Props) {
     super(props);
-    userInfo = firebase.auth().currentUser;
+    userInfo = this.props.userInfo[this.props.userInfo.length - 1];
     this.props.userInfo && console.log("userddddd", userInfo);
     this.state = {
       userName: "",
@@ -272,7 +245,7 @@ class UserMain extends Component<Props, State> {
         followerNumber: Object.keys(snap.val()).length
       });
     });
-    User.isInitAuthedRef(userInfo.uid).on("value", snap => {
+    User.isInitAuthedRef(userInfo.uid).once("value", snap => {
       if (!snap || !snap.val()) {
         return;
       }
@@ -312,32 +285,14 @@ class UserMain extends Component<Props, State> {
     Follow.getFollowerRef(userInfo.uid).off();
     User.isInitAuthedRef(userInfo.uid).off();
     UploadedImage.getMyUploadedImageRef(userInfo.uid).off();
+    userInfo = null;
+    additionalUserInfo = null;
   }
 
   handleChange = (name: string) => (event: any) => {
     const obj: any = {};
     obj[name] = event.target.value;
     this.setState(obj);
-  };
-
-  handleChangeFile = (e: any) => {
-    const files = e.target.files;
-    const src = files.length === 0 ? "" : createObjectURL(files[0]);
-    this.setState({ photoURL: src, uploadedImage: files[0] });
-    if (files[0]) {
-      this.handleOpenUploadImageModal();
-    }
-  };
-
-  handleOpenUploadImageModal = () => {
-    this.setState({ isOpenUploadImageModal: true });
-  };
-
-  handleCloseUploadImageModal = () => {
-    this.setState({
-      uploadedImage: null,
-      isOpenUploadImageModal: false
-    });
   };
 
   handleOpenSelectedImageModal = (selectedImageDetail: any) => {
@@ -401,15 +356,6 @@ class UserMain extends Component<Props, State> {
     });
   };
 
-  uploadImage = () => {
-    this.props.onUploadImage({
-      uploadedImage: this.state.uploadedImage,
-      comment: this.state.comment,
-      petSpecies: additionalUserInfo.petSpecies
-    });
-    this.handleCloseUploadImageModal();
-  };
-
   onMenuOpen = () => {
     this.setState({
       isMenuOpen: true
@@ -422,6 +368,14 @@ class UserMain extends Component<Props, State> {
     });
   };
 
+  revertUser = () => {
+    this.props.onUnSelectUser();
+    this.props.history.replace("/reload");
+    setTimeout(() => {
+      this.props.history.replace("/otherView");
+    });
+  };
+
   render() {
     if (!additionalUserInfo) {
       return <Loading />;
@@ -429,14 +383,18 @@ class UserMain extends Component<Props, State> {
     const { classes } = this.props;
     return (
       <Fragment>
-        {!this.props.userInfo && (
-          <Navbar
-            title={this.state.userName}
-            menuItems={this.menuItems}
-            open={this.state.isMenuOpen}
-            onOpen={this.onMenuOpen}
-          />
-        )}
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="revert"
+              onClick={this.revertUser}
+            >
+              <ReplyIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
         <Paper className={classNames(classes.paper, classes.fullWidth)}>
           <Card className={classes.card}>
             <CardHeader
@@ -446,18 +404,6 @@ class UserMain extends Component<Props, State> {
                   src={userInfo.photoURL}
                   className={classes.avatar}
                 />
-              }
-              action={
-                !this.props.userInfo && (
-                  <IconButton component="label">
-                    <input
-                      type="file"
-                      onChange={this.handleChangeFile}
-                      className={classes.fileUpload}
-                    />
-                    <AddAPhotoRoundedIcon className={classes.addPhotoIcon} />{" "}
-                  </IconButton>
-                )
               }
               className={classes.cardComponent}
               title={additionalUserInfo.userName}
@@ -535,46 +481,9 @@ class UserMain extends Component<Props, State> {
             </Card>
           </div>
         </Modal>
-        <Modal
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
-          open={this.state.isOpenUploadImageModal}
-          onClose={this.handleCloseUploadImageModal}
-        >
-          <div style={getModalStyle()} className={classes.paper}>
-            <Card>
-              <CardMedia
-                component="img"
-                className={classes.media}
-                src={this.state.photoURL || userInfo.photoURL}
-                title="Contemplative Reptile"
-              />
-              <CardContent>
-                <TextField
-                  id="outlined-multiline-static"
-                  label="コメント"
-                  multiline
-                  rows="4"
-                  defaultValue=""
-                  onChange={this.handleChange("comment")}
-                  className={classes.textField}
-                  margin="normal"
-                  variant="outlined"
-                />
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={this.uploadImage}
-                >
-                  投稿
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </Modal>
       </Fragment>
     );
   }
 }
 
-export default withStyles(styles)(withRouter(UserMain));
+export default withStyles(styles)(withRouter(OtherMain));
