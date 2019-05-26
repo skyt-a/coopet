@@ -327,6 +327,7 @@ class UserMain extends Component<Props, State> {
   handleChangeFile = (e: any) => {
     const files = e.target.files;
     const file = files[0];
+    console.log(file);
     if (file.type !== "image/jpeg" && file.type !== "image/png") {
       this.props.enqueueSnackbar("画像ファイル(.jpg,.png)を選択してください", {
         variant: "error",
