@@ -239,13 +239,6 @@ class UserMain extends Component<Props, State> {
       this.props.history.push("/auth");
       return;
     }
-    if (userInfo.isAnonymous) {
-      additionalUserInfo = {
-        userName: "匿名ユーザー",
-        petName: "匿名ペット",
-        petSpecies: "other"
-      };
-    }
     this.state = {
       userName: "",
       photoURL: "",
@@ -268,9 +261,6 @@ class UserMain extends Component<Props, State> {
   componentDidMount = () => {
     if (!userInfo) {
       this.props.history.push("/auth");
-      return;
-    }
-    if (userInfo.isAnonymous) {
       return;
     }
     Follow.getFollowingRef(userInfo.uid).on("value", snap => {
@@ -505,7 +495,7 @@ class UserMain extends Component<Props, State> {
   };
 
   render() {
-    if ((!userInfo || !userInfo.isAnonymous) && !additionalUserInfo) {
+    if (!additionalUserInfo) {
       return <Loading />;
     }
     const { classes } = this.props;
@@ -530,8 +520,7 @@ class UserMain extends Component<Props, State> {
                 />
               }
               action={
-                !this.props.userInfo &&
-                !userInfo.isAnonymous && (
+                !this.props.userInfo && (
                   <IconButton component="label">
                     <input
                       type="file"

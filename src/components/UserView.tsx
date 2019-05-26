@@ -19,7 +19,6 @@ import classNames from "classnames";
 import Loading from "./Loading";
 import User from "../utils/User";
 import animalSpecies from "../assets/data/animalSpecies.json";
-import firebase from "../firebase";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({

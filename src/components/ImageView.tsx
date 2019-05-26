@@ -23,7 +23,6 @@ import Loading from "./Loading";
 import animalSpecies from "../assets/data/animalSpecies.json";
 import CommentsView from "../containers/CommentsView";
 import User from "../utils/User";
-import firebase from "../firebase";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({

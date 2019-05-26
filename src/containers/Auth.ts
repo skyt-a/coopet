@@ -14,7 +14,7 @@ const mapStateToProps = () => (state: RootState) => {
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
   return {
     onAuth: (signing: any) => {
-      dispatch(authActions.signUp.started(signing));
+      dispatch(authActions.signIn.started(signing));
     },
     onSignUp: (signing: any) => {
       dispatch(authActions.signUp.started(signing));

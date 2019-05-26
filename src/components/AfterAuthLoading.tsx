@@ -22,13 +22,6 @@ class AfterAuthLoading extends Component<Props, State> {
       this.props.history.push("/auth");
       return;
     }
-    if (userInfo.isAnonymous) {
-      this.props.onStoreUserInfo({
-        userName: "匿名ユーザー",
-        petName: "匿名ペット",
-        petSpecies: "other"
-      });
-    }
     User.isInitAuthedRef(userInfo.uid).on("value", snap => {
       if (!snap || !snap.val()) {
         this.props.history.push("/registerUser");

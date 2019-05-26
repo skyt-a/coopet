@@ -33,7 +33,6 @@ const styles = (theme: Theme): StyleRules =>
       textAlign: "center"
     }
   });
-
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   auth: any;
   authenticatedUser: UserInfo;
@@ -56,6 +55,8 @@ const providers: {
   { providerName: "Password" },
   { providerName: "Unknown" }
 ];
+const testUserMail = "testtestcoopet@gmail.com";
+const testUserPassword = "testtestcoopet";
 class Auth extends Component<Props, State> {
   unsubscribe: any;
   constructor(props: Props) {
@@ -98,6 +99,15 @@ class Auth extends Component<Props, State> {
     if (providerName === "Password") {
       this.props.onSignUp(signing);
     }
+    this.props.onAuth(signing);
+  };
+
+  authByTestUser = () => {
+    const signing = {
+      email: testUserMail,
+      password: testUserPassword,
+      authProvider: "Password"
+    };
     this.props.onAuth(signing);
   };
 
@@ -168,6 +178,16 @@ class Auth extends Component<Props, State> {
               </Fragment>
             );
           })}
+          <ListItem>
+            <Button
+              className={classNames(classes.button, classes.listItemInner)}
+              color="secondary"
+              variant="contained"
+              onClick={() => this.authByTestUser()}
+            >
+              テストユーザーでログイン
+            </Button>
+          </ListItem>
         </List>
       </Paper>
     );
