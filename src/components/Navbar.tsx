@@ -6,8 +6,9 @@ import withStyles, {
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 import { AppBar, MenuItem, Drawer } from "@material-ui/core";
-import { Toolbar, IconButton, Typography } from "@material-ui/core";
+import { Toolbar, IconButton } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
+import logo from "../assets/images/logo.png";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -20,6 +21,10 @@ const styles = (theme: Theme): StyleRules =>
     },
     menuButton: {
       marginLeft: theme.spacing.unit
+    },
+    logo: {
+      height: "60px",
+      margin: "auto"
     }
   });
 
@@ -49,7 +54,7 @@ class Navbar extends Component<Props> {
     return (
       <div>
         <Drawer open={this.props.open}>{this.createMenuItem()}</Drawer>
-        <AppBar color="secondary">
+        <AppBar color="primary">
           <Toolbar>
             <IconButton
               onClick={this.props.onOpen}
@@ -59,9 +64,7 @@ class Navbar extends Component<Props> {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h5" color="inherit">
-              {this.props.title}
-            </Typography>
+            <img alt="logo" src={logo} className={classes.logo} />
           </Toolbar>
         </AppBar>
       </div>

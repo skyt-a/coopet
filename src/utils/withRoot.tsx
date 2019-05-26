@@ -1,13 +1,18 @@
 import * as React from "react";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { red, blue } from "@material-ui/core/colors";
+import { blue } from "@material-ui/core/colors";
 
 const theme = createMuiTheme({
   // テーマ色設定
   palette: {
     type: "light",
-    primary: red,
+    primary: {
+      // light: will be calculated from palette.primary.main,
+      main: "#fff"
+      // dark: will be calculated from palette.primary.main,
+      // contrastText: will be calculated to contrast with palette.primary.main
+    },
     secondary: blue
   },
   // タイポグラフィ設定
