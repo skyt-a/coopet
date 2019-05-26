@@ -52,8 +52,7 @@ const providers: {
 }[] = [
   { providerName: "Google" },
   { providerName: "Twitter" },
-  { providerName: "Password" },
-  { providerName: "Unknown" }
+  { providerName: "Password" }
 ];
 const testUserMail = "testtestcoopet@gmail.com";
 const testUserPassword = "testtestcoopet";
