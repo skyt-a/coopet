@@ -26,11 +26,6 @@ const styles = (theme: Theme): StyleRules =>
       zIndex: 1000,
       textAlign: "center"
     },
-    root: {
-      [theme.breakpoints.up("md")]: {
-        display: "none"
-      }
-    },
     button: {
       maxWidth: "100%" // ボタンが横一杯に広がって欲しくない時はコメントアウト
     }
@@ -53,7 +48,7 @@ class RouteRelatedBottomNavigation extends Component<Props> {
       onclick: () => this.props.history.push("/userView")
     },
     {
-      label: "会員情報",
+      label: "プロフ",
       icon: <InfoIcon />,
       link_to: "/userMain",
       onclick: () => this.props.history.push("/userMain")

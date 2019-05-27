@@ -15,6 +15,9 @@ const styles = (theme: Theme): StyleRules =>
     root: {
       textAlign: "center"
     },
+    toolbar: {
+      padding: 0
+    },
     paragraph: {
       fontFamily: "serif",
       padding: theme.spacing.unit * 2
@@ -25,6 +28,7 @@ const styles = (theme: Theme): StyleRules =>
     logo: {
       height: "60px",
       position: "absolute",
+      margin: "auto",
       right: 0,
       left: 0
     }
@@ -67,7 +71,7 @@ class Navbar extends Component<Props> {
           {this.createMenuItem()}
         </Drawer>
         <AppBar color="secondary">
-          <Toolbar>
+          <Toolbar className={classes.toolbar}>
             <IconButton
               onClick={this.props.onOpen}
               color="inherit"

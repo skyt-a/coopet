@@ -418,7 +418,7 @@ class OtherMain extends Component<Props, State> {
                   )[0].name
                 }
                 className={classes.chip}
-                variant="outlined"
+                variant="default"
               />
             </CardContent>
             <CardActions className={classes.actions}>
@@ -428,7 +428,7 @@ class OtherMain extends Component<Props, State> {
                 badgeContent={this.state.followingNumber}
                 className={classes.margin}
               >
-                <Chip label="フォロー" variant="outlined" color="secondary" />
+                <Chip label="フォロー" variant="outlined" color="primary" />
               </Badge>
               <Badge
                 color="primary"
@@ -436,28 +436,30 @@ class OtherMain extends Component<Props, State> {
                 badgeContent={this.state.followerNumber}
                 className={classes.margin}
               >
-                <Chip label="フォロワー" variant="outlined" color="secondary" />
+                <Chip label="フォロワー" variant="outlined" color="primary" />
               </Badge>
             </CardActions>
           </Card>
-          <Card className={classNames(classes.flex, classes.card)}>
-            <Fragment>
-              {this.state.uploadedImages.map((uploaded, i) => (
-                <div className={classes.uploadedImageWrap} key={i}>
-                  <img
-                    onClick={() => this.handleOpenSelectedImageModal(uploaded)}
-                    alt={uploaded.comment}
-                    className={classes.uploadedImage}
-                    src={uploaded.url}
-                  />
-                </div>
-              ))}
-            </Fragment>
-          </Card>
+          {this.state.uploadedImages && this.state.uploadedImages.length > 0 && (
+            <Card className={classNames(classes.flex, classes.card)}>
+              <Fragment>
+                {this.state.uploadedImages.map((uploaded, i) => (
+                  <div className={classes.uploadedImageWrap} key={i}>
+                    <img
+                      onClick={() =>
+                        this.handleOpenSelectedImageModal(uploaded)
+                      }
+                      alt={uploaded.comment}
+                      className={classes.uploadedImage}
+                      src={uploaded.url}
+                    />
+                  </div>
+                ))}
+              </Fragment>
+            </Card>
+          )}
         </Paper>
         <Modal
-          aria-labelledby="simple-modal-title2"
-          aria-describedby="simple-modal-description2"
           open={this.state.isOpenSelectedImageModal}
           onClose={this.handleCloseSelectedImageModal}
         >

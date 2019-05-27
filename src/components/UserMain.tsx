@@ -84,6 +84,12 @@ const styles = (theme: Theme): StyleRules =>
     },
     uploadedImageWrap: {
       flexBasis: "calc(100% / 3.1)",
+      [theme.breakpoints.up("sm")]: {
+        flexBasis: "calc(100% / 6)"
+      },
+      [theme.breakpoints.up("md")]: {
+        flexBasis: "calc(100% / 10)"
+      },
       position: "relative",
       height: "150px",
       border: "1px solid rgba(0, 0, 0, 0.12)",
@@ -102,7 +108,8 @@ const styles = (theme: Theme): StyleRules =>
       padding: theme.spacing.unit
     },
     cardComponent: {
-      padding: "1px"
+      padding: "1px",
+      textAlign: "left"
     },
     mainCommentContent: {},
     cardContent: {
@@ -165,7 +172,6 @@ const styles = (theme: Theme): StyleRules =>
 function getModalStyle() {
   return {
     backgroundColor: "white",
-    height: "60vh",
     width: "100vw"
   };
 }
@@ -592,10 +598,8 @@ class UserMain extends Component<Props, State> {
             </Card>
           )}
         </Paper>
-        // 画像詳細モーダル
+        {/* 画像詳細モーダル */}
         <Modal
-          aria-labelledby="simple-modal-title2"
-          aria-describedby="simple-modal-description2"
           open={this.state.isOpenSelectedImageModal}
           onClose={this.handleCloseSelectedImageModal}
         >
@@ -619,10 +623,8 @@ class UserMain extends Component<Props, State> {
             </Card>
           </div>
         </Modal>
-        // 画像投稿モーダル
+        {/* 画像投稿モーダル */}
         <Modal
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
           open={this.state.isOpenUploadImageModal}
           onClose={this.handleCloseUploadImageModal}
         >
@@ -646,6 +648,7 @@ class UserMain extends Component<Props, State> {
                   margin="normal"
                   variant="outlined"
                 />
+                <div>
                 <Button
                   color="primary"
                   variant="contained"
@@ -653,6 +656,7 @@ class UserMain extends Component<Props, State> {
                 >
                   投稿
                 </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
