@@ -10,6 +10,6 @@
   ],
   "start_url": "https://coopet-51a0b.firebaseapp.com",
   "display": "standalone",
-  "theme_color": "#CCB093",
-  "background_color": "#ffffff"
+  "theme_color": "#ffffff",
+  "background_color": "#f7dda4"
 }
