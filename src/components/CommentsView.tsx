@@ -103,16 +103,10 @@ class CommentsView extends Component<Props, State> {
     userInfo = firebase.auth().currentUser;
   }
 
-  handleOpenUserDetailModal = (selectedUserInfo: any) => (e: any) => {
-    // this.setState({
-    //   isOpenUserDetailModal: true,
-    //   selectedUserInfo: selectedUserInfo
-    // });
-    console.log(selectedUserInfo);
-    if (!this.props.onSelectUser) {
+  goToUserDetail = (selectedUserInfo: any) => (e: any) => {
+    if (!this.props.onSelectUser || selectedUserInfo.uid === userInfo.uid) {
       return;
     }
-    console.log("test", this.props.onSelectUser);
     this.props.onSelectUser(selectedUserInfo);
     this.props.history.replace("/reload");
     setTimeout(() => {
@@ -141,7 +135,7 @@ class CommentsView extends Component<Props, State> {
                   <div
                     className={classes.commentWrapperRight}
                     key={i}
-                    onClick={this.handleOpenUserDetailModal(
+                    onClick={this.goToUserDetail(
                       this.props.commentUserMast[commented.uid]
                     )}
                   >
@@ -163,7 +157,7 @@ class CommentsView extends Component<Props, State> {
                   <div
                     className={classes.commentWrapperLeft}
                     key={i}
-                    onClick={this.handleOpenUserDetailModal(
+                    onClick={this.goToUserDetail(
                       this.props.commentUserMast[commented.uid]
                     )}
                   >

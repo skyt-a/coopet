@@ -98,9 +98,9 @@ const styles = (theme: Theme): StyleRules =>
       padding: theme.spacing.unit
     },
     cardComponent: {
-      padding: "1px"
+      padding: "1px",
+      textAlign: "left"
     },
-    mainCommentContent: {},
     cardContent: {
       overflow: "auto",
       height: "30vh"
@@ -409,7 +409,7 @@ class OtherMain extends Component<Props, State> {
               title={additionalUserInfo.userName}
               subheader={additionalUserInfo.petName}
             />
-            <CardContent className={classes.cardComponent}>
+            <CardActions className={classes.actions}>
               <Chip
                 color="primary"
                 label={
@@ -420,8 +420,6 @@ class OtherMain extends Component<Props, State> {
                 className={classes.chip}
                 variant="default"
               />
-            </CardContent>
-            <CardActions className={classes.actions}>
               <Badge
                 color="primary"
                 showZero

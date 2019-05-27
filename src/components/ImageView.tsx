@@ -6,7 +6,6 @@ import withStyles, {
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 import {
-  Paper,
   Card,
   TextField,
   MenuItem,
@@ -26,6 +25,9 @@ import User from "../utils/User";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
+    root: {
+      textAlign: "center"
+    },
     paper: {
       textAlign: "center",
       padding: theme.spacing.unit,
@@ -160,6 +162,11 @@ function getModalStyle() {
   };
 }
 
+const allSpeciesItem = {
+  id: "all",
+  name: "すべて"
+};
+
 let userInfo: any;
 let additionalUserInfo: any;
 class ImageView extends Component<Props, State> {
@@ -172,7 +179,7 @@ class ImageView extends Component<Props, State> {
     }
     additionalUserInfo = this.props.auth.additionalUserInfo;
     this.state = {
-      selectedSpecies: additionalUserInfo.petSpecies,
+      selectedSpecies: allSpeciesItem.id,
       viewedImages: [],
       isOpenImageDetailModal: false,
       selectedImageDetail: {},
@@ -180,29 +187,29 @@ class ImageView extends Component<Props, State> {
       commentUserMast: {},
       loading: false
     };
-    UploadedImage.getUploadedImageBySpeciesRef(this.state.selectedSpecies)
-      .orderByKey()
-      .on("value", snap => {
-        if (!snap || !snap.val()) {
-          return;
-        }
-        const result = snap.val();
-        console.log(result);
-        this.setState({
-          viewedImages: Object.keys(result)
-            .filter(key => {
-              const inner = Object.keys(result[key])[0];
-              return inner !== userInfo.uid;
-            })
-            .map(key => {
-              const inner = result[key];
-              const image = inner[Object.keys(inner)[0]];
-              image["uid"] = Object.keys(inner)[0];
-              image["key"] = key;
-              return image;
-            })
-        });
-      });
+    // UploadedImage.getUploadedImageBySpeciesRef(this.state.selectedSpecies)
+    //   .orderByKey()
+    //   .on("value", snap => {
+    //     if (!snap || !snap.val()) {
+    //       return;
+    //     }
+    //     const result = snap.val();
+    //     console.log(result);
+    //     this.setState({
+    //       viewedImages: Object.keys(result)
+    //         .filter(key => {
+    //           const inner = Object.keys(result[key])[0];
+    //           return inner !== userInfo.uid;
+    //         })
+    //         .map(key => {
+    //           const inner = result[key];
+    //           const image = inner[Object.keys(inner)[0]];
+    //           image["uid"] = Object.keys(inner)[0];
+    //           image["key"] = key;
+    //           return image;
+    //         })
+    //     });
+    //   });
   }
 
   componentDidMount = () => {
@@ -210,6 +217,28 @@ class ImageView extends Component<Props, State> {
       this.props.history.push("/auth");
       return;
     }
+    UploadedImage.getFullUploadedImageRef()
+      .orderByKey()
+      // .limitToFirst(1)
+      .on("value", snap => {
+        if (!snap || !snap.val()) {
+          return;
+        }
+        const result = snap.val();
+        this.setState({
+          viewedImages: Object.keys(result)
+            // 自分自身が投稿した画像は表示しない
+            .filter(key => {
+              const imageInfo = result[key];
+              return imageInfo.uid !== userInfo.uid;
+            })
+            .map(key => {
+              const imageInfo = result[key];
+              imageInfo["key"] = key;
+              return imageInfo;
+            })
+        });
+      });
   };
 
   componentWillUnmount() {
@@ -219,6 +248,7 @@ class ImageView extends Component<Props, State> {
     UploadedImage.getUploadedImageBySpeciesRef(
       this.state.selectedSpecies
     ).off();
+    UploadedImage.getFullUploadedImageRef().off();
     // UploadedImage.getMyUploadedImageRef(userInfo.uid).off();
   }
 
@@ -234,45 +264,68 @@ class ImageView extends Component<Props, State> {
       loading: true
     });
     const selectedValue = event.target.value;
-    UploadedImage.getUploadedImageBySpeciesRef(
-      this.state.selectedSpecies
-    ).off();
-    UploadedImage.getUploadedImageBySpeciesRef(selectedValue).on(
-      "value",
-      snap => {
-        let thisViewedImages = [];
-        if (snap && snap.val()) {
-          const result = snap.val();
-          thisViewedImages = Object.keys(result)
-            .filter(key => {
-              const inner = Object.keys(result[key])[0];
-              return inner !== userInfo.uid;
-            })
-            .map(key => {
-              const inner = result[key];
-              const image = inner[Object.keys(inner)[0]];
-              image["uid"] = Object.keys(inner)[0];
-              image["key"] = key;
-              return image;
-            });
-        }
-        this.setState({
-          viewedImages: thisViewedImages,
-          loading: false
-        });
+    UploadedImage.getFullUploadedImageRef().off();
+    let targetRef: any = UploadedImage.getFullUploadedImageRef();
+    // .limitToFirst(1)
+    if (allSpeciesItem.id !== selectedValue) {
+      targetRef = targetRef
+        .orderByChild("petSpecies")
+        .startAt(selectedValue)
+        .endAt(selectedValue);
+    }
+    targetRef.on("value", (snap: any) => {
+      let viewedImages: any[] = [];
+      if (snap && snap.val()) {
+        const result = snap.val();
+        viewedImages = Object.keys(result)
+          // 自分自身が投稿した画像は表示しない
+          .filter(key => {
+            const imageInfo = result[key];
+            return imageInfo.uid !== userInfo.uid;
+          })
+          .map(key => {
+            const imageInfo = result[key];
+            imageInfo["key"] = key;
+            return imageInfo;
+          });
       }
-    );
+      this.setState({
+        viewedImages: viewedImages,
+        loading: false
+      });
+    });
+    // UploadedImage.getUploadedImageBySpeciesRef(selectedValue).on(
+    //   "value",
+    //   snap => {
+    //     let thisViewedImages = [];
+    //     if (snap && snap.val()) {
+    //       const result = snap.val();
+    //       thisViewedImages = Object.keys(result)
+    //         .filter(key => {
+    //           const inner = Object.keys(result[key])[0];
+    //           return inner !== userInfo.uid;
+    //         })
+    //         .map(key => {
+    //           const inner = result[key];
+    //           const image = inner[Object.keys(inner)[0]];
+    //           image["uid"] = Object.keys(inner)[0];
+    //           image["key"] = key;
+    //           return image;
+    //         });
+    //     }
+    //     this.setState({
+    //       viewedImages: thisViewedImages,
+    //       loading: false
+    //     });
+    //   }
+    // );
     this.setState({
       selectedSpecies: selectedValue
     });
   };
 
   handleOpenImageDetailModal = (selectedImageDetail: any) => {
-    UploadedImage.getUploadedImageCommentedsRef(
-      this.state.selectedSpecies,
-      selectedImageDetail.key,
-      selectedImageDetail.uid
-    )
+    UploadedImage.getUploadedImageCommentedsRef(selectedImageDetail.key)
       .orderByKey()
       .on("value", snap => {
         let commenteds: any[] = [];
@@ -358,7 +411,7 @@ class ImageView extends Component<Props, State> {
     const { classes } = this.props;
     return (
       <Fragment>
-        <Paper className={classNames(classes.paper, classes.fullWidth)}>
+        <div className={classes.root}>
           <TextField
             select
             label="ペットの種類"
@@ -368,6 +421,9 @@ class ImageView extends Component<Props, State> {
             variant="outlined"
             onChange={this.handleSpeciesSelectChange()}
           >
+            <MenuItem key={allSpeciesItem.id} value={allSpeciesItem.id}>
+              {allSpeciesItem.name}
+            </MenuItem>
             {animalSpecies.map(option => (
               <MenuItem key={option.id} value={option.id}>
                 {option.name}
@@ -388,7 +444,7 @@ class ImageView extends Component<Props, State> {
               ))}
             </Card>
           )}
-        </Paper>
+        </div>
         <Modal
           aria-labelledby="simple-modal-title2"
           aria-describedby="simple-modal-description2"

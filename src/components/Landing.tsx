@@ -68,7 +68,7 @@ class Landing extends Component<Props> {
           <Button
             variant="contained"
             className={classes.button}
-            color="secondary"
+            color="primary"
             onClick={this.goToLoginPage}
           >
             始めましょう！
