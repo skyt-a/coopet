@@ -72,6 +72,7 @@ class RouteRelatedBottomNavigation extends Component<Props> {
   buttons = this.navButtons.map((button_info, index) => {
     return (
       <BottomNavigationAction
+        color="secondary"
         value={button_info.link_to}
         label={button_info.label}
         icon={button_info.icon}
@@ -90,6 +91,7 @@ class RouteRelatedBottomNavigation extends Component<Props> {
     return (
       <div className={classes.wrapper}>
         <BottomNavigation
+          color="secondary"
           value={this.props.location.pathname}
           showLabels
           className={classes.root}

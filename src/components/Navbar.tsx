@@ -24,7 +24,10 @@ const styles = (theme: Theme): StyleRules =>
     },
     logo: {
       height: "60px",
-      margin: "auto"
+      position: "absolute",
+      margin: "auto",
+      right: 0,
+      left: 0
     }
   });
 
@@ -34,6 +37,7 @@ interface Props extends WithStyles<typeof styles> {
   menuItems: any[];
   open: boolean;
   onOpen: () => void;
+  onBackdropClick: () => void;
 }
 interface MenuItem {
   menuLabel: string;
@@ -53,8 +57,17 @@ class Navbar extends Component<Props> {
     const { classes } = this.props;
     return (
       <div>
-        <Drawer open={this.props.open}>{this.createMenuItem()}</Drawer>
-        <AppBar color="primary">
+        <Drawer
+          open={this.props.open}
+          ModalProps={{
+            onBackdropClick: () => {
+              this.props.onBackdropClick();
+            }
+          }}
+        >
+          {this.createMenuItem()}
+        </Drawer>
+        <AppBar color="secondary">
           <Toolbar>
             <IconButton
               onClick={this.props.onOpen}
