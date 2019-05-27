@@ -25,30 +25,28 @@ const uploadSaga = {
     }
     try {
       if (profile.uploadedImage) {
-        const key = KeyCreater.create();
+        const key = KeyCreater.create(currentUser.uid);
         const ref = storage.ref().child(`photoURL:${currentUser.uid}:${key}`);
         yield ref.put(profile.uploadedImage);
         let targetURL;
         yield ref.getDownloadURL().then(url => {
           targetURL = url;
         });
-        yield database
-          .ref(
-            `/uploadedImage/${profile.petSpecies}/${key}/${currentUser.uid}/`
-          )
-          .set(
-            {
-              url: targetURL,
-              comment: profile.comment
-            },
-            error => {
-              console.log(error);
-              if (error) {
-                console.error(error);
-              } else {
-              }
+        yield database.ref(`/uploadedImage/${key}`).set(
+          {
+            url: targetURL,
+            comment: profile.comment,
+            petSpecies: profile.petSpecies,
+            uid: currentUser.uid
+          },
+          error => {
+            console.log(error);
+            if (error) {
+              console.error(error);
+            } else {
             }
-          );
+          }
+        );
         yield database.ref(`/users/${currentUser.uid}/uploadImage/${key}`).set(
           {
             url: targetURL,
@@ -90,13 +88,11 @@ const uploadSaga = {
     }
     const now = new Date();
     // 投稿降順にするための処理
-    const key = KeyCreater.create();
+    const key = KeyCreater.create(currentUser.uid);
     try {
       yield database
         .ref(
-          `/uploadedImage/${profile.petSpecies}/${profile.key}/${
-            profile.uid
-          }/commenteds/${key}/${currentUser.uid}`
+          `/uploadedImage/${profile.key}/commenteds/${key}/${currentUser.uid}`
         )
         .set(
           {

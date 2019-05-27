@@ -9,6 +9,10 @@ export default class UploadedImage {
     return database.ref(`/users/${userId}/uploadImage/${key}`);
   }
 
+  static getFullUploadedImageRef() {
+    return database.ref(`/uploadedImage`);
+  }
+
   static getUploadedImageBySpeciesRef(speciesId: string) {
     return database.ref(`/uploadedImage/${speciesId}`);
   }
@@ -17,11 +21,7 @@ export default class UploadedImage {
     return database.ref(`/uploadedImage/${speciesId}/${key}/${uid}`);
   }
 
-  static getUploadedImageCommentedsRef(
-    speciesId: string,
-    key: string,
-    uid: string
-  ) {
-    return database.ref(`/uploadedImage/${speciesId}/${key}/${uid}/commenteds`);
+  static getUploadedImageCommentedsRef(key: string) {
+    return database.ref(`/uploadedImage/${key}/commenteds`);
   }
 }

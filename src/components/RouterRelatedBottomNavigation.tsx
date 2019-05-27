@@ -59,7 +59,7 @@ class RouteRelatedBottomNavigation extends Component<Props> {
     if (!this.props.location) {
       return false;
     }
-    return ["/userMain", "/userView", "/imageView"].includes(
+    return ["/userMain", "/userView", "/imageView", "/otherView"].includes(
       this.props.location.pathname
     );
   }
