@@ -25,7 +25,6 @@ const styles = (theme: Theme): StyleRules =>
     logo: {
       height: "60px",
       position: "absolute",
-      margin: "auto",
       right: 0,
       left: 0
     }
