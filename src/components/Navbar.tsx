@@ -6,13 +6,17 @@ import withStyles, {
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 import { AppBar, MenuItem, Drawer } from "@material-ui/core";
-import { Toolbar, IconButton, Typography } from "@material-ui/core";
+import { Toolbar, IconButton } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
+import logo from "../assets/images/logo.png";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
     root: {
       textAlign: "center"
+    },
+    toolbar: {
+      padding: 0
     },
     paragraph: {
       fontFamily: "serif",
@@ -20,6 +24,13 @@ const styles = (theme: Theme): StyleRules =>
     },
     menuButton: {
       marginLeft: theme.spacing.unit
+    },
+    logo: {
+      height: "60px",
+      position: "absolute",
+      margin: "auto",
+      right: 0,
+      left: 0
     }
   });
 
@@ -29,6 +40,7 @@ interface Props extends WithStyles<typeof styles> {
   menuItems: any[];
   open: boolean;
   onOpen: () => void;
+  onBackdropClick: () => void;
 }
 interface MenuItem {
   menuLabel: string;
@@ -48,9 +60,18 @@ class Navbar extends Component<Props> {
     const { classes } = this.props;
     return (
       <div>
-        <Drawer open={this.props.open}>{this.createMenuItem()}</Drawer>
+        <Drawer
+          open={this.props.open}
+          ModalProps={{
+            onBackdropClick: () => {
+              this.props.onBackdropClick();
+            }
+          }}
+        >
+          {this.createMenuItem()}
+        </Drawer>
         <AppBar color="secondary">
-          <Toolbar>
+          <Toolbar className={classes.toolbar}>
             <IconButton
               onClick={this.props.onOpen}
               color="inherit"
@@ -59,9 +80,7 @@ class Navbar extends Component<Props> {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h5" color="inherit">
-              {this.props.title}
-            </Typography>
+            <img alt="logo" src={logo} className={classes.logo} />
           </Toolbar>
         </AppBar>
       </div>

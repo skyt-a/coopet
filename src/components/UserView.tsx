@@ -34,6 +34,9 @@ const styles = (theme: Theme): StyleRules =>
       margin: theme.spacing.unit,
       padding: theme.spacing.unit
     },
+    userCard: {
+      width: "95%"
+    },
     flex: {
       display: "flex",
       flexWrap: "wrap",
@@ -203,7 +206,10 @@ class UserView extends Component<Props, State> {
           {this.state.viewedUser && this.state.viewedUser.length !== 0 && (
             <Card className={classNames(classes.flex, classes.card)}>
               {this.state.viewedUser.map((user, i) => (
-                <Card onClick={this.handleOpenUserDetailModal(user)}>
+                <Card
+                  className={classes.userCard}
+                  onClick={this.handleOpenUserDetailModal(user)}
+                >
                   <CardHeader
                     avatar={
                       <Avatar

@@ -84,6 +84,12 @@ const styles = (theme: Theme): StyleRules =>
     },
     uploadedImageWrap: {
       flexBasis: "calc(100% / 3.1)",
+      [theme.breakpoints.up("sm")]: {
+        flexBasis: "calc(100% / 6)"
+      },
+      [theme.breakpoints.up("md")]: {
+        flexBasis: "calc(100% / 10)"
+      },
       position: "relative",
       height: "150px",
       border: "1px solid rgba(0, 0, 0, 0.12)",
@@ -102,7 +108,8 @@ const styles = (theme: Theme): StyleRules =>
       padding: theme.spacing.unit
     },
     cardComponent: {
-      padding: "1px"
+      padding: "1px",
+      textAlign: "left"
     },
     mainCommentContent: {},
     cardContent: {
@@ -165,7 +172,6 @@ const styles = (theme: Theme): StyleRules =>
 function getModalStyle() {
   return {
     backgroundColor: "white",
-    height: "60vh",
     width: "100vw"
   };
 }
@@ -507,6 +513,7 @@ class UserMain extends Component<Props, State> {
             menuItems={this.menuItems}
             open={this.state.isMenuOpen}
             onOpen={this.onMenuOpen}
+            onBackdropClick={this.onMenuClose}
           />
         )}
         <Paper className={classNames(classes.paper, classes.fullWidth)}>
@@ -527,7 +534,10 @@ class UserMain extends Component<Props, State> {
                       onChange={this.handleChangeFile}
                       className={classes.fileUpload}
                     />
-                    <AddAPhotoRoundedIcon className={classes.addPhotoIcon} />{" "}
+                    <AddAPhotoRoundedIcon
+                      color="primary"
+                      className={classes.addPhotoIcon}
+                    />{" "}
                   </IconButton>
                 )
               }
@@ -535,7 +545,10 @@ class UserMain extends Component<Props, State> {
               title={additionalUserInfo.userName}
               subheader={additionalUserInfo.petName}
             />
-            <CardContent className={classes.cardComponent}>
+            {/* <CardContent className={classes.cardComponent}>
+              
+            </CardContent> */}
+            <CardActions className={classes.actions}>
               <Chip
                 color="primary"
                 label={
@@ -546,17 +559,15 @@ class UserMain extends Component<Props, State> {
                   )[0].name
                 }
                 className={classes.chip}
-                variant="outlined"
+                variant="default"
               />
-            </CardContent>
-            <CardActions className={classes.actions}>
               <Badge
                 color="primary"
                 showZero
                 badgeContent={this.state.followingNumber}
                 className={classes.margin}
               >
-                <Chip label="フォロー" variant="outlined" color="secondary" />
+                <Chip label="フォロー" variant="outlined" color="primary" />
               </Badge>
               <Badge
                 color="primary"
@@ -564,28 +575,31 @@ class UserMain extends Component<Props, State> {
                 badgeContent={this.state.followerNumber}
                 className={classes.margin}
               >
-                <Chip label="フォロワー" variant="outlined" color="secondary" />
+                <Chip label="フォロワー" variant="outlined" color="primary" />
               </Badge>
             </CardActions>
           </Card>
-          <Card className={classNames(classes.flex, classes.card)}>
-            <Fragment>
-              {this.state.uploadedImages.map((uploaded, i) => (
-                <div className={classes.uploadedImageWrap} key={i}>
-                  <img
-                    onClick={() => this.handleOpenSelectedImageModal(uploaded)}
-                    alt={uploaded.comment}
-                    className={classes.uploadedImage}
-                    src={uploaded.url}
-                  />
-                </div>
-              ))}
-            </Fragment>
-          </Card>
+          {this.state.uploadedImages && this.state.uploadedImages.length > 0 && (
+            <Card className={classNames(classes.flex, classes.card)}>
+              <Fragment>
+                {this.state.uploadedImages.map((uploaded, i) => (
+                  <div className={classes.uploadedImageWrap} key={i}>
+                    <img
+                      onClick={() =>
+                        this.handleOpenSelectedImageModal(uploaded)
+                      }
+                      alt={uploaded.comment}
+                      className={classes.uploadedImage}
+                      src={uploaded.url}
+                    />
+                  </div>
+                ))}
+              </Fragment>
+            </Card>
+          )}
         </Paper>
+        {/* 画像詳細モーダル */}
         <Modal
-          aria-labelledby="simple-modal-title2"
-          aria-describedby="simple-modal-description2"
           open={this.state.isOpenSelectedImageModal}
           onClose={this.handleCloseSelectedImageModal}
         >
@@ -609,9 +623,8 @@ class UserMain extends Component<Props, State> {
             </Card>
           </div>
         </Modal>
+        {/* 画像投稿モーダル */}
         <Modal
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
           open={this.state.isOpenUploadImageModal}
           onClose={this.handleCloseUploadImageModal}
         >
@@ -635,6 +648,7 @@ class UserMain extends Component<Props, State> {
                   margin="normal"
                   variant="outlined"
                 />
+                <div>
                 <Button
                   color="primary"
                   variant="contained"
@@ -642,6 +656,7 @@ class UserMain extends Component<Props, State> {
                 >
                   投稿
                 </Button>
+                </div>
               </CardContent>
             </Card>
           </div>

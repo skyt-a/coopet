@@ -26,11 +26,6 @@ const styles = (theme: Theme): StyleRules =>
       zIndex: 1000,
       textAlign: "center"
     },
-    root: {
-      [theme.breakpoints.up("md")]: {
-        display: "none"
-      }
-    },
     button: {
       maxWidth: "100%" // ボタンが横一杯に広がって欲しくない時はコメントアウト
     }
@@ -53,7 +48,7 @@ class RouteRelatedBottomNavigation extends Component<Props> {
       onclick: () => this.props.history.push("/userView")
     },
     {
-      label: "会員情報",
+      label: "プロフ",
       icon: <InfoIcon />,
       link_to: "/userMain",
       onclick: () => this.props.history.push("/userMain")
@@ -72,6 +67,7 @@ class RouteRelatedBottomNavigation extends Component<Props> {
   buttons = this.navButtons.map((button_info, index) => {
     return (
       <BottomNavigationAction
+        color="secondary"
         value={button_info.link_to}
         label={button_info.label}
         icon={button_info.icon}
@@ -90,6 +86,7 @@ class RouteRelatedBottomNavigation extends Component<Props> {
     return (
       <div className={classes.wrapper}>
         <BottomNavigation
+          color="secondary"
           value={this.props.location.pathname}
           showLabels
           className={classes.root}

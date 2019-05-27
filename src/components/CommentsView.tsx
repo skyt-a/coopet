@@ -14,7 +14,8 @@ const styles = (theme: Theme): StyleRules =>
   createStyles({
     cardContent: {
       overflow: "auto",
-      height: "30vh"
+      maxHeight: "30vh",
+      padding: "5px"
     },
     balloonRight: {
       position: "relative",
