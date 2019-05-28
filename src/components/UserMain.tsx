@@ -6,7 +6,6 @@ import withStyles, {
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 import {
-  Typography,
   Paper,
   Avatar,
   Modal,
@@ -32,7 +31,7 @@ import UploadedImage from "../utils/UploadedImage";
 import Loading from "./Loading";
 import User from "../utils/User";
 import animalSpecies from "../assets/data/animalSpecies.json";
-import CommentsView from "../containers/CommentsView";
+import ImageDetailModal from "./ImageDetailModal";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -41,17 +40,11 @@ const styles = (theme: Theme): StyleRules =>
       width: 60,
       height: 60
     },
-    button: {
-      margin: theme.spacing.unit
-    },
     paper: {
       textAlign: "center",
       padding: theme.spacing.unit,
       marginTop: "60px",
       overflowX: "hidden"
-    },
-    listItemInner: {
-      margin: "auto"
     },
     fileUpload: {
       opacity: 0,
@@ -67,9 +60,6 @@ const styles = (theme: Theme): StyleRules =>
     flex: {
       display: "flex",
       flexWrap: "wrap"
-    },
-    betweenAround: {
-      justifyContent: "space-between"
     },
     addPhotoIcon: {
       fontSize: "40px"
@@ -111,61 +101,10 @@ const styles = (theme: Theme): StyleRules =>
       padding: "1px",
       textAlign: "left"
     },
-    mainCommentContent: {},
-    cardContent: {
-      overflow: "auto",
-      height: "30vh"
-    },
     actions: {
       display: "flex",
       justifyContent: "flex-end",
       paddingRight: "10px"
-    },
-    balloonRight: {
-      position: "relative",
-      display: "inline-block",
-      padding: "7px 10px",
-      minWidth: "120px",
-      maxWidth: "100%",
-      color: "#555",
-      fontSize: "16px",
-      background: "#e0edff",
-      "&::before": {
-        content: '""',
-        position: "absolute",
-        top: "50%",
-        left: "100%",
-        marginTop: "-15px",
-        border: "15px solid transparent",
-        borderLeft: "15px solid #e0edff"
-      }
-    },
-    balloonLeft: {
-      position: "relative",
-      display: "inline-block",
-      padding: "7px 10px",
-      minWidth: "120px",
-      maxWidth: "100%",
-      color: "#555",
-      fontSize: "16px",
-      background: "#ff8e9d",
-      "&::before": {
-        content: '""',
-        position: "absolute",
-        top: "50%",
-        left: "-30px",
-        marginTop: "-15px",
-        border: "15px solid transparent",
-        borderRight: "15px solid #ff8e9d"
-      }
-    },
-    commentWrapperLeft: {
-      textAlign: "left",
-      margin: "10px"
-    },
-    commentWrapperRight: {
-      textAlign: "right",
-      margin: "10px"
     }
   });
 
@@ -205,7 +144,7 @@ interface State {
   followerNumber: number;
   loading: boolean;
   isOpenUploadImageModal: boolean;
-  isOpenSelectedImageModal: boolean;
+  isOpenImageDetailModal: boolean;
   comment: string;
   uploadedImages: UploadedImageInfo[];
   selectedImageURL: string;
@@ -253,7 +192,7 @@ class UserMain extends Component<Props, State> {
       followerNumber: 0,
       loading: true,
       isOpenUploadImageModal: false,
-      isOpenSelectedImageModal: false,
+      isOpenImageDetailModal: false,
       comment: "",
       uploadedImages: [],
       selectedImageURL: "",
@@ -293,17 +232,14 @@ class UserMain extends Component<Props, State> {
       additionalUserInfo = snap.val();
     });
     UploadedImage.getMyUploadedImageRef(userInfo.uid)
-      .orderByKey()
       .on("value", snap => {
         if (!snap || !snap.val()) {
           return;
         }
         const result = snap.val();
-        console.log(snap.val());
         this.setState({
           uploadedImages: Object.keys(result).map(key => {
             const image = result[key];
-            image["uid"] = userInfo.uid;
             image["key"] = key;
             return image;
           })
@@ -419,63 +355,16 @@ class UserMain extends Component<Props, State> {
     });
   };
 
-  handleOpenSelectedImageModal = (selectedImageDetail: any) => {
-    UploadedImage.getMyUploadedImageDetailRef(
-      selectedImageDetail.uid,
-      selectedImageDetail.key
-    ).on("value", snap => {
-      let commenteds: any[] = [];
-      let promises: Promise<any>[] = [];
-      if (snap && snap.val()) {
-        const result = snap.val();
-        if (result.commenteds) {
-          const targetCommentsProp = result.commenteds;
-          const userIds = Object.keys(targetCommentsProp)
-            .map((key: any) => {
-              const inner = targetCommentsProp[key];
-              return Object.keys(inner)[0];
-            })
-            // 重複を削除する
-            .filter(function(x, i, self) {
-              return self.indexOf(x) === i;
-            });
-          promises = userIds.map(v => User.getUserByIdRef(v).once("value"));
-        }
-        Promise.all(promises).then(users => {
-          const targetCommentsProp = result.commenteds;
-          let userMast: any = {};
-          if (targetCommentsProp) {
-            commenteds = Object.keys(targetCommentsProp).map((key: any) => {
-              const inner = targetCommentsProp[key];
-              const comment = inner[Object.keys(inner)[0]];
-              comment["uid"] = Object.keys(inner)[0];
-              comment["key"] = key;
-              return comment;
-            });
-            userMast = {};
-            users.forEach(user => {
-              if (user && user.val()) {
-                userMast[user.val().uid] = user.val();
-              }
-            });
-          }
-          selectedImageDetail["commenteds"] = commenteds;
-          if (!this.state.isOpenSelectedImageModal) {
-            this.setState({
-              selectedImageDetail: selectedImageDetail,
-              commentUserMast: userMast,
-              isOpenSelectedImageModal: true
-            });
-          }
-        });
-      }
+  handleOpenImageDetailModal = (selectedImageDetail: any) => {
+    this.setState({
+      selectedImageDetail: selectedImageDetail,
+      isOpenImageDetailModal: true
     });
   };
 
-  handleCloseSelectedImageModal = () => {
+  handleCloseImageDetailModal = () => {
     this.setState({
-      isOpenSelectedImageModal: false,
-      selectedImageDetail: {}
+      isOpenImageDetailModal: false
     });
   };
 
@@ -585,9 +474,7 @@ class UserMain extends Component<Props, State> {
                 {this.state.uploadedImages.map((uploaded, i) => (
                   <div className={classes.uploadedImageWrap} key={i}>
                     <img
-                      onClick={() =>
-                        this.handleOpenSelectedImageModal(uploaded)
-                      }
+                      onClick={() => this.handleOpenImageDetailModal(uploaded)}
                       alt={uploaded.comment}
                       className={classes.uploadedImage}
                       src={uploaded.url}
@@ -599,30 +486,11 @@ class UserMain extends Component<Props, State> {
           )}
         </Paper>
         {/* 画像詳細モーダル */}
-        <Modal
-          open={this.state.isOpenSelectedImageModal}
-          onClose={this.handleCloseSelectedImageModal}
-        >
-          <div style={getModalStyle()} className={classes.paper}>
-            <Card>
-              <CardMedia
-                component="img"
-                className={classes.media}
-                src={this.state.selectedImageDetail.url}
-                title="Contemplative Reptile"
-              />
-              <CardContent>
-                <Typography>
-                  {this.state.selectedImageDetail.comment}
-                </Typography>
-              </CardContent>
-              <CommentsView
-                commenteds={this.state.selectedImageDetail.commenteds}
-                commentUserMast={this.state.commentUserMast}
-              />
-            </Card>
-          </div>
-        </Modal>
+        <ImageDetailModal
+          open={this.state.isOpenImageDetailModal}
+          selectedImageDetail={this.state.selectedImageDetail}
+          onClose={this.handleCloseImageDetailModal}
+        />
         {/* 画像投稿モーダル */}
         <Modal
           open={this.state.isOpenUploadImageModal}
@@ -649,13 +517,13 @@ class UserMain extends Component<Props, State> {
                   variant="outlined"
                 />
                 <div>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={this.uploadImage}
-                >
-                  投稿
-                </Button>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={this.uploadImage}
+                  >
+                    投稿
+                  </Button>
                 </div>
               </CardContent>
             </Card>

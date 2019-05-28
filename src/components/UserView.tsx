@@ -209,6 +209,7 @@ class UserView extends Component<Props, State> {
                 <Card
                   className={classes.userCard}
                   onClick={this.handleOpenUserDetailModal(user)}
+                  key={i}
                 >
                   <CardHeader
                     avatar={

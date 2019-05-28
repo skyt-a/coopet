@@ -10,6 +10,10 @@ export default class User {
   }
 
   static getUsersBySpeciesRef(speciesId: string) {
-    return database.ref(`/speciesCategory/${speciesId}`);
+    return database
+      .ref(`/users`)
+      .orderByChild("petSpecies")
+      .startAt(speciesId)
+      .endAt(speciesId);
   }
 }

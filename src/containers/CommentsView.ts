@@ -3,7 +3,7 @@ import { Action, Dispatch } from "redux";
 
 import { RootState } from "../modules";
 import CommentsView from "../components/CommentsView";
-import { appActions } from "../actions";
+import { appActions, uploadActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
   return {};
@@ -13,6 +13,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
   return {
     onSelectUser: (user: any) => {
       dispatch(appActions.selectUser(user));
+    },
+    onCommentImage: (param: any) => {
+      dispatch(uploadActions.commentImage.started(param));
     }
   };
 };

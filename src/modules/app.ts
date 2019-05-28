@@ -50,7 +50,6 @@ export const reducer = reducerWithInitialState(INITIAL_APP_STATE)
       nowUserInfo.splice(index, 1);
     }
     nowUserInfo.push(action);
-    console.log("nowUserInfo", index, nowUserInfo);
     return {
       ...state,
       selectedUserInfo: nowUserInfo
