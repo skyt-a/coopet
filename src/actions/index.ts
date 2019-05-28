@@ -11,7 +11,6 @@ import actionCreatorFactory from "typescript-fsa";
 import { AppError } from "../models/AppError";
 import { AppInfo } from "../models/AppInfo";
 import { SigningInfo } from "../models/SigningInfo";
-import { Profile } from "../models/Profile";
 
 const actionCreator = actionCreatorFactory();
 
@@ -27,14 +26,8 @@ export enum ActionTypes {
   AUTH_SIGN_OUT = "LOGOUT",
   AUTH_SYNC_STATE = "AUTH/SYNC_STATE",
 
-  AUTH_ADD_LINK = "AUTH/ADD_LINK",
-  AUTH_REMOVE_LINK = "AUTH/REMOVE_LINK",
-  AUTH_UPDATE_EMAIL = "AUTH/UPDATE_EMAIL",
-  AUTH_UPDATE_PROFILE = "AUTH/UPDATE_PROFILE",
   AUTH_UPDATE_USERINFO = "CONFIRM_REGISTER",
-  AUTH_UPDATE_PASSWORD = "AUTH/UPDATE_PASSWORD",
   AUTH_SEND_PASSWORD_RESET_EMAIL = "AUTH/SEND_PASSWORD_RESET_EMAIL",
-  AUTH_WITHDRAW = "AUTH/WITHDRAW",
 
   AUTH_STATE_CHANGED = "AUTH/STATE_CHANGED",
   AUTH_INITIALIZE = "AUTH/INITIALIZE",
@@ -77,35 +70,12 @@ export const authActions = {
     ActionTypes.AUTH_SYNC_STATE
   ),
 
-  addLink: actionCreator.async<SigningInfo, boolean, any>(
-    ActionTypes.AUTH_ADD_LINK
-  ),
-
-  removeLink: actionCreator.async<SigningInfo, boolean, any>(
-    ActionTypes.AUTH_REMOVE_LINK
-  ),
-
-  updateEmail: actionCreator.async<string, boolean, any>(
-    ActionTypes.AUTH_UPDATE_EMAIL
-  ),
-
-  updateProfile: actionCreator.async<Profile, boolean, any>(
-    ActionTypes.AUTH_UPDATE_PROFILE
-  ),
   updateUserInfo: actionCreator.async<any, boolean, any>(
     ActionTypes.AUTH_UPDATE_USERINFO
   ),
 
-  updatePassword: actionCreator.async<string, boolean, any>(
-    ActionTypes.AUTH_UPDATE_PASSWORD
-  ),
-
   sendPasswordResetEmail: actionCreator.async<string, boolean, any>(
     ActionTypes.AUTH_SEND_PASSWORD_RESET_EMAIL
-  ),
-
-  withdraw: actionCreator.async<undefined, boolean, any>(
-    ActionTypes.AUTH_WITHDRAW
   ),
 
   stateChanged: actionCreator<any>(ActionTypes.AUTH_STATE_CHANGED),

@@ -18,8 +18,7 @@ const INITIAL_AUTH_STATE: IAuthState = {
 
 // async:
 //   signUp, signIn, signOut, (syncState),
-//   addLink, removeLink, updateEmail, updateProfile, updatePassword,
-//   sendPasswordResetEmail, withDraw
+//   sendPasswordResetEmail
 // sync:
 //   stateChanged, initialize
 export const reducer = reducerWithInitialState(INITIAL_AUTH_STATE)
@@ -28,16 +27,9 @@ export const reducer = reducerWithInitialState(INITIAL_AUTH_STATE)
       authActions.signUp.started as ActionCreator<any>,
       authActions.signIn.started as ActionCreator<any>,
       authActions.signOut.started as ActionCreator<any>,
-      authActions.addLink.started as ActionCreator<any>,
-      authActions.removeLink.started as ActionCreator<any>,
-      authActions.updateEmail.started as ActionCreator<any>,
-      authActions.updateProfile.started as ActionCreator<any>,
-      authActions.updatePassword.started as ActionCreator<any>,
-      authActions.sendPasswordResetEmail.started as ActionCreator<any>,
-      authActions.withdraw.started as ActionCreator<any>
+      authActions.sendPasswordResetEmail.started as ActionCreator<any>
     ],
     (state, action) => {
-      console.log(state, action);
       return { ...state, submitting: true };
     }
   )
@@ -49,20 +41,8 @@ export const reducer = reducerWithInitialState(INITIAL_AUTH_STATE)
       authActions.signIn.failed as ActionCreator<any>,
       authActions.signOut.done as ActionCreator<any>,
       authActions.signOut.failed as ActionCreator<any>,
-      authActions.addLink.done as ActionCreator<any>,
-      authActions.addLink.failed as ActionCreator<any>,
-      authActions.removeLink.done as ActionCreator<any>,
-      authActions.removeLink.failed as ActionCreator<any>,
-      authActions.updateEmail.done as ActionCreator<any>,
-      authActions.updateEmail.failed as ActionCreator<any>,
-      authActions.updateProfile.done as ActionCreator<any>,
-      authActions.updateProfile.failed as ActionCreator<any>,
-      authActions.updatePassword.done as ActionCreator<any>,
-      authActions.updatePassword.failed as ActionCreator<any>,
       authActions.sendPasswordResetEmail.done as ActionCreator<any>,
       authActions.sendPasswordResetEmail.failed as ActionCreator<any>,
-      authActions.withdraw.done as ActionCreator<any>,
-      authActions.withdraw.failed as ActionCreator<any>,
       authActions.storeUserInfo.done as ActionCreator<any>,
       authActions.storeUserInfo.failed as ActionCreator<any>
     ],
@@ -76,16 +56,9 @@ export const reducer = reducerWithInitialState(INITIAL_AUTH_STATE)
       authActions.storeUserInfo.failed as ActionCreator<any>
     ],
     (state, action) => {
-      console.log("stored!!1", action);
       if (!action.params) {
         return { ...state, submitting: false };
       }
-      console.log({
-        user: action.params.currentUser,
-        additionalUserInfo: action.params.additionalUserInfo,
-        submitting: false,
-        timestamp: Date.now()
-      });
       return {
         user: action.params.currentUser,
         additionalUserInfo: action.params.additionalUserInfo,
@@ -106,7 +79,6 @@ export const reducer = reducerWithInitialState(INITIAL_AUTH_STATE)
     }
   )
   .caseWithAction(authActions.stateChanged, (state: any, action: any) => {
-    console.log(state, action);
     return {
       ...state,
       user: action.payload,

@@ -40,7 +40,7 @@ const uploadSaga = {
             uid: currentUser.uid
           },
           error => {
-            console.log(error);
+            console.error(error);
             if (error) {
               console.error(error);
             } else {
@@ -53,7 +53,7 @@ const uploadSaga = {
             comment: profile.comment
           },
           error => {
-            console.log(error);
+            console.error(error);
             if (error) {
               console.error(error);
             } else {
@@ -100,7 +100,7 @@ const uploadSaga = {
             date: now
           },
           error => {
-            console.log(error);
+            console.error(error);
             if (error) {
               console.error(error);
             } else {
@@ -119,7 +119,7 @@ const uploadSaga = {
             date: now
           },
           error => {
-            console.log(error);
+            console.error(error);
             if (error) {
               console.error(error);
             } else {

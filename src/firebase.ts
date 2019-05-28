@@ -14,10 +14,8 @@ const firebaseConfig = {
   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_ID
 };
-console.log(firebaseConfig);
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-console.log(firebase);
 
 export const authProviders = new Map<AuthProvider, firebase.auth.AuthProvider>([
   ["Password", new firebase.auth.EmailAuthProvider()],

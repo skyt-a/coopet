@@ -6,7 +6,6 @@ import UserView from "../components/UserView";
 import { authActions, uploadActions, appActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
-  console.log(state);
   return {
     auth: state.Auth
   };

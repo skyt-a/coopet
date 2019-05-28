@@ -6,7 +6,6 @@ import ImageView from "../components/ImageView";
 import { authActions, uploadActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
-  console.log(state);
   return {
     auth: state.Auth
   };
@@ -19,9 +18,6 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
     },
     onUploadImage: (param: any) => {
       dispatch(uploadActions.uploadImage.started(param));
-    },
-    onCommentImage: (param: any) => {
-      dispatch(uploadActions.commentImage.started(param));
     }
   };
 };

@@ -2,7 +2,11 @@ import { database } from "../firebase";
 
 export default class UploadedImage {
   static getMyUploadedImageRef(userId: string) {
-    return database.ref(`/users/${userId}/uploadImage`);
+    return database
+      .ref(`/uploadedImage`)
+      .orderByChild("uid")
+      .startAt(userId)
+      .endAt(userId);
   }
 
   static getMyUploadedImageDetailRef(userId: string, key: string) {
