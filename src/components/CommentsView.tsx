@@ -9,6 +9,7 @@ import { Typography, CardContent, Avatar, Modal } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
 import UserMain from "../containers/UserMain";
+import classNames from "classnames";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -16,56 +17,6 @@ const styles = (theme: Theme): StyleRules =>
       overflow: "auto",
       maxHeight: "30vh",
       padding: "5px"
-    },
-    balloonRight: {
-      position: "relative",
-      display: "inline-block",
-      padding: "7px 10px",
-      minWidth: "120px",
-      maxWidth: "100%",
-      color: "#555",
-      fontSize: "16px",
-      background: "#e0edff",
-      marginRight: "50px",
-      "&::before": {
-        content: '""',
-        position: "absolute",
-        top: "50%",
-        left: "100%",
-        marginTop: "-15px",
-        border: "15px solid transparent",
-        borderLeft: "15px solid #e0edff"
-      }
-    },
-    balloonLeft: {
-      position: "relative",
-      display: "inline-block",
-      padding: "7px 10px",
-      minWidth: "120px",
-      maxWidth: "100%",
-      color: "#555",
-      fontSize: "16px",
-      background: "#ff8e9d",
-      marginLeft: "50px",
-      "&::before": {
-        content: '""',
-        position: "absolute",
-        top: "50%",
-        left: "-30px",
-        marginTop: "-15px",
-        border: "15px solid transparent",
-        borderRight: "15px solid #ff8e9d"
-      }
-    },
-    commentWrapperLeft: {
-      textAlign: "left",
-      margin: "10px",
-      position: "relative"
-    },
-    commentWrapperRight: {
-      textAlign: "right",
-      margin: "10px",
-      position: "relative"
     },
     avatarLeft: {
       bottom: 0,
@@ -78,6 +29,52 @@ const styles = (theme: Theme): StyleRules =>
       right: 0,
       display: "inline-block",
       position: "absolute"
+    },
+    userNameRight: {
+      position: "absolute",
+      right: 0
+    },
+    userNameLeft: {
+      position: "absolute",
+      left: 0
+    },
+    balloonSetBox: {
+      display: "flex",
+      flexWrap: "wrap",
+      position: "relative"
+    },
+    balloon: {
+      position: "relative",
+      display: "inline-block",
+      maxWidth: "300px",
+      padding: "8px 15px",
+      background: "#f0f0f0",
+      textAlign: "left",
+      borderRadius: "15px",
+      marginTop: "20px",
+      "&::after": {
+        content: "''",
+        border: "14px solid transparent",
+        borderTopColor: "#f0f0f0",
+        position: "absolute",
+        top: "0"
+      }
+    },
+    leftBalloon: {
+      flexDirection: "row",
+      marginLeft: "45px",
+      marginRight: "auto",
+      "&::after": {
+        left: "-10px"
+      }
+    },
+    rightBalloon: {
+      flexDirection: "row-reverse",
+      marginRight: "45px",
+      marginLeft: "auto",
+      "&::after": {
+        right: "-10px"
+      }
     }
   });
 
@@ -133,17 +130,22 @@ class CommentsView extends Component<Props, State> {
               if (commented.uid === userInfo.uid) {
                 return (
                   <div
-                    className={classes.commentWrapperRight}
+                    className={classes.balloonSetBox}
                     key={i}
                     onClick={this.goToUserDetail(
                       this.props.commentUserMast[commented.uid]
                     )}
                   >
-                    <Typography>
+                    <Typography className={classes.userNameRight}>
                       {this.props.commentUserMast[commented.uid].userName}
                     </Typography>
-                    <div className={classes.balloonRight}>
-                      <Typography>{commented.comment}</Typography>
+                    <div
+                      className={classNames(
+                        classes.balloon,
+                        classes.rightBalloon
+                      )}
+                    >
+                      {commented.comment}
                     </div>
                     <Avatar
                       alt="Remy Sharp"
@@ -155,26 +157,76 @@ class CommentsView extends Component<Props, State> {
               } else {
                 return (
                   <div
-                    className={classes.commentWrapperLeft}
+                    className={classes.balloonSetBox}
                     key={i}
                     onClick={this.goToUserDetail(
                       this.props.commentUserMast[commented.uid]
                     )}
                   >
-                    <Typography>
+                    <Typography className={classes.userNameLeft}>
                       {this.props.commentUserMast[commented.uid].userName}
                     </Typography>
+                    <div
+                      className={classNames(
+                        classes.balloon,
+                        classes.leftBalloon
+                      )}
+                    >
+                      {commented.comment}
+                    </div>
                     <Avatar
                       alt="Remy Sharp"
                       src={this.props.commentUserMast[commented.uid].photoURL}
                       className={classes.avatarLeft}
                     />
-                    <div className={classes.balloonLeft}>
-                      <Typography>{commented.comment}</Typography>
-                    </div>
                   </div>
                 );
               }
+              // if (commented.uid === userInfo.uid) {
+              //   return (
+              //     <div
+              //       className={classes.commentWrapperRight}
+              //       key={i}
+              //       onClick={this.goToUserDetail(
+              //         this.props.commentUserMast[commented.uid]
+              //       )}
+              //     >
+              //       <Typography>
+              //         {this.props.commentUserMast[commented.uid].userName}
+              //       </Typography>
+              //       <div className={classes.balloonRight}>
+              //         <Typography>{commented.comment}</Typography>
+              //       </div>
+              //       <Avatar
+              //         alt="Remy Sharp"
+              //         src={this.props.commentUserMast[commented.uid].photoURL}
+              //         className={classes.avatarRight}
+              //       />
+              //     </div>
+              //   );
+              // } else {
+              //   return (
+              //     <div
+              //       className={classes.commentWrapperLeft}
+              //       key={i}
+              //       onClick={this.goToUserDetail(
+              //         this.props.commentUserMast[commented.uid]
+              //       )}
+              //     >
+              //       <Typography>
+              //         {this.props.commentUserMast[commented.uid].userName}
+              //       </Typography>
+              //       <Avatar
+              //         alt="Remy Sharp"
+              //         src={this.props.commentUserMast[commented.uid].photoURL}
+              //         className={classes.avatarLeft}
+              //       />
+              //       <div className={classes.balloonLeft}>
+              //         <Typography>{commented.comment}</Typography>
+              //       </div>
+              //     </div>
+              //   );
+              // }
             })}
         </CardContent>
         <Modal
