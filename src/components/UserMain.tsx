@@ -231,21 +231,20 @@ class UserMain extends Component<Props, State> {
       this.props.onStoreUserInfo(snap.val());
       additionalUserInfo = snap.val();
     });
-    UploadedImage.getMyUploadedImageRef(userInfo.uid)
-      .on("value", snap => {
-        if (!snap || !snap.val()) {
-          return;
-        }
-        const result = snap.val();
-        this.setState({
-          uploadedImages: Object.keys(result).map(key => {
-            const image = result[key];
-            image["key"] = key;
-            return image;
-          })
-          //Object.values(snap.val())
-        });
+    UploadedImage.getMyUploadedImageRef(userInfo.uid).on("value", snap => {
+      if (!snap || !snap.val()) {
+        return;
+      }
+      const result = snap.val();
+      this.setState({
+        uploadedImages: Object.keys(result).map(key => {
+          const image = result[key];
+          image["key"] = key;
+          return image;
+        })
+        //Object.values(snap.val())
       });
+    });
     setTimeout(() => {
       this.setState({
         loading: false
