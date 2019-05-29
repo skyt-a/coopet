@@ -174,7 +174,7 @@ class CommentsView extends Component<Props, State> {
             });
           }
           this.setState({
-            commenteds: commenteds,
+            commenteds: commenteds.reverse(),
             commentUserMast: userMast
           });
         });
