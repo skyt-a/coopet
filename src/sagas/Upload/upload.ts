@@ -92,7 +92,9 @@ const uploadSaga = {
     try {
       yield database
         .ref(
-          `/uploadedImage/${profile.key}/commenteds/${key}/${currentUser.uid}`
+          `/uploadedImage/${profile.key}/commenteds/${now.getTime()}/${
+            currentUser.uid
+          }`
         )
         .set(
           {

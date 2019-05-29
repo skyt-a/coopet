@@ -134,9 +134,9 @@ class CommentsView extends Component<Props, State> {
 
   updateComment = () => {
     const selectedImageDetail = this.props.selectedImageDetail;
-    UploadedImage.getUploadedImageCommentedsRef(selectedImageDetail.key)
-      .orderByKey()
-      .on("value", snap => {
+    UploadedImage.getUploadedImageCommentedsRef(selectedImageDetail.key).on(
+      "value",
+      snap => {
         let commenteds: any[] = [];
         let promises: Promise<any>[] = [];
         let result: any;
@@ -178,7 +178,8 @@ class CommentsView extends Component<Props, State> {
             commentUserMast: userMast
           });
         });
-      });
+      }
+    );
   };
 
   goToUserDetail = (selectedUserInfo: any) => (e: any) => {
