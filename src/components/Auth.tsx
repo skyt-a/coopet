@@ -8,7 +8,6 @@ import createStyles from "@material-ui/core/styles/createStyles";
 // ランディングページのTop画像
 import {
   Button,
-  Paper,
   ListItem,
   List,
   TextField,
@@ -72,7 +71,7 @@ const providers: {
   color: string;
 }[] = [
   { providerName: "Google", color: "#4285F4" },
-  { providerName: "Facebook", color: "#4285F4" },
+  { providerName: "Facebook", color: "#3B5998" },
   { providerName: "Twitter", color: "#1DA1F2" }
 ];
 const testUserMail = "testtestcoopet@gmail.com";
@@ -218,7 +217,7 @@ class Auth extends Component<Props, State> {
           </ListItem>
         </List>
 
-        <img className={classes.dog} src={dog} />
+        <img alt="dog" className={classes.dog} src={dog} />
       </Fragment>
     );
   }
