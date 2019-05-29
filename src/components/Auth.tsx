@@ -6,17 +6,29 @@ import withStyles, {
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 // ランディングページのTop画像
-import { Button, Paper, ListItem, List, TextField } from "@material-ui/core";
+import {
+  Button,
+  Paper,
+  ListItem,
+  List,
+  TextField,
+  Card,
+  Typography
+} from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
 import { UserInfo } from "../models/UserInfo";
 import IconUtil from "../utils/IconUtil";
 import classNames from "classnames";
 import Loading from "./Loading";
+import dog from "../assets/images/dog.svg";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
     button: {
+      margin: theme.spacing.unit
+    },
+    card: {
       margin: theme.spacing.unit
     },
     paper: {
@@ -31,6 +43,14 @@ const styles = (theme: Theme): StyleRules =>
     },
     progressWrapper: {
       textAlign: "center"
+    },
+    dog: {
+      height: "80px",
+      position: "absolute",
+      right: "10px"
+    },
+    type: {
+      fontSize: "1.1rem"
     }
   });
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
@@ -49,10 +69,11 @@ interface State {
 }
 const providers: {
   providerName: string;
+  color: string;
 }[] = [
-  { providerName: "Google" },
-  { providerName: "Twitter" },
-  { providerName: "Password" }
+  { providerName: "Google", color: "#4285F4" },
+  { providerName: "Facebook", color: "#4285F4" },
+  { providerName: "Twitter", color: "#1DA1F2" }
 ];
 const testUserMail = "testtestcoopet@gmail.com";
 const testUserPassword = "testtestcoopet";
@@ -123,50 +144,57 @@ class Auth extends Component<Props, State> {
       return <Loading />;
     }
     return (
-      <Paper className={classes.paper}>
+      <Fragment>
         {/* <Typography>Username: {user && user.displayName}</Typography> */}
         <List>
-          {providers.map((p: any, i: number) => {
-            return (
-              <Fragment key={i}>
-                {p.providerName === "Password" && (
-                  <Fragment>
-                    <ListItem>
-                      <TextField
-                        label="メールアドレス"
-                        className={classNames(
-                          classes.button,
-                          classes.listItemInner
-                        )}
-                        value={this.state.email}
-                        onChange={this.handleChange("email")}
-                        margin="dense"
-                        variant="outlined"
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <TextField
-                        label="パスワード"
-                        className={classNames(
-                          classes.button,
-                          classes.listItemInner
-                        )}
-                        value={this.state.password}
-                        onChange={this.handleChange("password")}
-                        type="password"
-                        margin="dense"
-                        variant="outlined"
-                      />
-                    </ListItem>
-                  </Fragment>
-                )}
-                <ListItem>
+          <Card className={classes.card}>
+            <Typography className={classes.type}>
+              メールアドレスでログイン
+            </Typography>
+            <ListItem>
+              <TextField
+                label="メールアドレス"
+                className={classNames(classes.button, classes.listItemInner)}
+                value={this.state.email}
+                onChange={this.handleChange("email")}
+                margin="dense"
+                variant="outlined"
+              />
+            </ListItem>
+            <ListItem>
+              <TextField
+                label="パスワード"
+                className={classNames(classes.button, classes.listItemInner)}
+                value={this.state.password}
+                onChange={this.handleChange("password")}
+                type="password"
+                margin="dense"
+                variant="outlined"
+              />
+            </ListItem>
+            <ListItem>
+              <Button
+                className={classNames(classes.button, classes.listItemInner)}
+                color="secondary"
+                variant="contained"
+                onClick={() => this.authByProvider("Password")}
+              >
+                {IconUtil.renderAuthProviderIcon("Password")}
+                メールでログイン
+              </Button>
+            </ListItem>
+          </Card>
+          <Card className={classes.card}>
+            <Typography className={classes.type}>SNSでログイン</Typography>
+            {providers.map((p: any, i: number) => {
+              return (
+                <ListItem key={i}>
                   <Button
                     className={classNames(
                       classes.button,
                       classes.listItemInner
                     )}
-                    color="secondary"
+                    style={{ background: p.color, color: "#FFF" }}
                     variant="contained"
                     onClick={() => this.authByProvider(p.providerName)}
                   >
@@ -174,9 +202,10 @@ class Auth extends Component<Props, State> {
                     {p.providerName}でログイン
                   </Button>
                 </ListItem>
-              </Fragment>
-            );
-          })}
+              );
+            })}
+          </Card>
+
           <ListItem>
             <Button
               className={classNames(classes.button, classes.listItemInner)}
@@ -188,7 +217,9 @@ class Auth extends Component<Props, State> {
             </Button>
           </ListItem>
         </List>
-      </Paper>
+
+        <img className={classes.dog} src={dog} />
+      </Fragment>
     );
   }
 }

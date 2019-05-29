@@ -7,7 +7,7 @@ import withStyles, {
 import { createStyles } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router";
 import "./Loading.scss";
-import footPrint from "../assets/images/footprint.png";
+import footPrint from "../assets/images/footprint.svg";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
