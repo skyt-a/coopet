@@ -40,7 +40,7 @@ const uploadSaga = {
             uid: currentUser.uid
           },
           error => {
-            console.error(error);
+            console.log(error);
             if (error) {
               console.error(error);
             } else {
@@ -53,7 +53,7 @@ const uploadSaga = {
             comment: profile.comment
           },
           error => {
-            console.error(error);
+            console.log(error);
             if (error) {
               console.error(error);
             } else {
@@ -92,9 +92,7 @@ const uploadSaga = {
     try {
       yield database
         .ref(
-          `/uploadedImage/${profile.key}/commenteds/${now.getTime()}/${
-            currentUser.uid
-          }`
+          `/uploadedImage/${profile.key}/commenteds/${key}/${currentUser.uid}`
         )
         .set(
           {
@@ -102,7 +100,7 @@ const uploadSaga = {
             date: now
           },
           error => {
-            console.error(error);
+            console.log(error);
             if (error) {
               console.error(error);
             } else {
@@ -121,7 +119,7 @@ const uploadSaga = {
             date: now
           },
           error => {
-            console.error(error);
+            console.log(error);
             if (error) {
               console.error(error);
             } else {
