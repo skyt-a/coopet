@@ -70,6 +70,10 @@ class App extends Component<Props, State> {
           <Route path="/top" component={Landing} />
           <Route path="/auth" component={Auth} />
           <Route path="/registerUser" component={RegisterUser} />
+          <Route
+            path="/changeUser"
+            render={() => <RegisterUser isChangeMode={true} />}
+          />
           <Route path="/userMain" component={UserMain} />
           <Route path="/imageView" component={ImageView} />
           <Route path="/userView" component={UserView} />

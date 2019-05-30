@@ -35,12 +35,11 @@ const styles = (theme: Theme): StyleRules =>
   });
 
 interface Props extends WithStyles<typeof styles> {
-  onLogout: () => void;
-  title: string;
-  menuItems: any[];
-  open: boolean;
-  onOpen: () => void;
-  onBackdropClick: () => void;
+  title?: string;
+  menuItems?: any[];
+  open?: boolean;
+  onOpen?: () => void;
+  onBackdropClick?: () => void;
 }
 interface MenuItem {
   menuLabel: string;
@@ -50,6 +49,9 @@ interface MenuItem {
 // Component を定義: React.PureComponent<Props> で拡張する
 class Navbar extends Component<Props> {
   createMenuItem() {
+    if (!this.props.menuItems || this.props.menuItems.length === 0) {
+      return null;
+    }
     return this.props.menuItems.map((item, index) => (
       <MenuItem onClick={item.func} key={index}>
         {item.menuLabel}
@@ -60,26 +62,30 @@ class Navbar extends Component<Props> {
     const { classes } = this.props;
     return (
       <div>
-        <Drawer
-          open={this.props.open}
-          ModalProps={{
-            onBackdropClick: () => {
-              this.props.onBackdropClick();
-            }
-          }}
-        >
-          {this.createMenuItem()}
-        </Drawer>
+        {this.props.menuItems && this.props.menuItems.length > 0 && (
+          <Drawer
+            open={this.props.open}
+            ModalProps={{
+              onBackdropClick: () => {
+                this.props.onBackdropClick && this.props.onBackdropClick();
+              }
+            }}
+          >
+            {this.createMenuItem()}
+          </Drawer>
+        )}
         <AppBar color="secondary">
           <Toolbar className={classes.toolbar}>
-            <IconButton
-              onClick={this.props.onOpen}
-              color="inherit"
-              aria-label="Menu"
-              className={classes.menuButton}
-            >
-              <MenuIcon />
-            </IconButton>
+            {this.props.menuItems && this.props.menuItems.length > 0 && (
+              <IconButton
+                onClick={this.props.onOpen}
+                color="inherit"
+                aria-label="Menu"
+                className={classes.menuButton}
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
             <img alt="logo" src={logo} className={classes.logo} />
           </Toolbar>
         </AppBar>
