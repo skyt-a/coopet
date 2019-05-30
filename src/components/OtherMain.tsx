@@ -12,10 +12,7 @@ import {
   CardHeader,
   Chip,
   CardActions,
-  Badge,
-  AppBar,
-  Toolbar,
-  IconButton
+  Badge
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import Follow from "../utils/Follow";
@@ -24,7 +21,6 @@ import UploadedImage from "../utils/UploadedImage";
 import Loading from "./Loading";
 import User from "../utils/User";
 import animalSpecies from "../assets/data/animalSpecies.json";
-import ReplyIcon from "@material-ui/icons/Reply";
 import ImageDetailModal from "./ImageDetailModal";
 
 const styles = (theme: Theme): StyleRules =>
@@ -113,7 +109,7 @@ class OtherMain extends Component<Props, State> {
   menuItems = [];
   constructor(props: Props) {
     super(props);
-    userInfo = this.props.userInfo[this.props.userInfo.length - 1];
+    userInfo = this.props.userInfo;
     this.state = {
       userName: "",
       photoURL: "",
@@ -241,18 +237,6 @@ class OtherMain extends Component<Props, State> {
     const { classes } = this.props;
     return (
       <Fragment>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="revert"
-              onClick={this.revertUser}
-            >
-              <ReplyIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
         <Paper className={classNames(classes.paper, classes.fullWidth)}>
           <Card className={classes.card}>
             <CardHeader

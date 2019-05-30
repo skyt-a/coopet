@@ -26,16 +26,21 @@ const styles = (theme: Theme): StyleRules =>
   });
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
+  auth: any;
   user: any;
-  onSelectUser?: Function;
+  onSelectUser?: (user: any) => void;
 }
 
 class UserCard extends Component<Props> {
   goToUserDetail = (selectedUserInfo: any) => (e: any) => {
-    if (this.props.onSelectUser) {
+    // 自分自身で無い場合のみ、ユーザー詳細画面へ移動することができる
+    if (
+      this.props.onSelectUser &&
+      this.props.auth.additionalUserInfo.uid !== selectedUserInfo.uid
+    ) {
       this.props.onSelectUser(selectedUserInfo);
+      this.props.history.push("/otherView");
     }
-    this.props.history.push("/otherView");
   };
 
   render() {

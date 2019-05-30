@@ -6,7 +6,9 @@ import UserCard from "../components/UserCard";
 import { appActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
-  return {};
+  return {
+    auth: state.Auth
+  };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
