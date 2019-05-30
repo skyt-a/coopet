@@ -36,7 +36,10 @@ export enum ActionTypes {
   UPLOAD_INITIALIZE = "UPLOAD_INITIALIZE",
   STORE_USERINFO = "STORE_USERINFO",
   SELECT_USER = "SELECT_USER",
-  UNSELECT_USER = "UNSELECT_USER"
+  UNSELECT_USER = "UNSELECT_USER",
+
+  FOLLOW = "FOLLOW",
+  UNFOLLOW = "UNFOLLOW"
 }
 
 // app
@@ -93,4 +96,9 @@ export const uploadActions = {
     ActionTypes.COMMENT_IMAGE
   ),
   initialize: actionCreator(ActionTypes.UPLOAD_INITIALIZE)
+};
+
+export const followActions = {
+  follow: actionCreator.async<any, boolean, any>(ActionTypes.FOLLOW),
+  unfollow: actionCreator.async<any, boolean, any>(ActionTypes.UNFOLLOW)
 };

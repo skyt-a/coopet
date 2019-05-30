@@ -3,6 +3,7 @@ import { ActionTypes } from "../actions";
 import appSaga from "./App/app";
 import authSaga from "./Auth/auth";
 import uploadSaga from "./Upload/upload";
+import followSaga from "./Follow/follow";
 
 export default function* rootSaga(): IterableIterator<any> {
   yield all([
@@ -23,6 +24,9 @@ export default function* rootSaga(): IterableIterator<any> {
     ),
     takeEvery(`${ActionTypes.STORE_USERINFO}_STARTED`, authSaga.storeUserInfo),
     takeEvery(`${ActionTypes.UPLOAD_IMAGE}_STARTED`, uploadSaga.uploadImage),
-    takeEvery(`${ActionTypes.COMMENT_IMAGE}_STARTED`, uploadSaga.commentImage)
+    takeEvery(`${ActionTypes.COMMENT_IMAGE}_STARTED`, uploadSaga.commentImage),
+
+    takeEvery(`${ActionTypes.FOLLOW}_STARTED`, followSaga.follow),
+    takeEvery(`${ActionTypes.UNFOLLOW}_STARTED`, followSaga.unfollow)
   ]);
 }
