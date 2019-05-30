@@ -23,8 +23,6 @@ import User from "../utils/User";
 const styles = (theme: Theme): StyleRules =>
   createStyles({
     cardContent: {
-      overflow: "auto",
-      maxHeight: "30vh",
       padding: "5px"
     },
     avatarLeft: {
@@ -88,11 +86,19 @@ const styles = (theme: Theme): StyleRules =>
     postArea: {
       textAlign: "center",
       padding: "3px"
+    },
+    buttonArea: {
+      display: "flex",
+      justifyContent: "space-around"
+    },
+    actionButton: {
+      minWidth: "30vw"
     }
   });
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   selectedImageDetail: any;
+  onCancel: () => void;
   onSelectUser?: (user: any) => void;
   onCommentImage?: (param: { uid: any; key: string; comment: string }) => void;
 }
@@ -291,33 +297,32 @@ class CommentsView extends Component<Props, State> {
           <div className={classes.postArea}>
             <TextField
               label="コメント"
-              multiline
-              rows="2"
               value={this.state.postComment}
               onChange={this.handleChange("postComment")}
               className={classes.textField}
               margin="normal"
               variant="outlined"
             />
-            <div>
+            <div className={classes.buttonArea}>
+              <Button
+                color="secondary"
+                variant="contained"
+                onClick={this.props.onCancel}
+                className={classes.actionButton}
+              >
+                キャンセル
+              </Button>
               <Button
                 color="primary"
                 variant="contained"
                 onClick={this.commentUploadedImage}
+                className={classes.actionButton}
               >
                 投稿
               </Button>
             </div>
           </div>
         </CardContent>
-        <Modal
-          aria-labelledby="simple-modal-title2"
-          aria-describedby="simple-modal-description2"
-          open={this.state.isOpenUserDetailModal}
-          onClose={this.handleCloseUserDetailModal}
-        >
-          <UserMain userInfo={this.state.selectedUserInfo} />
-        </Modal>
       </Fragment>
     );
   }

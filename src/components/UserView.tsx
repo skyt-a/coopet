@@ -164,11 +164,7 @@ class UserView extends Component<Props, State> {
     });
   };
 
-  handleOpenUserDetailModal = (selectedUserInfo: any) => (e: any) => {
-    // this.setState({
-    //   isOpenUserDetailModal: true,
-    //   selectedUserInfo: selectedUserInfo
-    // });
+  goToUserDetail = (selectedUserInfo: any) => (e: any) => {
     this.props.onSelectUser(selectedUserInfo);
     this.props.history.push("/otherView");
   };
@@ -208,7 +204,7 @@ class UserView extends Component<Props, State> {
               {this.state.viewedUser.map((user, i) => (
                 <Card
                   className={classes.userCard}
-                  onClick={this.handleOpenUserDetailModal(user)}
+                  onClick={this.goToUserDetail(user)}
                   key={i}
                 >
                   <CardHeader

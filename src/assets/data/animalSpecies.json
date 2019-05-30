@@ -9,15 +9,7 @@
   },
   {
     "id": "boar",
-    "name": "イノシシ(ウリボウ)"
-  },
-  {
-    "id": "Dolphin",
-    "name": "イルカ"
-  },
-  {
-    "id": "Eaglewhale",
-    "name": "イワシクジラ"
+    "name": "ウリボウ"
   },
   {
     "id": "Inko",
@@ -36,20 +28,12 @@
     "name": "カワウソ"
   },
   {
-    "id": "Kangaroo",
-    "name": "カンガルー"
-  },
-  {
     "id": "tortoise",
     "name": "カメ"
   },
   {
     "id": "Fox",
     "name": "キツネ"
-  },
-  {
-    "id": "Lemur",
-    "name": "キツネザル"
   },
   {
     "id": "Giraffe",
@@ -68,14 +52,6 @@
     "name": "コウモリ"
   },
   {
-    "id": "Coyote",
-    "name": "コヨーテ"
-  },
-  {
-    "id": "gorilla",
-    "name": "ゴリラ"
-  },
-  {
     "id": "monkey",
     "name": "サル"
   },
@@ -84,44 +60,12 @@
     "name": "サーバル"
   },
   {
-    "id": "Deer",
-    "name": "シカ"
-  },
-  {
-    "id": "zebra",
-    "name": "シマウマ"
-  },
-  {
-    "id": "Chipmunk",
-    "name": "シマリス"
-  },
-  {
-    "id": "Killerwhale",
-    "name": "シャチ"
-  },
-  {
-    "id": "skunk",
-    "name": "スカンク"
-  },
-  {
     "id": "Raccoondog",
     "name": "タヌキ"
   },
   {
     "id": "Chinchilla",
     "name": "チンチラ"
-  },
-  {
-    "id": "Chimpanzee",
-    "name": "チンパンジー"
-  },
-  {
-    "id": "Cheetah",
-    "name": "チーター"
-  },
-  {
-    "id": "Tuchipig",
-    "name": "ツチブタ"
   },
   {
     "id": "degu",
@@ -150,10 +94,6 @@
   {
     "id": "Sheep",
     "name": "ヒツジ"
-  },
-  {
-    "id": "Leopard",
-    "name": "ヒョウ"
   },
   {
     "id": "Beaver",

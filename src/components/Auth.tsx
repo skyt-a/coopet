@@ -99,6 +99,13 @@ class Auth extends Component<Props, State> {
     });
   };
 
+  componentWillUnmount() {
+    if (!this.unsubscribe) {
+      return;
+    }
+    this.unsubscribe();
+  }
+
   handleChange = (name: string) => (event: any) => {
     const obj: any = {};
     obj[name] = event.target.value;
@@ -129,13 +136,6 @@ class Auth extends Component<Props, State> {
     };
     this.props.onAuth(signing);
   };
-
-  componentWillUnmount() {
-    if (!this.unsubscribe) {
-      return;
-    }
-    this.unsubscribe();
-  }
 
   render() {
     const { classes } = this.props;
