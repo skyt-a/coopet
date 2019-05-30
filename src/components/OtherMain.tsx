@@ -12,10 +12,7 @@ import {
   CardHeader,
   Chip,
   CardActions,
-  Badge,
-  AppBar,
-  Toolbar,
-  IconButton
+  Badge
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import Follow from "../utils/Follow";
@@ -24,7 +21,6 @@ import UploadedImage from "../utils/UploadedImage";
 import Loading from "./Loading";
 import User from "../utils/User";
 import animalSpecies from "../assets/data/animalSpecies.json";
-import ReplyIcon from "@material-ui/icons/Reply";
 import ImageDetailModal from "./ImageDetailModal";
 
 const styles = (theme: Theme): StyleRules =>
