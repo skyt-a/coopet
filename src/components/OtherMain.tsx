@@ -113,7 +113,7 @@ class OtherMain extends Component<Props, State> {
   menuItems = [];
   constructor(props: Props) {
     super(props);
-    userInfo = this.props.userInfo[this.props.userInfo.length - 1];
+    userInfo = this.props.userInfo;
     this.state = {
       userName: "",
       photoURL: "",
@@ -241,18 +241,6 @@ class OtherMain extends Component<Props, State> {
     const { classes } = this.props;
     return (
       <Fragment>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="revert"
-              onClick={this.revertUser}
-            >
-              <ReplyIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
         <Paper className={classNames(classes.paper, classes.fullWidth)}>
           <Card className={classes.card}>
             <CardHeader

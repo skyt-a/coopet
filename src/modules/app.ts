@@ -12,7 +12,7 @@ export interface IAppState {
 const INITIAL_APP_STATE: IAppState = {
   errors: [] as AppError[],
   infos: [] as AppInfo[],
-  selectedUserInfo: []
+  selectedUserInfo: null
 };
 
 export const reducer = reducerWithInitialState(INITIAL_APP_STATE)
@@ -44,23 +44,15 @@ export const reducer = reducerWithInitialState(INITIAL_APP_STATE)
     return INITIAL_APP_STATE;
   })
   .case(appActions.selectUser, (state: any, action: any) => {
-    const nowUserInfo = state.selectedUserInfo;
-    const index = nowUserInfo.map((n: any) => n.uid).indexOf(action.uid);
-    if (index >= 0) {
-      nowUserInfo.splice(index, 1);
-    }
-    nowUserInfo.push(action);
     return {
       ...state,
-      selectedUserInfo: nowUserInfo
+      selectedUserInfo: action
     };
   })
   .case(appActions.unselectUser, (state: any, action: any) => {
-    const nowUserInfo = state.selectedUserInfo;
-    nowUserInfo.pop();
     return {
       ...state,
-      selectedUserInfo: nowUserInfo
+      selectedUserInfo: null
     };
   });
 
