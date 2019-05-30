@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
   WithStyles,
@@ -21,6 +21,7 @@ import firebase from "../firebase";
 import User from "../utils/User";
 import Loading from "./Loading";
 import animalSpecies from "../assets/data/animalSpecies.json";
+import Navbar from "../containers/Navbar";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -29,7 +30,8 @@ const styles = (theme: Theme): StyleRules =>
     },
     paper: {
       textAlign: "center",
-      padding: theme.spacing.unit
+      padding: theme.spacing.unit,
+      marginTop: "60px"
     },
     listItemInner: {
       margin: "auto"
@@ -62,8 +64,8 @@ interface Props
     WithSnackbarProps {
   registerUser: any;
   auth: any;
+  isChangeMode?: boolean;
   onRegisterUser: (registerInfo: State) => void;
-  // onLogout: () => void;
 }
 interface State {
   userName: string;
@@ -71,8 +73,6 @@ interface State {
   petSpecies: any;
   photoURL: string;
   uploadedImage: any;
-  follow: any[];
-  follower: any[];
 }
 const createObjectURL =
   (window.URL || (window as any).webkitURL).createObjectURL ||
@@ -90,24 +90,33 @@ class RegisterUser extends Component<Props, State> {
       this.props.history.push("/auth");
       return;
     }
-    this.state = {
-      userName: userName,
-      petName: props.registerUser ? props.registerUser.petName : "",
-      petSpecies: props.registerUser
-        ? props.registerUser.petSpecies
-        : animalSpecies[0].id,
-      photoURL: "",
-      uploadedImage: null,
-      follow: [],
-      follower: []
-    };
-    User.isInitAuthedRef(userInfo.uid).on("value", snap => {
-      if (snap && snap.val()) {
-        this.props.history.push("/userMain");
-      } else {
-        loading = false;
-      }
-    });
+    if (props.isChangeMode) {
+      this.state = {
+        userName: this.props.auth.additionalUserInfo.userName,
+        petName: this.props.auth.additionalUserInfo.petName,
+        petSpecies: this.props.auth.additionalUserInfo.petSpecies,
+        photoURL: this.props.auth.additionalUserInfo.photoURL,
+        uploadedImage: null
+      };
+      loading = false;
+    } else {
+      this.state = {
+        userName: userName,
+        petName: props.registerUser ? props.registerUser.petName : "",
+        petSpecies: props.registerUser
+          ? props.registerUser.petSpecies
+          : animalSpecies[0].id,
+        photoURL: "",
+        uploadedImage: null
+      };
+      User.isInitAuthedRef(userInfo.uid).on("value", snap => {
+        if (snap && snap.val()) {
+          this.props.history.push("/userMain");
+        } else {
+          loading = false;
+        }
+      });
+    }
   }
 
   handleChange = (name: string) => (event: any) => {
@@ -211,88 +220,95 @@ class RegisterUser extends Component<Props, State> {
       return <Loading />;
     }
     return (
-      <Paper className={classes.paper}>
-        <Typography variant="h6">
-          あなたのペットについて教えてください
-        </Typography>
-        <form className={classes.container} noValidate autoComplete="off">
-          <TextField
-            required
-            label="あなたのお名前"
-            className={classes.textField}
-            defaultValue={this.state.userName}
-            onChange={this.handleChange("userName")}
-            margin="dense"
-            variant="outlined"
-          />
+      <Fragment>
+        <Navbar />
+        <Paper className={classes.paper}>
+          {!this.props.isChangeMode && (
+            <Typography variant="h6">
+              あなたのペットについて教えてください
+            </Typography>
+          )}
+          <form className={classes.container} noValidate autoComplete="off">
+            <TextField
+              required
+              label="あなたのお名前"
+              className={classes.textField}
+              defaultValue={this.state.userName}
+              onChange={this.handleChange("userName")}
+              margin="dense"
+              variant="outlined"
+            />
 
-          <TextField
-            required
-            label="ペットのお名前"
-            className={classes.textField}
-            value={this.state.petName}
-            onChange={this.handleChange("petName")}
-            margin="dense"
-            variant="outlined"
-          />
-          <TextField
-            select
-            required
-            label="ペットの種類"
-            className={classes.select}
-            value={this.state.petSpecies || animalSpecies[0].id}
-            margin="dense"
-            variant="outlined"
-            onChange={this.handleChange("petSpecies")}
-          >
-            {animalSpecies.map(option => (
-              <MenuItem key={option.id} value={option.id}>
-                {option.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <Card className={classes.card}>
-            {(this.state.photoURL || userInfo.photoURL) && (
-              <CardMedia
-                component="img"
-                className={classes.media}
-                src={this.state.photoURL || userInfo.photoURL}
-                title="Contemplative Reptile"
-              />
+            <TextField
+              required
+              label="ペットのお名前"
+              className={classes.textField}
+              value={this.state.petName}
+              onChange={this.handleChange("petName")}
+              margin="dense"
+              variant="outlined"
+            />
+            {!this.props.isChangeMode && (
+              <TextField
+                select
+                required
+                label="ペットの種類"
+                className={classes.select}
+                value={this.state.petSpecies || animalSpecies[0].id}
+                margin="dense"
+                variant="outlined"
+                onChange={this.handleChange("petSpecies")}
+              >
+                {animalSpecies.map(option => (
+                  <MenuItem key={option.id} value={option.id}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
             )}
-            <CardContent>
-              <Button component="label" variant="contained" color="secondary">
-                サムネイル画像を設定する
-                <input
-                  type="file"
-                  required
-                  onChange={this.handleChangeFile}
-                  className={classes.fileUpload}
+            <Card className={classes.card}>
+              {(this.state.photoURL || userInfo.photoURL) && (
+                <CardMedia
+                  component="img"
+                  className={classes.media}
+                  src={this.state.photoURL || userInfo.photoURL}
+                  title="Contemplative Reptile"
                 />
-              </Button>
-            </CardContent>
-          </Card>
-        </form>
-        {!this.hasValidateError() ? (
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            onClick={this.confirmRegister}
-          >
-            登録
-          </Button>
-        ) : (
-          <Button
-            variant="contained"
-            disabled
-            color="primary"
-            className={classes.button}
-          >
-            登録
-          </Button>
-        )}
-      </Paper>
+              )}
+              <CardContent>
+                <Button component="label" variant="contained" color="secondary">
+                  サムネイル画像を設定する
+                  <input
+                    type="file"
+                    required
+                    onChange={this.handleChangeFile}
+                    className={classes.fileUpload}
+                  />
+                </Button>
+              </CardContent>
+            </Card>
+          </form>
+          {!this.hasValidateError() ? (
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={this.confirmRegister}
+            >
+              {this.props.isChangeMode ? "変更" : "登録"}
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              disabled
+              color="primary"
+              className={classes.button}
+            >
+              {this.props.isChangeMode ? "変更" : "登録"}
+            </Button>
+          )}
+        </Paper>
+      </Fragment>
     );
   }
 }

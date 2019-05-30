@@ -21,9 +21,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
           petName: registerInfo.petName,
           photoURL: registerInfo.photoURL,
           petSpecies: registerInfo.petSpecies,
-          uploadedImage: registerInfo.uploadedImage,
-          follow: registerInfo.follow,
-          follower: registerInfo.follower
+          uploadedImage: registerInfo.uploadedImage
         })
       );
     }

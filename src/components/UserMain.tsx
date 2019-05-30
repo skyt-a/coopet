@@ -172,7 +172,7 @@ class UserMain extends Component<Props, State> {
     {
       menuLabel: "会員情報変更",
       func: () => {
-        this.props.history.push("/registerUser");
+        this.props.history.push("/changeUser");
         this.onMenuClose();
       }
     }
