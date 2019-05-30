@@ -9,13 +9,11 @@ import {
   Typography,
   CardContent,
   Avatar,
-  Modal,
   TextField,
   Button
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
-import UserMain from "../containers/UserMain";
 import classNames from "classnames";
 import UploadedImage from "../utils/UploadedImage";
 import User from "../utils/User";
