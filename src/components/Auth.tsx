@@ -146,7 +146,7 @@ class Auth extends Component<Props, State> {
       <Fragment>
         {/* <Typography>Username: {user && user.displayName}</Typography> */}
         <List>
-          <Card className={classes.card}>
+          <Card className={classes.card} color="secondary">
             <Typography className={classes.type}>
               メールアドレスでログイン
             </Typography>

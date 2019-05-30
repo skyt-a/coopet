@@ -3,7 +3,7 @@ import { Action, Dispatch } from "redux";
 
 import { RootState } from "../modules";
 import OtherMain from "../components/OtherMain";
-import { authActions, appActions } from "../actions";
+import { authActions, appActions, followActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
   return {
@@ -18,6 +18,12 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
     },
     onUnSelectUser: () => {
       dispatch(appActions.unselectUser());
+    },
+    onFollow: (p: any) => {
+      dispatch(followActions.follow.started(p));
+    },
+    onUnfollow: (p: any) => {
+      dispatch(followActions.unfollow.started(p));
     }
   };
 };

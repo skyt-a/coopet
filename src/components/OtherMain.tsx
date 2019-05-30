@@ -22,6 +22,7 @@ import Loading from "./Loading";
 import User from "../utils/User";
 import animalSpecies from "../assets/data/animalSpecies.json";
 import ImageDetailModal from "./ImageDetailModal";
+import firebase from "../firebase";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -78,6 +79,8 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   auth?: any;
   onStoreUserInfo: (p: any) => void;
   onUnSelectUser: () => void;
+  onFollow: (p: any) => void;
+  onUnfollow: (p: any) => void;
 }
 
 type UploadedImageInfo = {
@@ -89,8 +92,8 @@ interface State {
   userName: string;
   photoURL: string;
   uploadedImage: any;
-  followingNumber: number;
-  followerNumber: number;
+  followingUids: string[];
+  followerUids: string[];
   loading: boolean;
   isOpenUploadImageModal: boolean;
   isOpenImageDetailModal: boolean;
@@ -101,21 +104,27 @@ interface State {
   commentUserMast: any;
   selectedComment: string;
   isMenuOpen: boolean;
+  following: boolean;
 }
 
+let authUser: any;
 let userInfo: any;
 let additionalUserInfo: any;
 class OtherMain extends Component<Props, State> {
   menuItems = [];
   constructor(props: Props) {
     super(props);
+    authUser = firebase.auth().currentUser;
+    if (authUser === null) {
+      this.props.history.push("/auth");
+    }
     userInfo = this.props.userInfo;
     this.state = {
       userName: "",
       photoURL: "",
       uploadedImage: null,
-      followingNumber: 0,
-      followerNumber: 0,
+      followingUids: [],
+      followerUids: [],
       loading: true,
       isOpenUploadImageModal: false,
       isOpenImageDetailModal: false,
@@ -125,12 +134,13 @@ class OtherMain extends Component<Props, State> {
       selectedComment: "",
       selectedImageDetail: {},
       commentUserMast: {},
-      isMenuOpen: false
+      isMenuOpen: false,
+      following: false
     };
   }
 
   componentDidMount = () => {
-    if (!userInfo) {
+    if (!userInfo || !firebase.auth()) {
       this.props.history.push("/auth");
       return;
     }
@@ -139,7 +149,7 @@ class OtherMain extends Component<Props, State> {
         return;
       }
       this.setState({
-        followingNumber: Object.keys(snap.val()).length
+        followingUids: Object.keys(snap.val())
       });
     });
     Follow.getFollowerRef(userInfo.uid).on("value", snap => {
@@ -147,14 +157,13 @@ class OtherMain extends Component<Props, State> {
         return;
       }
       this.setState({
-        followerNumber: Object.keys(snap.val()).length
+        followerUids: Object.keys(snap.val())
       });
     });
-    User.isInitAuthedRef(userInfo.uid).once("value", snap => {
+    User.getUserByIdRef(userInfo.uid).once("value", snap => {
       if (!snap || !snap.val()) {
         return;
       }
-      this.props.onStoreUserInfo(snap.val());
       additionalUserInfo = snap.val();
     });
     UploadedImage.getMyUploadedImageRef(userInfo.uid).on("value", snap => {
@@ -170,6 +179,15 @@ class OtherMain extends Component<Props, State> {
           return image;
         })
         //Object.values(snap.val())
+      });
+    });
+    Follow.getFollowerRef(userInfo.uid).on("child_removed", snap => {
+      if (!snap || !snap.val()) {
+        return;
+      }
+      this.setState({
+        followerUids: Object.keys(snap.val()),
+        following: Object.keys(snap.val()).includes(authUser.uid)
       });
     });
     setTimeout(() => {
@@ -222,11 +240,10 @@ class OtherMain extends Component<Props, State> {
     });
   };
 
-  revertUser = () => {
-    this.props.onUnSelectUser();
-    this.props.history.replace("/reload");
-    setTimeout(() => {
-      this.props.history.replace("/otherView");
+  handleUnfollow = (user: any) => {
+    this.props.onUnfollow(user);
+    this.setState({
+      following: false
     });
   };
 
@@ -247,6 +264,23 @@ class OtherMain extends Component<Props, State> {
                   className={classes.avatar}
                 />
               }
+              action={
+                !this.state.followerUids.includes(authUser.uid) ? (
+                  <Chip
+                    label="フォロー"
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => this.props.onFollow(additionalUserInfo)}
+                  />
+                ) : (
+                  <Chip
+                    label="フォロー済"
+                    variant="default"
+                    color="primary"
+                    onClick={() => this.handleUnfollow(additionalUserInfo)}
+                  />
+                )
+              }
               className={classes.cardComponent}
               title={additionalUserInfo.userName}
               subheader={additionalUserInfo.petName}
@@ -265,7 +299,7 @@ class OtherMain extends Component<Props, State> {
               <Badge
                 color="primary"
                 showZero
-                badgeContent={this.state.followingNumber}
+                badgeContent={this.state.followingUids.length}
                 className={classes.margin}
               >
                 <Chip label="フォロー" variant="outlined" color="primary" />
@@ -273,7 +307,7 @@ class OtherMain extends Component<Props, State> {
               <Badge
                 color="primary"
                 showZero
-                badgeContent={this.state.followerNumber}
+                badgeContent={this.state.followerUids.length}
                 className={classes.margin}
               >
                 <Chip label="フォロワー" variant="outlined" color="primary" />
