@@ -11,12 +11,9 @@ import animalSpecies from "../assets/data/animalSpecies.json";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
-    card: {
-      margin: theme.spacing.unit,
-      padding: theme.spacing.unit
-    },
     userCard: {
-      width: "95%"
+      width: "95%",
+      margin: "2px"
     },
     flex: {
       display: "flex",

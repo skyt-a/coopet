@@ -32,6 +32,7 @@ import Loading from "./Loading";
 import User from "../utils/User";
 import animalSpecies from "../assets/data/animalSpecies.json";
 import ImageDetailModal from "./ImageDetailModal";
+import FollowViewModal from "../containers/FollowViewModal";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -140,8 +141,8 @@ interface State {
   userName: string;
   photoURL: string;
   uploadedImage: any;
-  followingNumber: number;
-  followerNumber: number;
+  followingUids: string[];
+  followerUids: string[];
   loading: boolean;
   isOpenUploadImageModal: boolean;
   isOpenImageDetailModal: boolean;
@@ -152,6 +153,8 @@ interface State {
   commentUserMast: any;
   selectedComment: string;
   isMenuOpen: boolean;
+  isOpenFollowingModal: boolean;
+  isOpenFollowerModal: boolean;
 }
 
 const createObjectURL =
@@ -188,8 +191,8 @@ class UserMain extends Component<Props, State> {
       userName: "",
       photoURL: "",
       uploadedImage: null,
-      followingNumber: 0,
-      followerNumber: 0,
+      followingUids: [],
+      followerUids: [],
       loading: true,
       isOpenUploadImageModal: false,
       isOpenImageDetailModal: false,
@@ -199,7 +202,9 @@ class UserMain extends Component<Props, State> {
       selectedComment: "",
       selectedImageDetail: {},
       commentUserMast: {},
-      isMenuOpen: false
+      isMenuOpen: false,
+      isOpenFollowingModal: false,
+      isOpenFollowerModal: false
     };
   }
 
@@ -213,7 +218,7 @@ class UserMain extends Component<Props, State> {
         return;
       }
       this.setState({
-        followingNumber: Object.keys(snap.val()).length
+        followingUids: Object.keys(snap.val())
       });
     });
     Follow.getFollowerRef(userInfo.uid).on("value", snap => {
@@ -221,7 +226,7 @@ class UserMain extends Component<Props, State> {
         return;
       }
       this.setState({
-        followerNumber: Object.keys(snap.val()).length
+        followerUids: Object.keys(snap.val())
       });
     });
     User.isInitAuthedRef(userInfo.uid).on("value", snap => {
@@ -343,6 +348,22 @@ class UserMain extends Component<Props, State> {
     reader.readAsDataURL(file);
   };
 
+  handleOpenFollowingModal = () => {
+    this.setState({ isOpenFollowingModal: true });
+  };
+
+  handleCloseFollowingModal = () => {
+    this.setState({ isOpenFollowingModal: false });
+  };
+
+  handleOpenFollowerModal = () => {
+    this.setState({ isOpenFollowerModal: true });
+  };
+
+  handleCloseFollowerModal = () => {
+    this.setState({ isOpenFollowerModal: false });
+  };
+
   handleOpenUploadImageModal = () => {
     this.setState({ isOpenUploadImageModal: true });
   };
@@ -452,18 +473,28 @@ class UserMain extends Component<Props, State> {
               <Badge
                 color="primary"
                 showZero
-                badgeContent={this.state.followingNumber}
+                badgeContent={this.state.followingUids.length}
                 className={classes.margin}
               >
-                <Chip label="フォロー" variant="outlined" color="primary" />
+                <Chip
+                  label="フォロー"
+                  variant="outlined"
+                  color="primary"
+                  onClick={this.handleOpenFollowingModal}
+                />
               </Badge>
               <Badge
                 color="primary"
                 showZero
-                badgeContent={this.state.followerNumber}
+                badgeContent={this.state.followerUids.length}
                 className={classes.margin}
               >
-                <Chip label="フォロワー" variant="outlined" color="primary" />
+                <Chip
+                  label="フォロワー"
+                  variant="outlined"
+                  color="primary"
+                  onClick={this.handleOpenFollowerModal}
+                />
               </Badge>
             </CardActions>
           </Card>
@@ -489,6 +520,19 @@ class UserMain extends Component<Props, State> {
           open={this.state.isOpenImageDetailModal}
           selectedImageDetail={this.state.selectedImageDetail}
           onClose={this.handleCloseImageDetailModal}
+        />
+
+        <FollowViewModal
+          open={this.state.isOpenFollowingModal}
+          onClose={this.handleCloseFollowingModal}
+          uids={this.state.followingUids}
+          title="フォロー"
+        />
+        <FollowViewModal
+          open={this.state.isOpenFollowerModal}
+          onClose={this.handleCloseFollowerModal}
+          uids={this.state.followerUids}
+          title="フォロワー"
         />
         {/* 画像投稿モーダル */}
         <Modal

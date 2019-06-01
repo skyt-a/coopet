@@ -12,7 +12,8 @@ import {
   CardHeader,
   Chip,
   CardActions,
-  Badge
+  Badge,
+  CardContent
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import Follow from "../utils/Follow";
@@ -62,6 +63,10 @@ const styles = (theme: Theme): StyleRules =>
       margin: theme.spacing.unit,
       padding: theme.spacing.unit
     },
+    cardContent: {
+      textAlign: "right",
+      padding: 0
+    },
     cardComponent: {
       padding: "1px",
       textAlign: "left"
@@ -70,6 +75,9 @@ const styles = (theme: Theme): StyleRules =>
       display: "flex",
       justifyContent: "flex-end",
       paddingRight: "10px"
+    },
+    followButton: {
+      margin: theme.spacing.unit
     }
   });
 
@@ -270,6 +278,7 @@ class OtherMain extends Component<Props, State> {
                     label="フォロー"
                     variant="outlined"
                     color="primary"
+                    className={classes.followButton}
                     onClick={() => this.props.onFollow(additionalUserInfo)}
                   />
                 ) : (
@@ -277,6 +286,7 @@ class OtherMain extends Component<Props, State> {
                     label="フォロー済"
                     variant="default"
                     color="primary"
+                    className={classes.followButton}
                     onClick={() => this.handleUnfollow(additionalUserInfo)}
                   />
                 )
@@ -285,7 +295,7 @@ class OtherMain extends Component<Props, State> {
               title={additionalUserInfo.userName}
               subheader={additionalUserInfo.petName}
             />
-            <CardActions className={classes.actions}>
+            <CardContent className={classes.cardContent}>
               <Chip
                 color="primary"
                 label={
@@ -296,6 +306,8 @@ class OtherMain extends Component<Props, State> {
                 className={classes.chip}
                 variant="default"
               />
+            </CardContent>
+            <CardActions className={classes.actions}>
               <Badge
                 color="primary"
                 showZero
