@@ -5,20 +5,13 @@ import withStyles, {
   StyleRules
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
-import {
-  Paper,
-  Avatar,
-  Card,
-  TextField,
-  CardHeader,
-  Chip,
-  MenuItem
-} from "@material-ui/core";
+import { Paper, Card, TextField, MenuItem } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import classNames from "classnames";
 import Loading from "./Loading";
 import User from "../utils/User";
 import animalSpecies from "../assets/data/animalSpecies.json";
+import UserCard from "../containers/UserCard";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -202,36 +195,7 @@ class UserView extends Component<Props, State> {
           {this.state.viewedUser && this.state.viewedUser.length !== 0 && (
             <Card className={classNames(classes.flex, classes.card)}>
               {this.state.viewedUser.map((user, i) => (
-                <Card
-                  className={classes.userCard}
-                  onClick={this.goToUserDetail(user)}
-                  key={i}
-                >
-                  <CardHeader
-                    avatar={
-                      <Avatar
-                        alt="Remy Sharp"
-                        src={user.photoURL}
-                        className={classes.avatar}
-                      />
-                    }
-                    action={
-                      <Chip
-                        color="primary"
-                        label={
-                          animalSpecies.filter(
-                            ele => ele.id === user.petSpecies
-                          )[0].name
-                        }
-                        className={classes.chip}
-                        variant="outlined"
-                      />
-                    }
-                    title={user.userName}
-                    subheader={user.petName}
-                    key={i}
-                  />
-                </Card>
+                <UserCard user={user} />
               ))}
             </Card>
           )}
