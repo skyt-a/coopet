@@ -33,6 +33,8 @@ export enum ActionTypes {
   AUTH_INITIALIZE = "AUTH/INITIALIZE",
   UPLOAD_IMAGE = "UPLOAD_IMAGE",
   COMMENT_IMAGE = "COMMENT_IMAGE",
+  LIKE_IMAGE = "LIKE_IMAGE",
+  DISLIKE_IMAGE = "DISLIKE_IMAGE",
   UPLOAD_INITIALIZE = "UPLOAD_INITIALIZE",
   STORE_USERINFO = "STORE_USERINFO",
   SELECT_USER = "SELECT_USER",
@@ -94,6 +96,10 @@ export const uploadActions = {
   uploadImage: actionCreator.async<any, boolean, any>(ActionTypes.UPLOAD_IMAGE),
   commentImage: actionCreator.async<any, boolean, any>(
     ActionTypes.COMMENT_IMAGE
+  ),
+  likeImage: actionCreator.async<any, boolean, any>(ActionTypes.LIKE_IMAGE),
+  dislikeImage: actionCreator.async<any, boolean, any>(
+    ActionTypes.DISLIKE_IMAGE
   ),
   initialize: actionCreator(ActionTypes.UPLOAD_INITIALIZE)
 };

@@ -63,7 +63,7 @@ function getModalStyle() {
   };
 }
 
-class FollowViewModal extends Component<Props, State> {
+class UserListModal extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -101,4 +101,4 @@ class FollowViewModal extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withRouter(FollowViewModal));
+export default withStyles(styles)(withRouter(UserListModal));

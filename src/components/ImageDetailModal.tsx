@@ -5,12 +5,19 @@ import withStyles, {
   StyleRules
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
-import { Card, CardMedia, CardContent, Modal } from "@material-ui/core";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  Modal,
+  IconButton
+} from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import CommentsView from "../containers/CommentsView";
 import User from "../utils/User";
 import UserCard from "../containers/UserCard";
 import classNames from "classnames";
+import FavoriteIcon from "@material-ui/icons/Favorite";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -22,6 +29,10 @@ const styles = (theme: Theme): StyleRules =>
       width: "80vw",
       margin: "auto",
       maxHeight: "30vh"
+    },
+    likeIcon: {
+      width: "2rem",
+      height: "2rem"
     },
     balloon: {
       position: "relative",
@@ -42,7 +53,6 @@ const styles = (theme: Theme): StyleRules =>
     },
     leftBalloon: {
       flexDirection: "row",
-      marginLeft: "35px",
       marginRight: "auto",
       "&::after": {
         left: "-10px"
@@ -51,13 +61,17 @@ const styles = (theme: Theme): StyleRules =>
   });
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
+  auth?: any;
   open: boolean;
   selectedImageDetail: any;
   onClose: () => void;
+  onLikeImage?: (detail: any) => void;
+  onDislikeImage?: (detail: any) => void;
 }
 
 interface State {
   imageUser: any;
+  isLiked: boolean;
 }
 function getModalStyle() {
   return {
@@ -72,9 +86,11 @@ class ImageDetailModal extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      imageUser: null
+      imageUser: null,
+      isLiked: false
     };
   }
+
   onRendered = () => {
     User.getUserByIdRef(this.props.selectedImageDetail.uid).once(
       "value",
@@ -86,10 +102,34 @@ class ImageDetailModal extends Component<Props, State> {
         }
       }
     );
+    console.log(this.props.auth);
+    const liked = this.props.selectedImageDetail.liked
+      ? Object.keys(this.props.selectedImageDetail.liked)
+      : [];
+    this.setState({
+      isLiked:
+        this.props.auth.additionalUserInfo.uid &&
+        liked.includes(this.props.auth.additionalUserInfo.uid)
+    });
   };
 
   onCancel = () => {
     this.props.onClose();
+  };
+
+  clickLike = () => {
+    if (!this.props.onLikeImage || !this.props.onDislikeImage) {
+      return;
+    }
+
+    if (!this.state.isLiked) {
+      this.props.onLikeImage(this.props.selectedImageDetail);
+    } else {
+      this.props.onDislikeImage(this.props.selectedImageDetail);
+    }
+    this.setState({
+      isLiked: !this.state.isLiked
+    });
   };
 
   render() {
@@ -105,6 +145,12 @@ class ImageDetailModal extends Component<Props, State> {
           <Card>
             <CardContent>
               {this.state.imageUser && <UserCard user={this.state.imageUser} />}
+              <IconButton onClick={this.clickLike}>
+                <FavoriteIcon
+                  className={classes.likeIcon}
+                  color={this.state.isLiked ? "primary" : "action"}
+                />
+              </IconButton>
               <div className={classNames(classes.balloon, classes.leftBalloon)}>
                 {this.props.selectedImageDetail.comment}
               </div>

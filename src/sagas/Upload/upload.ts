@@ -139,6 +139,70 @@ const uploadSaga = {
     } finally {
       console.log("uploadSaga: uploadImage end.");
     }
+  },
+  likeImage: function*(action: Action<any>): IterableIterator<any> {
+    console.log("uploadSaga: likeImage start.");
+    let profile = action.payload;
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) {
+      console.log(`user not signed in`);
+      throw {
+        code: "user not signed in",
+        message: "this operation requires user to be signed in."
+      };
+    }
+    try {
+      yield database
+        .ref(`/uploadedImage/${profile.key}/liked/${currentUser.uid}`)
+        .set(true, error => {
+          console.log(error);
+          if (error) {
+            console.error(error);
+          } else {
+          }
+        });
+    } catch (err) {
+      yield put(
+        uploadActions.likeImage.failed({ params: action.payload, error: err })
+      );
+      const appError = AppErrorUtil.toAppError(err, {
+        name: "likeImage",
+        stack: JSON.stringify(err),
+        severity: isIAuthError(err) ? Severity.WARNING : Severity.FATAL
+      });
+      yield put(appActions.pushErrors([appError]));
+    } finally {
+      console.log("uploadSaga: likeImage end.");
+    }
+  },
+  dislikeImage: function*(action: Action<any>): IterableIterator<any> {
+    console.log("uploadSaga: likeImage start.");
+    let profile = action.payload;
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) {
+      console.log(`user not signed in`);
+      throw {
+        code: "user not signed in",
+        message: "this operation requires user to be signed in."
+      };
+    }
+    try {
+      yield database
+        .ref(`/uploadedImage/${profile.key}/liked/${currentUser.uid}`)
+        .remove();
+    } catch (err) {
+      yield put(
+        uploadActions.likeImage.failed({ params: action.payload, error: err })
+      );
+      const appError = AppErrorUtil.toAppError(err, {
+        name: "likeImage",
+        stack: JSON.stringify(err),
+        severity: isIAuthError(err) ? Severity.WARNING : Severity.FATAL
+      });
+      yield put(appActions.pushErrors([appError]));
+    } finally {
+      console.log("uploadSaga: likeImage end.");
+    }
   }
 };
 export default uploadSaga;
