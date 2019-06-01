@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 
 import { RootState } from "../modules";
-import FollowViewModal from "../components/FollowViewModal";
+import UserListModal from "../components/UserListModal";
 import { authActions, uploadActions, appActions } from "../actions";
 
 const mapStateToProps = () => (state: RootState) => {
@@ -28,4 +28,4 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(FollowViewModal);
+)(UserListModal);

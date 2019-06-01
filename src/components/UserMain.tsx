@@ -31,8 +31,8 @@ import UploadedImage from "../utils/UploadedImage";
 import Loading from "./Loading";
 import User from "../utils/User";
 import animalSpecies from "../assets/data/animalSpecies.json";
-import ImageDetailModal from "./ImageDetailModal";
-import FollowViewModal from "../containers/FollowViewModal";
+import ImageDetailModal from "../containers/ImageDetailModal";
+import UserListModal from "../containers/UserListModal";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -532,13 +532,13 @@ class UserMain extends Component<Props, State> {
           onClose={this.handleCloseImageDetailModal}
         />
 
-        <FollowViewModal
+        <UserListModal
           open={this.state.isOpenFollowingModal}
           onClose={this.handleCloseFollowingModal}
           uids={this.state.followingUids}
           title="フォロー"
         />
-        <FollowViewModal
+        <UserListModal
           open={this.state.isOpenFollowerModal}
           onClose={this.handleCloseFollowerModal}
           uids={this.state.followerUids}

@@ -10,14 +10,15 @@ import {
   TextField,
   MenuItem,
   FormControlLabel,
-  Switch
+  Switch,
+  Badge
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import classNames from "classnames";
 import UploadedImage from "../utils/UploadedImage";
 import Loading from "./Loading";
 import animalSpecies from "../assets/data/animalSpecies.json";
-import ImageDetailModal from "./ImageDetailModal";
+import ImageDetailModal from "../containers/ImageDetailModal";
 import Follow from "../utils/Follow";
 
 const styles = (theme: Theme): StyleRules =>
@@ -30,16 +31,17 @@ const styles = (theme: Theme): StyleRules =>
     },
     card: {
       margin: theme.spacing.unit,
-      padding: theme.spacing.unit
+      padding: "10px"
+    },
+    badge: {
+      flexBasis: "calc(100% / 3.1)"
     },
     flex: {
       display: "flex",
       flexWrap: "wrap",
       overflow: "auto"
     },
-    filterArea: {},
     uploadedImageWrap: {
-      flexBasis: "calc(100% / 3.1)",
       position: "relative",
       height: "150px",
       border: "1px solid rgba(0, 0, 0, 0.12)",
@@ -115,30 +117,7 @@ class ImageView extends Component<Props, State> {
       this.props.history.push("/auth");
       return;
     }
-    // UploadedImage.getFullUploadedImageRef()
-    //   .orderByKey()
-    //   // .limitToFirst(1)
-    //   .on("value", snap => {
-    //     if (!snap || !snap.val()) {
-    //       return;
-    //     }
-    //     const result = snap.val();
-    //     this.setState({
-    //       viewedImages: Object.keys(result)
-    //         // 自分自身が投稿した画像は表示しない
-    //         .filter(key => {
-    //           const imageInfo = result[key];
-    //           return imageInfo.uid !== userInfo.uid;
-    //         })
-    //         .map(key => {
-    //           const imageInfo = result[key];
-    //           imageInfo["key"] = key;
-    //           return imageInfo;
-    //         })
-    //     });
-    //   });
-    this.updateImageViewBySpecieds(this.state.selectedSpecies);
-    this.updateImageViewByFollow();
+    this.updateImageViewBySpecies(this.state.selectedSpecies);
   };
 
   componentWillUnmount() {
@@ -166,9 +145,9 @@ class ImageView extends Component<Props, State> {
       loading: true
     });
     if (event.target.checked) {
-      this.updateImageViewByFollow();
+      this.updateImageViewByFollow(this.state.viewedImages);
     } else {
-      this.updateImageViewBySpecieds(this.state.selectedSpecies);
+      this.updateImageViewBySpecies(this.state.selectedSpecies);
     }
   };
 
@@ -177,13 +156,10 @@ class ImageView extends Component<Props, State> {
     this.setState({
       loading: true
     });
-    this.updateImageViewBySpecieds(selectedValue);
-    if (this.state.isFollowingView) {
-      this.updateImageViewByFollow();
-    }
+    this.updateImageViewBySpecies(selectedValue);
   };
 
-  updateImageViewByFollow = () => {
+  updateImageViewByFollow = (viewedImages: any[]) => {
     Follow.getFollowingRef(userInfo.uid).once("value", snap => {
       if (!snap || !snap.val()) {
         return;
@@ -191,15 +167,13 @@ class ImageView extends Component<Props, State> {
       const followingUid = snap.val();
       const users = Object.keys(followingUid);
       this.setState({
-        viewedImages: this.state.viewedImages.filter(image =>
-          users.includes(image.uid)
-        ),
+        viewedImages: viewedImages.filter(image => users.includes(image.uid)),
         loading: false
       });
     });
   };
 
-  updateImageViewBySpecieds = (selectedValue: string) => {
+  updateImageViewBySpecies = (selectedValue: string) => {
     this.setState({
       viewedImages: []
     });
@@ -229,14 +203,16 @@ class ImageView extends Component<Props, State> {
             return imageInfo;
           });
       }
-      this.setState({
-        viewedImages: viewedImages
-      });
-      if (!this.state.isFollowingView) {
+      if (this.state.isFollowingView) {
+        this.updateImageViewByFollow(viewedImages);
+      } else {
         this.setState({
-          loading: false
+          viewedImages: viewedImages
         });
       }
+      this.setState({
+        loading: false
+      });
     });
     this.setState({
       selectedSpecies: selectedValue
@@ -257,9 +233,6 @@ class ImageView extends Component<Props, State> {
   };
 
   render() {
-    if (!additionalUserInfo || this.state.loading) {
-      return <Loading />;
-    }
     const { classes } = this.props;
     return (
       <Fragment>
@@ -297,16 +270,33 @@ class ImageView extends Component<Props, State> {
           </div>
           {this.state.viewedImages && this.state.viewedImages.length !== 0 && (
             <Card className={classNames(classes.flex, classes.card)}>
-              {this.state.viewedImages.map((uploaded, i) => (
-                <div className={classes.uploadedImageWrap} key={i}>
-                  <img
-                    onClick={() => this.handleOpenImageDetailModal(uploaded)}
-                    alt={uploaded.comment}
-                    className={classes.uploadedImage}
-                    src={uploaded.url}
-                  />
-                </div>
-              ))}
+              {!this.state.isOpenImageDetailModal &&
+              (!additionalUserInfo || this.state.loading) ? (
+                <Loading />
+              ) : (
+                this.state.viewedImages.map((uploaded, i) => (
+                  <Badge
+                    key={i}
+                    color="primary"
+                    showZero
+                    badgeContent={
+                      uploaded.liked ? Object.keys(uploaded.liked).length : 0
+                    }
+                    className={classes.badge}
+                  >
+                    <div className={classes.uploadedImageWrap}>
+                      <img
+                        onClick={() =>
+                          this.handleOpenImageDetailModal(uploaded)
+                        }
+                        alt={uploaded.comment}
+                        className={classes.uploadedImage}
+                        src={uploaded.url}
+                      />
+                    </div>
+                  </Badge>
+                ))
+              )}
             </Card>
           )}
         </div>
