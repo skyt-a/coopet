@@ -349,6 +349,9 @@ class UserMain extends Component<Props, State> {
   };
 
   handleOpenFollowingModal = () => {
+    if (this.state.followingUids.length === 0) {
+      return;
+    }
     this.setState({ isOpenFollowingModal: true });
   };
 
@@ -357,6 +360,9 @@ class UserMain extends Component<Props, State> {
   };
 
   handleOpenFollowerModal = () => {
+    if (this.state.followerUids.length === 0) {
+      return;
+    }
     this.setState({ isOpenFollowerModal: true });
   };
 
@@ -436,19 +442,35 @@ class UserMain extends Component<Props, State> {
                 />
               }
               action={
-                !this.props.userInfo && (
-                  <IconButton component="label">
-                    <input
-                      type="file"
-                      onChange={this.handleChangeFile}
-                      className={classes.fileUpload}
-                    />
-                    <AddAPhotoRoundedIcon
+                <Fragment>
+                  {!this.props.userInfo && (
+                    <IconButton component="label">
+                      <input
+                        type="file"
+                        onChange={this.handleChangeFile}
+                        className={classes.fileUpload}
+                      />
+                      <AddAPhotoRoundedIcon
+                        color="primary"
+                        className={classes.addPhotoIcon}
+                      />{" "}
+                    </IconButton>
+                  )}
+                  <div>
+                    <Chip
                       color="primary"
-                      className={classes.addPhotoIcon}
-                    />{" "}
-                  </IconButton>
-                )
+                      label={
+                        additionalUserInfo &&
+                        additionalUserInfo.petSpecies &&
+                        animalSpecies.filter(
+                          ele => ele.id === additionalUserInfo.petSpecies
+                        )[0].name
+                      }
+                      className={classes.chip}
+                      variant="default"
+                    />
+                  </div>
+                </Fragment>
               }
               className={classes.cardComponent}
               title={additionalUserInfo.userName}
@@ -458,18 +480,6 @@ class UserMain extends Component<Props, State> {
               
             </CardContent> */}
             <CardActions className={classes.actions}>
-              <Chip
-                color="primary"
-                label={
-                  additionalUserInfo &&
-                  additionalUserInfo.petSpecies &&
-                  animalSpecies.filter(
-                    ele => ele.id === additionalUserInfo.petSpecies
-                  )[0].name
-                }
-                className={classes.chip}
-                variant="default"
-              />
               <Badge
                 color="primary"
                 showZero

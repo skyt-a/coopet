@@ -12,8 +12,7 @@ import {
   CardHeader,
   Chip,
   CardActions,
-  Badge,
-  CardContent
+  Badge
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import Follow from "../utils/Follow";
@@ -24,6 +23,7 @@ import User from "../utils/User";
 import animalSpecies from "../assets/data/animalSpecies.json";
 import ImageDetailModal from "./ImageDetailModal";
 import firebase from "../firebase";
+import FollowViewModal from "../containers/FollowViewModal";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -62,10 +62,6 @@ const styles = (theme: Theme): StyleRules =>
     card: {
       margin: theme.spacing.unit,
       padding: theme.spacing.unit
-    },
-    cardContent: {
-      textAlign: "right",
-      padding: 0
     },
     cardComponent: {
       padding: "1px",
@@ -113,6 +109,8 @@ interface State {
   selectedComment: string;
   isMenuOpen: boolean;
   following: boolean;
+  isOpenFollowingModal: boolean;
+  isOpenFollowerModal: boolean;
 }
 
 let authUser: any;
@@ -143,7 +141,9 @@ class OtherMain extends Component<Props, State> {
       selectedImageDetail: {},
       commentUserMast: {},
       isMenuOpen: false,
-      following: false
+      following: false,
+      isOpenFollowingModal: false,
+      isOpenFollowerModal: false
     };
   }
 
@@ -217,6 +217,28 @@ class OtherMain extends Component<Props, State> {
     additionalUserInfo = null;
   }
 
+  handleOpenFollowingModal = () => {
+    if (this.state.followingUids.length === 0) {
+      return;
+    }
+    this.setState({ isOpenFollowingModal: true });
+  };
+
+  handleCloseFollowingModal = () => {
+    this.setState({ isOpenFollowingModal: false });
+  };
+
+  handleOpenFollowerModal = () => {
+    if (this.state.followerUids.length === 0) {
+      return;
+    }
+    this.setState({ isOpenFollowerModal: true });
+  };
+
+  handleCloseFollowerModal = () => {
+    this.setState({ isOpenFollowerModal: false });
+  };
+
   handleChange = (name: string) => (event: any) => {
     const obj: any = {};
     obj[name] = event.target.value;
@@ -273,40 +295,42 @@ class OtherMain extends Component<Props, State> {
                 />
               }
               action={
-                !this.state.followerUids.includes(authUser.uid) ? (
-                  <Chip
-                    label="フォロー"
-                    variant="outlined"
-                    color="primary"
-                    className={classes.followButton}
-                    onClick={() => this.props.onFollow(additionalUserInfo)}
-                  />
-                ) : (
-                  <Chip
-                    label="フォロー済"
-                    variant="default"
-                    color="primary"
-                    className={classes.followButton}
-                    onClick={() => this.handleUnfollow(additionalUserInfo)}
-                  />
-                )
+                <Fragment>
+                  {!this.state.followerUids.includes(authUser.uid) ? (
+                    <Chip
+                      label="フォロー"
+                      variant="outlined"
+                      color="primary"
+                      className={classes.followButton}
+                      onClick={() => this.props.onFollow(additionalUserInfo)}
+                    />
+                  ) : (
+                    <Chip
+                      label="フォロー済"
+                      variant="default"
+                      color="primary"
+                      className={classes.followButton}
+                      onClick={() => this.handleUnfollow(additionalUserInfo)}
+                    />
+                  )}
+                  <div>
+                    <Chip
+                      color="primary"
+                      label={
+                        animalSpecies.filter(
+                          ele => ele.id === additionalUserInfo.petSpecies
+                        )[0].name
+                      }
+                      className={classes.chip}
+                      variant="default"
+                    />
+                  </div>
+                </Fragment>
               }
               className={classes.cardComponent}
               title={additionalUserInfo.userName}
               subheader={additionalUserInfo.petName}
             />
-            <CardContent className={classes.cardContent}>
-              <Chip
-                color="primary"
-                label={
-                  animalSpecies.filter(
-                    ele => ele.id === additionalUserInfo.petSpecies
-                  )[0].name
-                }
-                className={classes.chip}
-                variant="default"
-              />
-            </CardContent>
             <CardActions className={classes.actions}>
               <Badge
                 color="primary"
@@ -314,7 +338,12 @@ class OtherMain extends Component<Props, State> {
                 badgeContent={this.state.followingUids.length}
                 className={classes.margin}
               >
-                <Chip label="フォロー" variant="outlined" color="primary" />
+                <Chip
+                  label="フォロー"
+                  variant="outlined"
+                  color="primary"
+                  onClick={this.handleOpenFollowingModal}
+                />
               </Badge>
               <Badge
                 color="primary"
@@ -322,7 +351,12 @@ class OtherMain extends Component<Props, State> {
                 badgeContent={this.state.followerUids.length}
                 className={classes.margin}
               >
-                <Chip label="フォロワー" variant="outlined" color="primary" />
+                <Chip
+                  label="フォロワー"
+                  variant="outlined"
+                  color="primary"
+                  onClick={this.handleOpenFollowerModal}
+                />
               </Badge>
             </CardActions>
           </Card>
@@ -343,6 +377,18 @@ class OtherMain extends Component<Props, State> {
             </Card>
           )}
         </Paper>
+        <FollowViewModal
+          open={this.state.isOpenFollowingModal}
+          onClose={this.handleCloseFollowingModal}
+          uids={this.state.followingUids}
+          title="フォロー"
+        />
+        <FollowViewModal
+          open={this.state.isOpenFollowerModal}
+          onClose={this.handleCloseFollowerModal}
+          uids={this.state.followerUids}
+          title="フォロワー"
+        />
         <ImageDetailModal
           open={this.state.isOpenImageDetailModal}
           selectedImageDetail={this.state.selectedImageDetail}

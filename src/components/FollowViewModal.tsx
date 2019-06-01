@@ -90,7 +90,7 @@ class FollowViewModal extends Component<Props, State> {
             {this.state.viewedUser && this.state.viewedUser.length !== 0 && (
               <Card className={classNames(classes.flex, classes.card)}>
                 {this.state.viewedUser.map((user: any, i: number) => (
-                  <UserCard user={user} />
+                  <UserCard user={user} key={i} />
                 ))}
               </Card>
             )}
