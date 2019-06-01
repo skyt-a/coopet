@@ -5,13 +5,20 @@ import withStyles, {
   StyleRules
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
-import { Card, TextField, MenuItem } from "@material-ui/core";
+import {
+  Card,
+  TextField,
+  MenuItem,
+  FormControlLabel,
+  Switch
+} from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import classNames from "classnames";
 import UploadedImage from "../utils/UploadedImage";
 import Loading from "./Loading";
 import animalSpecies from "../assets/data/animalSpecies.json";
 import ImageDetailModal from "./ImageDetailModal";
+import Follow from "../utils/Follow";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -27,8 +34,10 @@ const styles = (theme: Theme): StyleRules =>
     },
     flex: {
       display: "flex",
-      flexWrap: "wrap"
+      flexWrap: "wrap",
+      overflow: "auto"
     },
+    filterArea: {},
     uploadedImageWrap: {
       flexBasis: "calc(100% / 3.1)",
       position: "relative",
@@ -68,6 +77,8 @@ interface State {
   postComment: string;
   commentUserMast: any;
   loading: boolean;
+  followingUid: string[];
+  isFollowingView: boolean;
 }
 
 const allSpeciesItem = {
@@ -93,7 +104,9 @@ class ImageView extends Component<Props, State> {
       selectedImageDetail: {},
       postComment: "",
       commentUserMast: {},
-      loading: false
+      loading: false,
+      followingUid: [],
+      isFollowingView: true
     };
   }
 
@@ -102,28 +115,30 @@ class ImageView extends Component<Props, State> {
       this.props.history.push("/auth");
       return;
     }
-    UploadedImage.getFullUploadedImageRef()
-      .orderByKey()
-      // .limitToFirst(1)
-      .on("value", snap => {
-        if (!snap || !snap.val()) {
-          return;
-        }
-        const result = snap.val();
-        this.setState({
-          viewedImages: Object.keys(result)
-            // 自分自身が投稿した画像は表示しない
-            .filter(key => {
-              const imageInfo = result[key];
-              return imageInfo.uid !== userInfo.uid;
-            })
-            .map(key => {
-              const imageInfo = result[key];
-              imageInfo["key"] = key;
-              return imageInfo;
-            })
-        });
-      });
+    // UploadedImage.getFullUploadedImageRef()
+    //   .orderByKey()
+    //   // .limitToFirst(1)
+    //   .on("value", snap => {
+    //     if (!snap || !snap.val()) {
+    //       return;
+    //     }
+    //     const result = snap.val();
+    //     this.setState({
+    //       viewedImages: Object.keys(result)
+    //         // 自分自身が投稿した画像は表示しない
+    //         .filter(key => {
+    //           const imageInfo = result[key];
+    //           return imageInfo.uid !== userInfo.uid;
+    //         })
+    //         .map(key => {
+    //           const imageInfo = result[key];
+    //           imageInfo["key"] = key;
+    //           return imageInfo;
+    //         })
+    //     });
+    //   });
+    this.updateImageViewBySpecieds(this.state.selectedSpecies);
+    this.updateImageViewByFollow();
   };
 
   componentWillUnmount() {
@@ -143,12 +158,52 @@ class ImageView extends Component<Props, State> {
     this.setState(obj);
   };
 
-  handleSpeciesSelectChange = () => (event: any) => {
+  handlecheckChange = (name: string) => (event: any) => {
+    const obj: any = {};
+    obj[name] = event.target.checked;
+    this.setState(obj);
     this.setState({
-      viewedImages: [],
       loading: true
     });
+    if (event.target.checked) {
+      this.updateImageViewByFollow();
+    } else {
+      this.updateImageViewBySpecieds(this.state.selectedSpecies);
+    }
+  };
+
+  handleSpeciesSelectChange = () => (event: any) => {
     const selectedValue = event.target.value;
+    this.setState({
+      loading: true
+    });
+    this.updateImageViewBySpecieds(selectedValue);
+    if (this.state.isFollowingView) {
+      this.updateImageViewByFollow();
+    }
+  };
+
+  updateImageViewByFollow = () => {
+    Follow.getFollowingRef(userInfo.uid).once("value", snap => {
+      if (!snap || !snap.val()) {
+        return;
+      }
+      const followingUid = snap.val();
+      const users = Object.keys(followingUid);
+      this.setState({
+        viewedImages: this.state.viewedImages.filter(image =>
+          users.includes(image.uid)
+        ),
+        loading: false
+      });
+    });
+  };
+
+  updateImageViewBySpecieds = (selectedValue: string) => {
+    this.setState({
+      viewedImages: []
+    });
+    Follow.getFollowingRef(userInfo.uid).off();
     UploadedImage.getFullUploadedImageRef().off();
     let targetRef: any = UploadedImage.getFullUploadedImageRef();
     // .limitToFirst(1)
@@ -175,9 +230,13 @@ class ImageView extends Component<Props, State> {
           });
       }
       this.setState({
-        viewedImages: viewedImages,
-        loading: false
+        viewedImages: viewedImages
       });
+      if (!this.state.isFollowingView) {
+        this.setState({
+          loading: false
+        });
+      }
     });
     this.setState({
       selectedSpecies: selectedValue
@@ -205,24 +264,37 @@ class ImageView extends Component<Props, State> {
     return (
       <Fragment>
         <div className={classes.root}>
-          <TextField
-            select
-            label="ペットの種類"
-            className={classes.select}
-            value={this.state.selectedSpecies}
-            margin="dense"
-            variant="outlined"
-            onChange={this.handleSpeciesSelectChange()}
-          >
-            <MenuItem key={allSpeciesItem.id} value={allSpeciesItem.id}>
-              {allSpeciesItem.name}
-            </MenuItem>
-            {animalSpecies.map(option => (
-              <MenuItem key={option.id} value={option.id}>
-                {option.name}
+          <div className={classes.filterArea}>
+            <TextField
+              select
+              label="ペットの種類"
+              className={classes.select}
+              value={this.state.selectedSpecies}
+              margin="dense"
+              variant="outlined"
+              onChange={this.handleSpeciesSelectChange()}
+            >
+              <MenuItem key={allSpeciesItem.id} value={allSpeciesItem.id}>
+                {allSpeciesItem.name}
               </MenuItem>
-            ))}
-          </TextField>
+              {animalSpecies.map(option => (
+                <MenuItem key={option.id} value={option.id}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={this.state.isFollowingView}
+                  onChange={this.handlecheckChange("isFollowingView")}
+                  value="isFollowingView"
+                  color="primary"
+                />
+              }
+              label="フォローフィルタ"
+            />
+          </div>
           {this.state.viewedImages && this.state.viewedImages.length !== 0 && (
             <Card className={classNames(classes.flex, classes.card)}>
               {this.state.viewedImages.map((uploaded, i) => (
