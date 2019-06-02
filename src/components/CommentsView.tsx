@@ -20,12 +20,14 @@ const styles = (theme: Theme): StyleRules =>
     avatarLeft: {
       bottom: 0,
       left: 0,
+      top: "20px",
       display: "inline-block",
       position: "absolute"
     },
     avatarRight: {
       bottom: 0,
       right: 0,
+      top: "20px",
       display: "inline-block",
       position: "absolute"
     },
@@ -51,6 +53,7 @@ const styles = (theme: Theme): StyleRules =>
       textAlign: "left",
       borderRadius: "15px",
       marginTop: "20px",
+      wordBreak: "break-all",
       "&::after": {
         content: "''",
         border: "14px solid transparent",

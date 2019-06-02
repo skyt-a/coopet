@@ -251,7 +251,6 @@ class UserMain extends Component<Props, State> {
       });
     });
     UploadedImage.getMyUploadedImageRef(userInfo.uid).on("child_removed", _ => {
-      console.log("deleteeddddddd");
       UploadedImage.getMyUploadedImageRef(userInfo.uid).off();
       UploadedImage.getMyUploadedImageRef(userInfo.uid).on("value", snap => {
         if (snap) {
@@ -260,14 +259,15 @@ class UserMain extends Component<Props, State> {
         if (!snap || snap.val() === undefined) {
           return;
         }
-        console.log("onnndndndndndnd");
         const result = snap.val();
         this.setState({
-          uploadedImages: result ? Object.keys(result).map(key => {
-            const image = result[key];
-            image["key"] = key;
-            return image;
-          }) : []
+          uploadedImages: result
+            ? Object.keys(result).map(key => {
+                const image = result[key];
+                image["key"] = key;
+                return image;
+              })
+            : []
           //Object.values(snap.val())
         });
       });
@@ -548,62 +548,70 @@ class UserMain extends Component<Props, State> {
           )}
         </Paper>
         {/* 画像詳細モーダル */}
-        <ImageDetailModal
-          open={this.state.isOpenImageDetailModal}
-          selectedImageDetail={this.state.selectedImageDetail}
-          onClose={this.handleCloseImageDetailModal}
-        />
+        {this.state.isOpenImageDetailModal ? (
+          <ImageDetailModal
+            open={this.state.isOpenImageDetailModal}
+            selectedImageDetail={this.state.selectedImageDetail}
+            onClose={this.handleCloseImageDetailModal}
+          />
+        ) : null}
 
-        <UserListModal
-          open={this.state.isOpenFollowingModal}
-          onClose={this.handleCloseFollowingModal}
-          uids={this.state.followingUids}
-          title="フォロー"
-        />
-        <UserListModal
-          open={this.state.isOpenFollowerModal}
-          onClose={this.handleCloseFollowerModal}
-          uids={this.state.followerUids}
-          title="フォロワー"
-        />
+        {this.state.isOpenFollowingModal ? (
+          <UserListModal
+            open={this.state.isOpenFollowingModal}
+            onClose={this.handleCloseFollowingModal}
+            uids={this.state.followingUids}
+            title="フォロー"
+          />
+        ) : null}
+        {this.state.isOpenFollowerModal ? (
+          <UserListModal
+            open={this.state.isOpenFollowerModal}
+            onClose={this.handleCloseFollowerModal}
+            uids={this.state.followerUids}
+            title="フォロワー"
+          />
+        ) : null}
         {/* 画像投稿モーダル */}
-        <Modal
-          open={this.state.isOpenUploadImageModal}
-          onClose={this.handleCloseUploadImageModal}
-        >
-          <div style={getModalStyle()} className={classes.paper}>
-            <Card>
-              <CardMedia
-                component="img"
-                className={classes.media}
-                src={this.state.photoURL || userInfo.photoURL}
-                title="Contemplative Reptile"
-              />
-              <CardContent>
-                <TextField
-                  id="outlined-multiline-static"
-                  label="コメント"
-                  multiline
-                  rows="4"
-                  defaultValue=""
-                  onChange={this.handleChange("comment")}
-                  className={classes.textField}
-                  margin="normal"
-                  variant="outlined"
+        {this.state.isOpenUploadImageModal ? (
+          <Modal
+            open={this.state.isOpenUploadImageModal}
+            onClose={this.handleCloseUploadImageModal}
+          >
+            <div style={getModalStyle()} className={classes.paper}>
+              <Card>
+                <CardMedia
+                  component="img"
+                  className={classes.media}
+                  src={this.state.photoURL || userInfo.photoURL}
+                  title="Contemplative Reptile"
                 />
-                <div>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    onClick={this.uploadImage}
-                  >
-                    投稿
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </Modal>
+                <CardContent>
+                  <TextField
+                    id="outlined-multiline-static"
+                    label="コメント"
+                    multiline
+                    rows="4"
+                    defaultValue=""
+                    onChange={this.handleChange("comment")}
+                    className={classes.textField}
+                    margin="normal"
+                    variant="outlined"
+                  />
+                  <div>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      onClick={this.uploadImage}
+                    >
+                      投稿
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </Modal>
+        ) : null}
       </Fragment>
     );
   }

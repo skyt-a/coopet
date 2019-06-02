@@ -1,11 +1,21 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
   WithStyles,
   StyleRules
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
-import { Card, CardMedia, CardContent, Modal, Button } from "@material-ui/core";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  Modal,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions
+} from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import CommentsView from "../containers/CommentsView";
 import User from "../utils/User";
@@ -19,7 +29,11 @@ import CommentInput from "../containers/CommentInput";
 const styles = (theme: Theme): StyleRules =>
   createStyles({
     modal: {
-      overflow: "auto"
+      overflow: "auto",
+      outline: "none"
+    },
+    modalContent: {
+      outline: "none"
     },
     media: {
       objectFit: "contain",
@@ -40,6 +54,7 @@ const styles = (theme: Theme): StyleRules =>
       textAlign: "left",
       borderRadius: "15px",
       marginTop: "5px",
+      wordBreak: "break-all",
       "&::after": {
         content: "''",
         border: "14px solid transparent",
@@ -80,6 +95,7 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
 interface State {
   imageUser: any;
   isLiked: boolean;
+  isOpenDeleteCheckDialog: boolean;
 }
 function getModalStyle() {
   return {
@@ -96,7 +112,8 @@ class ImageDetailModal extends Component<Props, State> {
     super(props);
     this.state = {
       imageUser: null,
-      isLiked: false
+      isLiked: false,
+      isOpenDeleteCheckDialog: false
     };
   }
 
@@ -111,7 +128,6 @@ class ImageDetailModal extends Component<Props, State> {
         }
       }
     );
-    console.log(this.props.auth);
     const liked = this.props.selectedImageDetail.liked
       ? Object.keys(this.props.selectedImageDetail.liked)
       : [];
@@ -141,83 +157,121 @@ class ImageDetailModal extends Component<Props, State> {
     });
   };
 
+  handleOpenCheckDeleteDialog = () => {
+    this.setState({
+      isOpenDeleteCheckDialog: true
+    });
+  };
+
+  handleCloseCheckDeleteDialog = () => {
+    this.setState({
+      isOpenDeleteCheckDialog: false
+    });
+  };
+
   render() {
     const { classes } = this.props;
     return (
-      <Modal
-        open={this.props.open}
-        onRendered={this.onRendered}
-        onBackdropClick={this.props.onClose}
-        className={classes.modal}
-      >
-        <div>
-          <div style={getModalStyle()}>
-            <Card>
-              <CardContent>
-                {this.state.imageUser && (
-                  <UserCard user={this.state.imageUser} />
-                )}
-                <div
-                  className={classNames(classes.balloon, classes.leftBalloon)}
-                >
-                  {this.props.selectedImageDetail.comment}
-                </div>
-              </CardContent>
-              <CardMedia
-                component="img"
-                className={classes.media}
-                src={this.props.selectedImageDetail.url}
-                title="Contemplative Reptile"
-              />
-              <CommentsView
-                onCancel={this.onCancel}
+      <Fragment>
+        <Modal
+          open={this.props.open}
+          onRendered={this.onRendered}
+          onBackdropClick={this.props.onClose}
+          className={classes.modal}
+        >
+          <div className={classes.modalContent}>
+            <div style={getModalStyle()}>
+              <Card>
+                <CardContent>
+                  {this.state.imageUser && (
+                    <UserCard user={this.state.imageUser} />
+                  )}
+                  <div
+                    className={classNames(classes.balloon, classes.leftBalloon)}
+                  >
+                    {this.props.selectedImageDetail.comment}
+                  </div>
+                </CardContent>
+                <CardMedia
+                  component="img"
+                  className={classes.media}
+                  src={this.props.selectedImageDetail.url}
+                  title="Contemplative Reptile"
+                />
+                <CommentsView
+                  onCancel={this.onCancel}
+                  selectedImageDetail={this.props.selectedImageDetail}
+                />
+              </Card>
+            </div>
+            <div className={classes.commentInputArea}>
+              <CommentInput
                 selectedImageDetail={this.props.selectedImageDetail}
               />
-            </Card>
-          </div>
-          <div className={classes.commentInputArea}>
-            <CommentInput
-              selectedImageDetail={this.props.selectedImageDetail}
-            />
-          </div>
-          <div className={classes.modalFooter}>
-            {this.props.auth.additionalUserInfo.uid ===
-              this.props.selectedImageDetail.uid && (
+            </div>
+            <div className={classes.modalFooter}>
+              {this.props.auth.additionalUserInfo.uid ===
+                this.props.selectedImageDetail.uid && (
+                <Button
+                  onClick={this.handleOpenCheckDeleteDialog}
+                  color="secondary"
+                  variant="contained"
+                >
+                  <DeleteIcon className={classes.likeIcon} color="action" />
+                </Button>
+              )}
               <Button
-                onClick={() => {
-                  if (!this.props.onDeleteImage) {
-                    return;
-                  }
-                  this.props.onDeleteImage(this.props.selectedImageDetail);
-                  this.props.onClose();
-                }}
+                onClick={this.clickLike}
                 color="secondary"
                 variant="contained"
               >
-                <DeleteIcon className={classes.likeIcon} color="action" />
+                <FavoriteIcon
+                  className={classes.likeIcon}
+                  color={this.state.isLiked ? "primary" : "action"}
+                />
               </Button>
-            )}
-            <Button
-              onClick={this.clickLike}
-              color="secondary"
-              variant="contained"
-            >
-              <FavoriteIcon
-                className={classes.likeIcon}
-                color={this.state.isLiked ? "primary" : "action"}
-              />
-            </Button>
-            <Button
-              color="secondary"
-              variant="contained"
-              onClick={this.onCancel}
-              className={classes.actionButton}
-            >
-              <ClearIcon color="action" />
-            </Button>
+              <Button
+                color="secondary"
+                variant="contained"
+                onClick={this.onCancel}
+                className={classes.actionButton}
+              >
+                <ClearIcon color="action" />
+              </Button>
+            </div>
           </div>
-        </div>
-      </Modal>
+        </Modal>
+        <Dialog
+          open={this.state.isOpenDeleteCheckDialog}
+          onClose={this.handleCloseCheckDeleteDialog}
+        >
+          <DialogContent>
+            <DialogContentText>本当に削除しますか？</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              autoFocus
+              onClick={this.handleCloseCheckDeleteDialog}
+              color="primary"
+            >
+              キャンセル
+            </Button>
+            <Button
+              onClick={() => {
+                if (!this.props.onDeleteImage) {
+                  return;
+                }
+                this.props.onDeleteImage(this.props.selectedImageDetail);
+                this.handleCloseCheckDeleteDialog();
+                this.props.onClose();
+              }}
+              color="primary"
+            >
+              削除
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Fragment>
     );
   }
 }

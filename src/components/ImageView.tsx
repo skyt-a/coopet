@@ -94,10 +94,6 @@ class ImageView extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     userInfo = this.props.auth.user;
-    if (!userInfo) {
-      this.props.history.push("/auth");
-      return;
-    }
     additionalUserInfo = this.props.auth.additionalUserInfo;
     this.state = {
       selectedSpecies: allSpeciesItem.id,
@@ -110,6 +106,10 @@ class ImageView extends Component<Props, State> {
       followingUid: [],
       isFollowingView: true
     };
+    if (!userInfo) {
+      this.props.history.push("/auth");
+      return;
+    }
   }
 
   componentDidMount = () => {
@@ -242,7 +242,9 @@ class ImageView extends Component<Props, State> {
               select
               label="ペットの種類"
               className={classes.select}
-              value={this.state.selectedSpecies}
+              value={
+                this.state ? this.state.selectedSpecies : allSpeciesItem.id
+              }
               margin="dense"
               variant="outlined"
               onChange={this.handleSpeciesSelectChange()}
@@ -300,11 +302,13 @@ class ImageView extends Component<Props, State> {
             </Card>
           )}
         </div>
-        <ImageDetailModal
-          open={this.state.isOpenImageDetailModal}
-          selectedImageDetail={this.state.selectedImageDetail}
-          onClose={this.handleCloseImageDetailModal}
-        />
+        {this.state.isOpenImageDetailModal ? (
+          <ImageDetailModal
+            open={this.state.isOpenImageDetailModal}
+            selectedImageDetail={this.state.selectedImageDetail}
+            onClose={this.handleCloseImageDetailModal}
+          />
+        ) : null}
       </Fragment>
     );
   }
