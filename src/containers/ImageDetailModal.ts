@@ -18,6 +18,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
     },
     onDislikeImage: (param: any) => {
       dispatch(uploadActions.dislikeImage.started(param));
+    },
+    onDeleteImage: (param: any) => {
+      dispatch(uploadActions.deleteImage.started(param));
     }
   };
 };
