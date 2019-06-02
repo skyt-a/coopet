@@ -1,3 +1,9 @@
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { appActions } from "../actions";
+
 import React, { Component } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
@@ -75,4 +81,21 @@ class UserCard extends Component<Props> {
   }
 }
 
-export default withStyles(styles)(withRouter(UserCard));
+const mapStateToProps = () => (state: RootState) => {
+  return {
+    auth: state.Auth
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onSelectUser: (user: any) => {
+      dispatch(appActions.selectUser(user));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(withRouter(UserCard)));

@@ -1,3 +1,9 @@
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { uploadActions } from "../actions";
+
 import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
@@ -66,6 +72,7 @@ const styles = (theme: Theme): StyleRules =>
     leftBalloon: {
       flexDirection: "row",
       marginRight: "auto",
+      marginLeft: "30px",
       "&::after": {
         left: "-10px"
       }
@@ -276,4 +283,27 @@ class ImageDetailModal extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withRouter(ImageDetailModal));
+const mapStateToProps = () => (state: RootState) => {
+  return {
+    auth: state.Auth
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onLikeImage: (param: any) => {
+      dispatch(uploadActions.likeImage.started(param));
+    },
+    onDislikeImage: (param: any) => {
+      dispatch(uploadActions.dislikeImage.started(param));
+    },
+    onDeleteImage: (param: any) => {
+      dispatch(uploadActions.deleteImage.started(param));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(withRouter(ImageDetailModal)));

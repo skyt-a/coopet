@@ -1,4 +1,10 @@
 import React, { Component, Fragment } from "react";
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { authActions } from "../actions";
+
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
   WithStyles,
@@ -19,7 +25,7 @@ import firebase from "../firebase";
 import { UserInfo } from "../models/UserInfo";
 import IconUtil from "../utils/IconUtil";
 import classNames from "classnames";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 import dog from "../assets/images/dog.svg";
 
 const styles = (theme: Theme): StyleRules =>
@@ -223,4 +229,33 @@ class Auth extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withRouter(Auth));
+const mapStateToProps = () => (state: RootState) => {
+  return {
+    auth: state.Auth
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onAuth: (signing: any) => {
+      dispatch(authActions.signIn.started(signing));
+    },
+    onSignUp: (signing: any) => {
+      dispatch(authActions.signUp.started(signing));
+    },
+    // onUpdateUser: (user: any) => {
+    //   dispatch(authActions.updateUserInfo.started(user));
+    // },
+    onStoreUserInfo: (p: any) => {
+      dispatch(authActions.storeUserInfo.started(p));
+    },
+    onLogout: () => {
+      dispatch(authActions.signOut.started());
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(withRouter(Auth)));

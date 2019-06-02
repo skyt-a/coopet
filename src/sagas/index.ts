@@ -6,6 +6,7 @@ import uploadSaga from "./Upload/upload";
 import followSaga from "./Follow/follow";
 
 export default function* rootSaga(): IterableIterator<any> {
+  // redux-sagaの適用設定
   yield all([
     authSaga.checkUserStateSaga(),
     takeLatest(ActionTypes.APP_INITIALIZE, appSaga.initialize),

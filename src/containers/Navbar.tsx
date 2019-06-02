@@ -1,3 +1,8 @@
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+
 import React, { Component } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
@@ -35,7 +40,6 @@ const styles = (theme: Theme): StyleRules =>
   });
 
 interface Props extends WithStyles<typeof styles> {
-  title?: string;
   menuItems?: any[];
   open?: boolean;
   onOpen?: () => void;
@@ -94,4 +98,17 @@ class Navbar extends Component<Props> {
   }
 }
 
-export default withStyles(styles)(Navbar);
+const mapStateToProps = () => (state: RootState) => {
+  return {
+    auth: state.Auth
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(Navbar));

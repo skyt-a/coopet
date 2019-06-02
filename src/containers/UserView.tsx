@@ -1,3 +1,9 @@
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { authActions, uploadActions, appActions } from "../actions";
+
 import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
@@ -8,10 +14,10 @@ import createStyles from "@material-ui/core/styles/createStyles";
 import { Paper, Card, TextField, MenuItem } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import classNames from "classnames";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 import User from "../utils/User";
 import animalSpecies from "../assets/data/animalSpecies.json";
-import UserCard from "../containers/UserCard";
+import UserCard from "./UserCard";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -205,4 +211,27 @@ class UserView extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withRouter(UserView));
+const mapStateToProps = () => (state: RootState) => {
+  return {
+    auth: state.Auth
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onStoreUserInfo: (p: any) => {
+      dispatch(authActions.storeUserInfo.started(p));
+    },
+    onUploadImage: (param: any) => {
+      dispatch(uploadActions.uploadImage.started(param));
+    },
+    onSelectUser: (user: any) => {
+      dispatch(appActions.selectUser(user));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(withRouter(UserView)));

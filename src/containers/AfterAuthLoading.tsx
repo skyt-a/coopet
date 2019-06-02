@@ -1,7 +1,13 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { authActions } from "../actions";
+
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 import User from "../utils/User";
 
 interface Props extends RouteComponentProps {
@@ -44,4 +50,21 @@ class AfterAuthLoading extends Component<Props, State> {
   }
 }
 
-export default withRouter(AfterAuthLoading);
+const mapStateToProps = () => (state: RootState) => {
+  return {
+    auth: state.Auth
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onStoreUserInfo: (p: any) => {
+      dispatch(authActions.storeUserInfo.started(p));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(AfterAuthLoading));

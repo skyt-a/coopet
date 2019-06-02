@@ -1,3 +1,9 @@
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { authActions, uploadActions } from "../actions";
+
 import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
@@ -6,20 +12,17 @@ import withStyles, {
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 import {
-  Card,
   TextField,
   MenuItem,
   FormControlLabel,
-  Switch,
-  Badge
+  Switch
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import classNames from "classnames";
 import UploadedImage from "../utils/UploadedImage";
-import Loading from "./Loading";
 import animalSpecies from "../assets/data/animalSpecies.json";
 import ImageDetailModal from "../containers/ImageDetailModal";
 import Follow from "../utils/Follow";
+import ImageList from "../components/ImageList";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -66,11 +69,6 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   onStoreUserInfo: (p: any) => void;
 }
 
-type UploadedImageInfo = {
-  url: string;
-  comment: string;
-};
-
 interface State {
   selectedSpecies: string;
   viewedImages: any[];
@@ -89,12 +87,10 @@ const allSpeciesItem = {
 };
 
 let userInfo: any;
-let additionalUserInfo: any;
 class ImageView extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     userInfo = this.props.auth.user;
-    additionalUserInfo = this.props.auth.additionalUserInfo;
     this.state = {
       selectedSpecies: allSpeciesItem.id,
       viewedImages: [],
@@ -270,37 +266,11 @@ class ImageView extends Component<Props, State> {
               label="フォローフィルタ"
             />
           </div>
-          {this.state.viewedImages && this.state.viewedImages.length !== 0 && (
-            <Card className={classNames(classes.flex, classes.card)}>
-              {!this.state.isOpenImageDetailModal &&
-              (!additionalUserInfo || this.state.loading) ? (
-                <Loading />
-              ) : (
-                this.state.viewedImages.map((uploaded, i) => (
-                  <Badge
-                    key={i}
-                    color="primary"
-                    showZero
-                    badgeContent={
-                      uploaded.liked ? Object.keys(uploaded.liked).length : 0
-                    }
-                    className={classes.badge}
-                  >
-                    <div className={classes.uploadedImageWrap}>
-                      <img
-                        onClick={() =>
-                          this.handleOpenImageDetailModal(uploaded)
-                        }
-                        alt={uploaded.comment}
-                        className={classes.uploadedImage}
-                        src={uploaded.url}
-                      />
-                    </div>
-                  </Badge>
-                ))
-              )}
-            </Card>
-          )}
+          <ImageList
+            uploadedImages={this.state.viewedImages}
+            handleOpenImageDetailModal={this.handleOpenImageDetailModal}
+          />
+          {/* )} */}
         </div>
         {this.state.isOpenImageDetailModal ? (
           <ImageDetailModal
@@ -314,4 +284,24 @@ class ImageView extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withRouter(ImageView));
+const mapStateToProps = () => (state: RootState) => {
+  return {
+    auth: state.Auth
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onStoreUserInfo: (p: any) => {
+      dispatch(authActions.storeUserInfo.started(p));
+    },
+    onUploadImage: (param: any) => {
+      dispatch(uploadActions.uploadImage.started(param));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(withRouter(ImageView)));

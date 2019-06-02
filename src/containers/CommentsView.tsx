@@ -1,3 +1,9 @@
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { appActions, uploadActions } from "../actions";
+
 import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
@@ -293,4 +299,22 @@ class CommentsView extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withRouter(CommentsView));
+const mapStateToProps = () => (state: RootState) => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onSelectUser: (user: any) => {
+      dispatch(appActions.selectUser(user));
+    },
+    onCommentImage: (param: any) => {
+      dispatch(uploadActions.commentImage.started(param));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(withRouter(CommentsView)));
