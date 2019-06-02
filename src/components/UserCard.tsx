@@ -13,7 +13,7 @@ const styles = (theme: Theme): StyleRules =>
   createStyles({
     userCard: {
       width: "95%",
-      margin: "2px"
+      margin: "auto"
     },
     flex: {
       display: "flex",

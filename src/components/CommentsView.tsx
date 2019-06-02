@@ -5,13 +5,7 @@ import withStyles, {
   StyleRules
 } from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
-import {
-  Typography,
-  CardContent,
-  Avatar,
-  TextField,
-  Button
-} from "@material-ui/core";
+import { Typography, CardContent, Avatar } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
 import classNames from "classnames";
@@ -290,36 +284,6 @@ class CommentsView extends Component<Props, State> {
                 );
               }
             })}
-        </CardContent>
-        <CardContent>
-          <div className={classes.postArea}>
-            <TextField
-              label="コメント"
-              value={this.state.postComment}
-              onChange={this.handleChange("postComment")}
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-            <div className={classes.buttonArea}>
-              <Button
-                color="secondary"
-                variant="contained"
-                onClick={this.props.onCancel}
-                className={classes.actionButton}
-              >
-                キャンセル
-              </Button>
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={this.commentUploadedImage}
-                className={classes.actionButton}
-              >
-                投稿
-              </Button>
-            </div>
-          </div>
         </CardContent>
       </Fragment>
     );

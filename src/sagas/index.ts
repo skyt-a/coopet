@@ -24,6 +24,7 @@ export default function* rootSaga(): IterableIterator<any> {
     ),
     takeEvery(`${ActionTypes.STORE_USERINFO}_STARTED`, authSaga.storeUserInfo),
     takeEvery(`${ActionTypes.UPLOAD_IMAGE}_STARTED`, uploadSaga.uploadImage),
+    takeEvery(`${ActionTypes.DELETE_IMAGE}_STARTED`, uploadSaga.deleteImage),
     takeEvery(`${ActionTypes.COMMENT_IMAGE}_STARTED`, uploadSaga.commentImage),
     takeEvery(`${ActionTypes.LIKE_IMAGE}_STARTED`, uploadSaga.likeImage),
     takeEvery(`${ActionTypes.DISLIKE_IMAGE}_STARTED`, uploadSaga.dislikeImage),

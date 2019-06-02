@@ -32,6 +32,7 @@ export enum ActionTypes {
   AUTH_STATE_CHANGED = "AUTH/STATE_CHANGED",
   AUTH_INITIALIZE = "AUTH/INITIALIZE",
   UPLOAD_IMAGE = "UPLOAD_IMAGE",
+  DELETE_IMAGE = "DELETE_IMAGE",
   COMMENT_IMAGE = "COMMENT_IMAGE",
   LIKE_IMAGE = "LIKE_IMAGE",
   DISLIKE_IMAGE = "DISLIKE_IMAGE",
@@ -94,6 +95,8 @@ export const authActions = {
 
 export const uploadActions = {
   uploadImage: actionCreator.async<any, boolean, any>(ActionTypes.UPLOAD_IMAGE),
+  deleteImage: actionCreator.async<any, boolean, any>(ActionTypes.DELETE_IMAGE),
+
   commentImage: actionCreator.async<any, boolean, any>(
     ActionTypes.COMMENT_IMAGE
   ),

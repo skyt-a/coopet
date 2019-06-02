@@ -250,6 +250,28 @@ class UserMain extends Component<Props, State> {
         //Object.values(snap.val())
       });
     });
+    UploadedImage.getMyUploadedImageRef(userInfo.uid).on("child_removed", _ => {
+      console.log("deleteeddddddd");
+      UploadedImage.getMyUploadedImageRef(userInfo.uid).off();
+      UploadedImage.getMyUploadedImageRef(userInfo.uid).on("value", snap => {
+        if (snap) {
+          console.log(snap.val());
+        }
+        if (!snap || snap.val() === undefined) {
+          return;
+        }
+        console.log("onnndndndndndnd");
+        const result = snap.val();
+        this.setState({
+          uploadedImages: result ? Object.keys(result).map(key => {
+            const image = result[key];
+            image["key"] = key;
+            return image;
+          }) : []
+          //Object.values(snap.val())
+        });
+      });
+    });
     setTimeout(() => {
       this.setState({
         loading: false
