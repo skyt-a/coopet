@@ -25,5 +25,8 @@
   * Storage
     + 画像保存
 
-### ビルド&デプロイ
+### テスト
+- Jest + enzyme
+
+### 
 - Circle CI
