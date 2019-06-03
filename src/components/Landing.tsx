@@ -46,6 +46,9 @@ const styles = (theme: Theme): StyleRules =>
   });
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
+/**
+ * ランディングページ
+ */
 class Landing extends Component<Props> {
   constructor(props: Props) {
     super(props);

@@ -85,6 +85,10 @@ const providers: {
 ];
 const testUserMail = "testtestcoopet@gmail.com";
 const testUserPassword = "testtestcoopet";
+
+/**
+ * 認証画面
+ */
 export class Auth extends Component<Props, State> {
   unsubscribe: any;
   constructor(props: Props) {
@@ -118,12 +122,18 @@ export class Auth extends Component<Props, State> {
     this.unsubscribe();
   }
 
+  /**
+   * 画面入力時のハンドラー
+   */
   handleChange = (name: string) => (event: any) => {
     const obj: any = {};
     obj[name] = event.target.value;
     this.setState(obj);
   };
 
+  /**
+   * 認証処理
+   */
   authByProvider = (providerName: string) => {
     const signing = {
       email: this.state.email,
@@ -136,6 +146,10 @@ export class Auth extends Component<Props, State> {
     this.props.onAuth(signing);
   };
 
+  /**
+   * メール&パスワードによる認証処理
+   * テキストフィールド入力値の入力チェックを行う
+   */
   authPassword = () => {
     if (this.validateAuthPassword()) {
       return;
@@ -143,6 +157,9 @@ export class Auth extends Component<Props, State> {
     this.authByProvider("Password");
   };
 
+  /**
+   * メールアドレスとパスワードの入力チェック
+   */
   validateAuthPassword = () => {
     let hasValidationError = false;
     if (!this.state.email) {
@@ -174,6 +191,9 @@ export class Auth extends Component<Props, State> {
     return hasValidationError;
   };
 
+  /**
+   * テストユーザーでの認証
+   */
   authByTestUser = () => {
     const signing = {
       email: testUserMail,
@@ -268,6 +288,7 @@ export class Auth extends Component<Props, State> {
   }
 }
 
+// reduxとのconnect設定
 const mapStateToProps = () => (state: RootState) => {
   return {
     auth: state.Auth,

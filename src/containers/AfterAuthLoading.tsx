@@ -15,6 +15,10 @@ interface Props extends RouteComponentProps {
 }
 
 let userInfo: any;
+
+/**
+ * 認証完了後のローディング画面
+ */
 export class AfterAuthLoading extends Component<Props> {
   constructor(props: Props) {
     super(props);
@@ -36,6 +40,9 @@ export class AfterAuthLoading extends Component<Props> {
     });
   };
 
+  /**
+   * Firebase認証ユーザーを取得する
+   */
   getFirebaseCurrentUser = () => {
     return firebase.auth().currentUser;
   };
@@ -52,6 +59,7 @@ export class AfterAuthLoading extends Component<Props> {
   }
 }
 
+// reduxとのconnect設定
 const mapStateToProps = () => (state: RootState) => {
   return {
     auth: state.Auth

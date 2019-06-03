@@ -69,6 +69,9 @@ function getModalStyle() {
   };
 }
 
+/**
+ * ユーザー一覧モーダル
+ */
 class UserListModal extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -107,6 +110,7 @@ class UserListModal extends Component<Props, State> {
   }
 }
 
+// reduxへのconnect
 const mapStateToProps = () => (state: RootState) => {
   return {
     auth: state.Auth

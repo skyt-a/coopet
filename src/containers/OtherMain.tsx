@@ -105,8 +105,11 @@ interface State {
 
 let authUser: any;
 let userInfo: any;
+
+/**
+ * 他ユーザー詳細画面
+ */
 class OtherMain extends Component<Props, State> {
-  menuItems = [];
   constructor(props: Props) {
     super(props);
     authUser = firebase.auth().currentUser;
@@ -185,6 +188,9 @@ class OtherMain extends Component<Props, State> {
     userInfo = null;
   }
 
+  /**
+   * フォロー一覧モーダル表示
+   */
   handleOpenFollowingModal = () => {
     if (this.state.followingUids.length === 0) {
       return;
@@ -192,10 +198,16 @@ class OtherMain extends Component<Props, State> {
     this.setState({ isOpenFollowingModal: true });
   };
 
+  /**
+   * フォロー一覧モーダル非表示
+   */
   handleCloseFollowingModal = () => {
     this.setState({ isOpenFollowingModal: false });
   };
 
+  /**
+   * フォロワー一覧モーダル表示
+   */
   handleOpenFollowerModal = () => {
     if (this.state.followerUids.length === 0) {
       return;
@@ -203,10 +215,16 @@ class OtherMain extends Component<Props, State> {
     this.setState({ isOpenFollowerModal: true });
   };
 
+  /**
+   * フォロワー一覧モーダル非表示
+   */
   handleCloseFollowerModal = () => {
     this.setState({ isOpenFollowerModal: false });
   };
 
+  /**
+   * 画像詳細モーダル表示
+   */
   handleOpenImageDetailModal = (selectedImageDetail: any) => {
     this.setState({
       selectedImageDetail: selectedImageDetail,
@@ -214,6 +232,9 @@ class OtherMain extends Component<Props, State> {
     });
   };
 
+  /**
+   * 画像詳細モーダル非表示
+   */
   handleCloseImageDetailModal = () => {
     this.setState({
       isOpenImageDetailModal: false
@@ -268,6 +289,7 @@ class OtherMain extends Component<Props, State> {
   }
 }
 
+// reduxへのconnect
 const mapStateToProps = () => (state: RootState) => {
   return {
     auth: state.Auth

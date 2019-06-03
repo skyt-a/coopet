@@ -112,7 +112,12 @@ interface State {
 }
 
 let userInfo: any;
+
+/**
+ * ユーザーメイン画面
+ */
 class UserMain extends Component<Props, State> {
+  // ナビゲーションバーに表示する項目
   menuItems = [
     {
       menuLabel: "ログアウト",
@@ -158,6 +163,7 @@ class UserMain extends Component<Props, State> {
       this.props.history.push("/auth");
       return;
     }
+    // フォロー一覧の変更監視
     Follow.getFollowingRef(userInfo.uid).on("value", snap => {
       if (!snap || !snap.val()) {
         return;
@@ -166,6 +172,7 @@ class UserMain extends Component<Props, State> {
         followingUids: Object.keys(snap.val())
       });
     });
+    // フォロワー一覧の変更監視
     Follow.getFollowerRef(userInfo.uid).on("value", snap => {
       if (!snap || !snap.val()) {
         return;
@@ -174,12 +181,14 @@ class UserMain extends Component<Props, State> {
         followerUids: Object.keys(snap.val())
       });
     });
+    // firebase認証に紐づくユーザー情報を取得
     User.isInitAuthedRef(userInfo.uid).on("value", snap => {
       if (!snap || !snap.val()) {
         return;
       }
       this.props.onStoreUserInfo(snap.val());
     });
+    // 画像一覧の変更監視
     UploadedImage.getMyUploadedImageRef(userInfo.uid).on("value", snap => {
       if (!snap || !snap.val()) {
         return;
@@ -193,6 +202,7 @@ class UserMain extends Component<Props, State> {
         })
       });
     });
+    // 画像一覧の削除監視
     UploadedImage.getMyUploadedImageRef(userInfo.uid).on("child_removed", _ => {
       UploadedImage.getMyUploadedImageRef(userInfo.uid).off();
       UploadedImage.getMyUploadedImageRef(userInfo.uid).on("value", snap => {
@@ -227,12 +237,18 @@ class UserMain extends Component<Props, State> {
     userInfo = null;
   }
 
+  /**
+   * 画面入力時のハンドラー
+   */
   handleChange = (name: string) => (event: any) => {
     const obj: any = {};
     obj[name] = event.target.value;
     this.setState(obj);
   };
 
+  /**
+   * 画像選択時処理
+   */
   handleChangeFile = (e: any) => {
     UploadFile.uploadImage(
       e,
@@ -251,6 +267,9 @@ class UserMain extends Component<Props, State> {
     );
   };
 
+  /**
+   * フォロー一覧の表示
+   */
   handleOpenFollowingModal = () => {
     if (this.state.followingUids.length === 0) {
       return;
@@ -258,10 +277,16 @@ class UserMain extends Component<Props, State> {
     this.setState({ isOpenFollowingModal: true });
   };
 
+  /**
+   * フォロー一覧の非表示
+   */
   handleCloseFollowingModal = () => {
     this.setState({ isOpenFollowingModal: false });
   };
 
+  /**
+   * フォロワー一覧の表示
+   */
   handleOpenFollowerModal = () => {
     if (this.state.followerUids.length === 0) {
       return;
@@ -269,14 +294,23 @@ class UserMain extends Component<Props, State> {
     this.setState({ isOpenFollowerModal: true });
   };
 
+  /**
+   * フォロワー一覧の非表示
+   */
   handleCloseFollowerModal = () => {
     this.setState({ isOpenFollowerModal: false });
   };
 
+  /**
+   * 画像投稿モーダルの表示
+   */
   handleOpenUploadImageModal = () => {
     this.setState({ isOpenUploadImageModal: true });
   };
 
+  /**
+   * 画像投稿モーダルの非表示
+   */
   handleCloseUploadImageModal = () => {
     this.setState({
       uploadedImage: null,
@@ -284,6 +318,9 @@ class UserMain extends Component<Props, State> {
     });
   };
 
+  /**
+   * 画像詳細モーダルの表示
+   */
   handleOpenImageDetailModal = (selectedImageDetail: any) => {
     this.setState({
       selectedImageDetail: selectedImageDetail,
@@ -291,12 +328,18 @@ class UserMain extends Component<Props, State> {
     });
   };
 
+  /**
+   * 画像詳細モーダルの非表示
+   */
   handleCloseImageDetailModal = () => {
     this.setState({
       isOpenImageDetailModal: false
     });
   };
 
+  /**
+   * 画像投稿処理
+   */
   uploadImage = () => {
     if (this.state.comment && this.state.comment.length > 300) {
       this.props.enqueueSnackbar("コメントは300文字以内で入力してください", {
@@ -316,12 +359,18 @@ class UserMain extends Component<Props, State> {
     });
   };
 
+  /**
+   * ナビゲーションバーを開く
+   */
   onMenuOpen = () => {
     this.setState({
       isMenuOpen: true
     });
   };
 
+  /**
+   * ナビゲーションバーを閉じる
+   */
   onMenuClose = () => {
     this.setState({
       isMenuOpen: false
@@ -369,7 +418,7 @@ class UserMain extends Component<Props, State> {
             onClose={this.handleCloseImageDetailModal}
           />
         ) : null}
-
+        {/* フォロー・フォロワーモーダル */}
         {this.state.isOpenFollowingModal ? (
           <UserListModal
             open={this.state.isOpenFollowingModal}
@@ -431,6 +480,7 @@ class UserMain extends Component<Props, State> {
   }
 }
 
+// reduxへのconnect
 const mapStateToProps = () => (state: RootState) => {
   return {
     auth: state.Auth

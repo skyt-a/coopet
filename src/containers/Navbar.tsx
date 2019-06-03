@@ -50,8 +50,13 @@ interface MenuItem {
   func: () => void;
 }
 
-// Component を定義: React.PureComponent<Props> で拡張する
+/**
+ * ナビゲーションバー
+ */
 class Navbar extends Component<Props> {
+  /**
+   * 表示するメニュー項目を表示
+   */
   createMenuItem() {
     if (!this.props.menuItems || this.props.menuItems.length === 0) {
       return null;
@@ -62,7 +67,7 @@ class Navbar extends Component<Props> {
       </MenuItem>
     ));
   }
-  public render() {
+  render() {
     const { classes } = this.props;
     return (
       <div>
@@ -98,6 +103,7 @@ class Navbar extends Component<Props> {
   }
 }
 
+// reduxへのconnect
 const mapStateToProps = () => (state: RootState) => {
   return {
     auth: state.Auth
