@@ -84,6 +84,10 @@ interface State {
 
 let userInfo: any;
 let loading = true;
+
+/**
+ * ユーザー登録画面
+ */
 class RegisterUser extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -124,12 +128,18 @@ class RegisterUser extends Component<Props, State> {
     }
   }
 
+  /**
+   * 画面入力時のハンドラー
+   */
   handleChange = (name: string) => (event: any) => {
     const obj: any = {};
     obj[name] = event.target.value;
     this.setState(obj);
   };
 
+  /**
+   * 登録完了処理
+   */
   confirmRegister = () => {
     loading = true;
     this.props.onRegisterUser(this.state);
@@ -139,6 +149,9 @@ class RegisterUser extends Component<Props, State> {
     }, 2000);
   };
 
+  /**
+   * 画像選択時処理
+   */
   handleChangeFile = (e: any) => {
     UploadFile.uploadImage(
       e,
@@ -154,6 +167,9 @@ class RegisterUser extends Component<Props, State> {
     );
   };
 
+  /**
+   * 入力エラーが存在するかチェックする
+   */
   hasValidateError = () => {
     return (
       !this.state.userName ||
@@ -261,6 +277,7 @@ class RegisterUser extends Component<Props, State> {
   }
 }
 
+// reduxへのconnect
 const mapStateToProps = () => (state: RootState) => {
   return {
     auth: state.Auth,

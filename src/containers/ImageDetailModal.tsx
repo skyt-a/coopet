@@ -114,6 +114,10 @@ function getModalStyle() {
     overflow: "auto"
   };
 }
+
+/**
+ * 画像詳細モーダル
+ */
 export class ImageDetailModal extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -124,6 +128,9 @@ export class ImageDetailModal extends Component<Props, State> {
     };
   }
 
+  /**
+   * モーダル表示時の処理
+   */
   onRendered = () => {
     User.getUserByIdRef(this.props.selectedImageDetail.uid).once(
       "value",
@@ -145,10 +152,16 @@ export class ImageDetailModal extends Component<Props, State> {
     });
   };
 
+  /**
+   * モーダル非表示時の処理
+   */
   onCancel = () => {
     this.props.onClose();
   };
 
+  /**
+   * いいねボタン押下時の処理
+   */
   clickLike = () => {
     if (!this.props.onLikeImage || !this.props.onDislikeImage) {
       return;
@@ -164,12 +177,18 @@ export class ImageDetailModal extends Component<Props, State> {
     });
   };
 
+  /**
+   * 削除確認メッセージの表示
+   */
   handleOpenCheckDeleteDialog = () => {
     this.setState({
       isOpenDeleteCheckDialog: true
     });
   };
 
+  /**
+   * 削除確認メッセージの非表示
+   */
   handleCloseCheckDeleteDialog = () => {
     this.setState({
       isOpenDeleteCheckDialog: false
@@ -285,6 +304,7 @@ export class ImageDetailModal extends Component<Props, State> {
   }
 }
 
+// reduxへのconnect
 const mapStateToProps = () => (state: RootState) => {
   return {
     auth: state.Auth

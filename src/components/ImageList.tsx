@@ -42,6 +42,9 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   handleOpenImageDetailModal: (uploaded: any) => void;
 }
 
+/**
+ * 画像一覧モジュール
+ */
 class ImageList extends Component<Props> {
   render() {
     if (!firebase.auth()) {

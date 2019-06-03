@@ -19,12 +19,12 @@ const styles = (theme: Theme): StyleRules =>
     }
   });
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
+/**
+ * ローディングモジュール
+ */
 class Loading extends Component<Props> {
   render() {
     return (
-      // <section className={classes.progressWrapper}>
-      //   <CircularProgress className={classes.progress} />
-      // </section>
       <Fragment>
         <svg id="svg-sprite">
           <symbol id="paw" viewBox="0 0 249 209.32">

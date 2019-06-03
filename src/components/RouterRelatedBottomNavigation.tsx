@@ -33,6 +33,9 @@ const styles = (theme: Theme): StyleRules =>
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
 
+/**
+ * ボトムナビゲーション
+ */
 class RouteRelatedBottomNavigation extends Component<Props> {
   navButtons = [
     {

@@ -111,6 +111,9 @@ interface State {
   userInfo: any;
 }
 
+/**
+ * コメント表示モジュール
+ */
 export class CommentsView extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -137,6 +140,9 @@ export class CommentsView extends Component<Props, State> {
     ).off();
   }
 
+  /**
+   * 画面に表示されるコメントを更新する
+   */
   updateComment = () => {
     const selectedImageDetail = this.props.selectedImageDetail;
     UploadedImage.getUploadedImageCommentedsRef(selectedImageDetail.key)
@@ -186,6 +192,9 @@ export class CommentsView extends Component<Props, State> {
       });
   };
 
+  /**
+   * ユーザー詳細画面へ遷移する
+   */
   goToUserDetail = (selectedUserInfo: any) => (e: any) => {
     if (
       !this.props.onSelectUser ||
@@ -272,6 +281,7 @@ export class CommentsView extends Component<Props, State> {
   }
 }
 
+// reduxへのconnect
 const mapStateToProps = () => (state: RootState) => {
   return {};
 };

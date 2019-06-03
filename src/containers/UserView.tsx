@@ -77,6 +77,10 @@ interface State {
 
 let userInfo: any;
 let additionalUserInfo: any;
+
+/**
+ * ユーザー一覧画面
+ */
 class UserView extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -127,12 +131,18 @@ class UserView extends Component<Props, State> {
     // UploadedImage.getMyUploadedImageRef(userInfo.uid).off();
   }
 
+  /**
+   * 画面入力時のハンドラー
+   */
   handleChange = (name: string) => (event: any) => {
     const obj: any = {};
     obj[name] = event.target.value;
     this.setState(obj);
   };
 
+  /**
+   * ペット種別変更時の処理
+   */
   handleSpeciesSelectChange = () => (event: any) => {
     const selectedValue = event.target.value;
     this.setState({
@@ -163,16 +173,12 @@ class UserView extends Component<Props, State> {
     });
   };
 
+  /**
+   * ユーザー詳細画面への遷移
+   */
   goToUserDetail = (selectedUserInfo: any) => (e: any) => {
     this.props.onSelectUser(selectedUserInfo);
     this.props.history.push("/otherView");
-  };
-
-  handleCloseUserDetailModal = () => {
-    this.setState({
-      isOpenUserDetailModal: false,
-      selectedUserInfo: {}
-    });
   };
 
   render() {
@@ -211,6 +217,7 @@ class UserView extends Component<Props, State> {
   }
 }
 
+// reduxへのconnect
 const mapStateToProps = () => (state: RootState) => {
   return {
     auth: state.Auth

@@ -124,7 +124,13 @@ interface Props
   onUnfollow?: (user: any) => void;
 }
 
+/**
+ * ユーザープロフィール
+ */
 class UserProfile extends Component<Props> {
+  /**
+   * フォロー時の処理
+   */
   handleFollow = (user: any) => {
     this.props.onFollow && this.props.onFollow(user);
     this.setState({
@@ -132,6 +138,9 @@ class UserProfile extends Component<Props> {
     });
   };
 
+  /**
+   * フォロー解除時の処理
+   */
   handleUnfollow = (user: any) => {
     this.props.onUnfollow && this.props.onUnfollow(user);
     this.setState({
@@ -139,6 +148,9 @@ class UserProfile extends Component<Props> {
     });
   };
 
+  /**
+   * フォローしているか判定する
+   */
   isFollowing = () => {
     if (!this.props.auth || !this.props.auth.additionalUserInfo) {
       return false;
@@ -250,6 +262,7 @@ class UserProfile extends Component<Props> {
   }
 }
 
+// reduxへのconnect
 const mapStateToProps = () => (state: RootState) => {
   return {
     auth: state.Auth

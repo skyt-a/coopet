@@ -53,6 +53,9 @@ interface State {
   postComment: string;
 }
 
+/**
+ * コメント入力モジュール
+ */
 export class CommentInput extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -65,19 +68,18 @@ export class CommentInput extends Component<Props, State> {
     };
   }
 
+  /**
+   * 画面入力時のハンドラー
+   */
   handleChange = (name: string) => (event: any) => {
     const obj: any = {};
     obj[name] = event.target.value;
     this.setState(obj);
   };
 
-  handleCloseUserDetailModal = () => {
-    this.setState({
-      isOpenUserDetailModal: false,
-      selectedUserInfo: {}
-    });
-  };
-
+  /**
+   * 画像へのコメントを行う
+   */
   commentUploadedImage = () => {
     if (!this.state.postComment || !this.props.onCommentImage) {
       return;
@@ -127,6 +129,7 @@ export class CommentInput extends Component<Props, State> {
   }
 }
 
+// reduxへのconnect
 const mapStateToProps = () => (state: RootState) => {
   return {};
 };

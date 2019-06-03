@@ -76,6 +76,10 @@ const allSpeciesItem = {
 };
 
 let userInfo: any;
+
+/**
+ * 画像表示モジュール
+ */
 export class ImageView extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -114,12 +118,18 @@ export class ImageView extends Component<Props, State> {
     // UploadedImage.getMyUploadedImageRef(userInfo.uid).off();
   }
 
+  /**
+   * 画面入力のハンドラー
+   */
   handleChange = (name: string) => (event: any) => {
     const obj: any = {};
     obj[name] = event.target.value;
     this.setState(obj);
   };
 
+  /**
+   * フォローフィルター変更時の処理
+   */
   handlecheckChange = (name: string) => (event: any) => {
     const obj: any = {};
     obj[name] = event.target.checked;
@@ -134,6 +144,9 @@ export class ImageView extends Component<Props, State> {
     }
   };
 
+  /**
+   * ペット種別変更時の処理
+   */
   handleSpeciesSelectChange = () => (event: any) => {
     const selectedValue = event.target.value;
     this.setState({
@@ -142,6 +155,9 @@ export class ImageView extends Component<Props, State> {
     this.updateImageViewBySpecies(selectedValue);
   };
 
+  /**
+   * フォローフィルターによって画像一覧を更新する
+   */
   updateImageViewByFollow = (viewedImages: any[]) => {
     Follow.getFollowingRef(userInfo.uid).once("value", snap => {
       if (!snap || !snap.val()) {
@@ -156,6 +172,9 @@ export class ImageView extends Component<Props, State> {
     });
   };
 
+  /**
+   * ペット種別によって画像一覧を更新する
+   */
   updateImageViewBySpecies = (selectedValue: string) => {
     this.setState({
       viewedImages: []
@@ -202,6 +221,9 @@ export class ImageView extends Component<Props, State> {
     });
   };
 
+  /**
+   * 画像詳細モーダルを表示する
+   */
   handleOpenImageDetailModal = (selectedImageDetail: any) => {
     this.setState({
       selectedImageDetail: selectedImageDetail,
@@ -209,6 +231,9 @@ export class ImageView extends Component<Props, State> {
     });
   };
 
+  /**
+   * 画像詳細モーダルを非表示する
+   */
   handleCloseImageDetailModal = () => {
     this.setState({
       isOpenImageDetailModal: false
@@ -271,6 +296,7 @@ export class ImageView extends Component<Props, State> {
   }
 }
 
+// reduxへのconnect
 const mapStateToProps = () => (state: RootState) => {
   return {
     auth: state.Auth
