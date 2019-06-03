@@ -1,20 +1,24 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { authActions } from "../actions";
+
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 import User from "../utils/User";
 
 interface Props extends RouteComponentProps {
   onStoreUserInfo: (p: any) => void;
 }
 
-interface State {}
-
 let userInfo: any;
-class AfterAuthLoading extends Component<Props, State> {
+export class AfterAuthLoading extends Component<Props> {
   constructor(props: Props) {
     super(props);
-    userInfo = firebase.auth().currentUser;
+    userInfo = this.getFirebaseCurrentUser();
   }
 
   componentDidMount = () => {
@@ -32,6 +36,10 @@ class AfterAuthLoading extends Component<Props, State> {
     });
   };
 
+  getFirebaseCurrentUser = () => {
+    return firebase.auth().currentUser;
+  };
+
   componentWillUnmount() {
     if (!userInfo) {
       return;
@@ -44,4 +52,21 @@ class AfterAuthLoading extends Component<Props, State> {
   }
 }
 
-export default withRouter(AfterAuthLoading);
+const mapStateToProps = () => (state: RootState) => {
+  return {
+    auth: state.Auth
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onStoreUserInfo: (p: any) => {
+      dispatch(authActions.storeUserInfo.started(p));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(AfterAuthLoading));

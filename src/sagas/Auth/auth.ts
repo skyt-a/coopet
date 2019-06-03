@@ -14,7 +14,6 @@ import { UserInfo } from "../../models/UserInfo";
 import { isIAuthError } from "../../models/AuthError";
 import { Severity } from "../../models/Severity";
 import { InfoLevel } from "../../models/InfoLevel";
-import SessionStorageAccessor from "../../utils/SessionStorageAccessor";
 import AppErrorUtil from "../../utils/AppErrorUtil";
 import AppInfoUtil from "../../utils/AppInfoUtil";
 import {
@@ -71,13 +70,7 @@ const authSaga = {
             };
           }
 
-          // リダイレクト前に、これから行う処理が SignUp であることを sessionStorage に持たせておく。
-          SessionStorageAccessor.setAuthAction({
-            action: "SignUp",
-            provider: signing.authProvider
-          });
-
-          // 行ってこい(Popup)
+          // サインイン処理
           yield firebase.auth().signInWithPopup(authProvider);
           break;
         }
@@ -176,13 +169,7 @@ const authSaga = {
             };
           }
 
-          // リダイレクト前に、これから行う処理が SignUp であることを sessionStorage に持たせておく。
-          SessionStorageAccessor.setAuthAction({
-            action: "SignIn",
-            provider: signing.authProvider
-          });
-
-          // 行ってこい(Popup)
+          // サインイン処理
           yield firebase.auth().signInWithPopup(authProvider);
           // 処理完了
           yield put(

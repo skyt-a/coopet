@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import Auth, { IAuthState } from "./Auth";
 import RegisterUser, { State } from "./RegisterUser";
-import App, { IAppState } from "./app";
+import App, { IAppState } from "./App";
 
 export type RootState = {
   App: IAppState;
@@ -14,10 +14,3 @@ export const rootReducer = combineReducers({
   RegisterUser,
   App
 });
-
-// export const actionCreator = {
-//   auth: Auth.actionCreator,
-//   registerUser: RegisterUser.actionCreator
-// };
-// export { IAuthState } from "./Auth";
-// export { State } from "./RegisterUser";

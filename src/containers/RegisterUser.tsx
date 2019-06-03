@@ -1,3 +1,9 @@
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { authActions } from "../actions/index";
+
 import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
@@ -19,7 +25,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { withSnackbar, WithSnackbarProps } from "notistack";
 import firebase from "../firebase";
 import User from "../utils/User";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 import animalSpecies from "../assets/data/animalSpecies.json";
 import Navbar from "../containers/Navbar";
 import { UploadFile } from "../utils/UploadFile";
@@ -255,4 +261,30 @@ class RegisterUser extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withRouter(withSnackbar(RegisterUser)));
+const mapStateToProps = () => (state: RootState) => {
+  return {
+    auth: state.Auth,
+    registerUser: state.ResgisterUser
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onRegisterUser: (registerInfo: any) => {
+      dispatch(
+        authActions.updateUserInfo.started({
+          userName: registerInfo.userName,
+          petName: registerInfo.petName,
+          photoURL: registerInfo.photoURL,
+          petSpecies: registerInfo.petSpecies,
+          uploadedImage: registerInfo.uploadedImage
+        })
+      );
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(withRouter(withSnackbar(RegisterUser))));

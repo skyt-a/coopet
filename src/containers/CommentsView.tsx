@@ -1,3 +1,9 @@
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { appActions } from "../actions";
+
 import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
@@ -93,9 +99,7 @@ const styles = (theme: Theme): StyleRules =>
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   selectedImageDetail: any;
-  onCancel: () => void;
   onSelectUser?: (user: any) => void;
-  onCommentImage?: (param: { uid: any; key: string; comment: string }) => void;
 }
 
 interface State {
@@ -104,10 +108,10 @@ interface State {
   commentUserMast?: any;
   selectedUserInfo: any;
   postComment: string;
+  userInfo: any;
 }
 
-let userInfo: any;
-class CommentsView extends Component<Props, State> {
+export class CommentsView extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -115,9 +119,9 @@ class CommentsView extends Component<Props, State> {
       commenteds: [],
       commentUserMast: null,
       selectedUserInfo: {},
-      postComment: ""
+      postComment: "",
+      userInfo: firebase.auth().currentUser
     };
-    userInfo = firebase.auth().currentUser;
   }
 
   componentDidMount = () => {
@@ -125,7 +129,7 @@ class CommentsView extends Component<Props, State> {
   };
 
   componentWillUnmount() {
-    if (!userInfo) {
+    if (!this.state.userInfo) {
       return;
     }
     UploadedImage.getUploadedImageCommentedsRef(
@@ -183,7 +187,10 @@ class CommentsView extends Component<Props, State> {
   };
 
   goToUserDetail = (selectedUserInfo: any) => (e: any) => {
-    if (!this.props.onSelectUser || selectedUserInfo.uid === userInfo.uid) {
+    if (
+      !this.props.onSelectUser ||
+      selectedUserInfo.uid === this.state.userInfo.uid
+    ) {
       return;
     }
     this.props.onSelectUser(selectedUserInfo);
@@ -191,34 +198,6 @@ class CommentsView extends Component<Props, State> {
     setTimeout(() => {
       this.props.history.replace("/otherView");
     });
-  };
-
-  handleChange = (name: string) => (event: any) => {
-    const obj: any = {};
-    obj[name] = event.target.value;
-    this.setState(obj);
-  };
-
-  handleCloseUserDetailModal = () => {
-    this.setState({
-      isOpenUserDetailModal: false,
-      selectedUserInfo: {}
-    });
-  };
-
-  commentUploadedImage = () => {
-    if (!this.state.postComment || !this.props.onCommentImage) {
-      return;
-    }
-    this.props.onCommentImage({
-      comment: this.state.postComment,
-      uid: this.props.selectedImageDetail.uid,
-      key: this.props.selectedImageDetail.key
-    });
-    this.setState({
-      postComment: ""
-    });
-    // this.handleOpenImageDetailModal(this.state.selectedImageDetail);
   };
 
   render() {
@@ -231,7 +210,7 @@ class CommentsView extends Component<Props, State> {
               if (!commented) {
                 return null;
               }
-              if (commented.uid === userInfo.uid) {
+              if (commented.uid === this.state.userInfo.uid) {
                 return (
                   <div
                     className={classes.balloonSetBox}
@@ -293,4 +272,19 @@ class CommentsView extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withRouter(CommentsView));
+const mapStateToProps = () => (state: RootState) => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onSelectUser: (user: any) => {
+      dispatch(appActions.selectUser(user));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(withRouter(CommentsView)));

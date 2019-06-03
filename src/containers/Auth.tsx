@@ -1,4 +1,10 @@
 import React, { Component, Fragment } from "react";
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { authActions } from "../actions";
+
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
   WithStyles,
@@ -16,10 +22,9 @@ import {
 } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import firebase from "../firebase";
-import { UserInfo } from "../models/UserInfo";
 import IconUtil from "../utils/IconUtil";
 import classNames from "classnames";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 import dog from "../assets/images/dog.svg";
 
 const styles = (theme: Theme): StyleRules =>
@@ -54,11 +59,9 @@ const styles = (theme: Theme): StyleRules =>
   });
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   auth: any;
-  authenticatedUser: UserInfo;
   onAuth: (signing: any) => void;
   onSignUp: (signing: any) => void;
   onUpdateUser: (user: any) => void;
-  onLogout: () => void;
   onStoreUserInfo: (p: any) => void;
 }
 interface State {
@@ -76,18 +79,21 @@ const providers: {
 ];
 const testUserMail = "testtestcoopet@gmail.com";
 const testUserPassword = "testtestcoopet";
-class Auth extends Component<Props, State> {
+export class Auth extends Component<Props, State> {
   unsubscribe: any;
   constructor(props: Props) {
     super(props);
     this.state = {
       email: "",
       password: "",
-      loading: true
+      loading: false
     };
   }
 
   componentDidMount = () => {
+    this.setState({
+      loading: true
+    });
     this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
       // this.props.onUpdateUser(user);
       if (user != null) {
@@ -110,10 +116,6 @@ class Auth extends Component<Props, State> {
     const obj: any = {};
     obj[name] = event.target.value;
     this.setState(obj);
-  };
-
-  logout = () => {
-    this.props.onLogout();
   };
 
   authByProvider = (providerName: string) => {
@@ -144,7 +146,6 @@ class Auth extends Component<Props, State> {
     }
     return (
       <Fragment>
-        {/* <Typography>Username: {user && user.displayName}</Typography> */}
         <List>
           <Card className={classes.card} color="secondary">
             <Typography className={classes.type}>
@@ -223,4 +224,30 @@ class Auth extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withRouter(Auth));
+const mapStateToProps = () => (state: RootState) => {
+  return {
+    auth: state.Auth
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onAuth: (signing: any) => {
+      dispatch(authActions.signIn.started(signing));
+    },
+    onSignUp: (signing: any) => {
+      dispatch(authActions.signUp.started(signing));
+    },
+    // onUpdateUser: (user: any) => {
+    //   dispatch(authActions.updateUserInfo.started(user));
+    // },
+    onStoreUserInfo: (p: any) => {
+      dispatch(authActions.storeUserInfo.started(p));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(withRouter(Auth)));

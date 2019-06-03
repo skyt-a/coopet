@@ -1,8 +1,8 @@
 // import { Action } from 'typescript-fsa'; // Note: not from 'redux'
 import { reducerWithInitialState } from "typescript-fsa-reducers";
-import { appActions } from "../actions";
-import { AppError } from "../models/AppError";
-import { AppInfo } from "../models/AppInfo";
+import { appActions } from "../../actions";
+import { AppError } from "../../models/AppError";
+import { AppInfo } from "../../models/AppInfo";
 
 export interface IAppState {
   errors: AppError[];

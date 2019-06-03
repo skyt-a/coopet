@@ -1,3 +1,9 @@
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { uploadActions } from "../actions";
+
 import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
@@ -66,6 +72,7 @@ const styles = (theme: Theme): StyleRules =>
     leftBalloon: {
       flexDirection: "row",
       marginRight: "auto",
+      marginLeft: "30px",
       "&::after": {
         left: "-10px"
       }
@@ -107,7 +114,7 @@ function getModalStyle() {
     overflow: "auto"
   };
 }
-class ImageDetailModal extends Component<Props, State> {
+export class ImageDetailModal extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -199,7 +206,6 @@ class ImageDetailModal extends Component<Props, State> {
                   title="Contemplative Reptile"
                 />
                 <CommentsView
-                  onCancel={this.onCancel}
                   selectedImageDetail={this.props.selectedImageDetail}
                 />
               </Card>
@@ -216,6 +222,7 @@ class ImageDetailModal extends Component<Props, State> {
                   onClick={this.handleOpenCheckDeleteDialog}
                   color="secondary"
                   variant="contained"
+                  id="deleteButton"
                 >
                   <DeleteIcon className={classes.likeIcon} color="action" />
                 </Button>
@@ -224,6 +231,7 @@ class ImageDetailModal extends Component<Props, State> {
                 onClick={this.clickLike}
                 color="secondary"
                 variant="contained"
+                id="likeButton"
               >
                 <FavoriteIcon
                   className={classes.likeIcon}
@@ -233,6 +241,7 @@ class ImageDetailModal extends Component<Props, State> {
               <Button
                 color="secondary"
                 variant="contained"
+                id="closeButton"
                 onClick={this.onCancel}
                 className={classes.actionButton}
               >
@@ -276,4 +285,27 @@ class ImageDetailModal extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withRouter(ImageDetailModal));
+const mapStateToProps = () => (state: RootState) => {
+  return {
+    auth: state.Auth
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onLikeImage: (param: any) => {
+      dispatch(uploadActions.likeImage.started(param));
+    },
+    onDislikeImage: (param: any) => {
+      dispatch(uploadActions.dislikeImage.started(param));
+    },
+    onDeleteImage: (param: any) => {
+      dispatch(uploadActions.deleteImage.started(param));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(withRouter(ImageDetailModal)));

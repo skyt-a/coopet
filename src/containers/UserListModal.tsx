@@ -1,3 +1,9 @@
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { authActions, uploadActions, appActions } from "../actions";
+
 import React, { Component } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
@@ -101,4 +107,27 @@ class UserListModal extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withRouter(UserListModal));
+const mapStateToProps = () => (state: RootState) => {
+  return {
+    auth: state.Auth
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onStoreUserInfo: (p: any) => {
+      dispatch(authActions.storeUserInfo.started(p));
+    },
+    onUploadImage: (param: any) => {
+      dispatch(uploadActions.uploadImage.started(param));
+    },
+    onSelectUser: (user: any) => {
+      dispatch(appActions.selectUser(user));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(withRouter(UserListModal)));

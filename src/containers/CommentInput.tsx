@@ -1,3 +1,9 @@
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+
+import { RootState } from "../modules";
+import { uploadActions } from "../actions";
+
 import React, { Component } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import withStyles, {
@@ -32,7 +38,6 @@ const styles = (theme: Theme): StyleRules =>
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   selectedImageDetail: any;
-  onSelectUser?: (user: any) => void;
   onCommentImage?: (param: { uid: any; key: string; comment: string }) => void;
 }
 
@@ -44,7 +49,7 @@ interface State {
   postComment: string;
 }
 
-class CommentInput extends Component<Props, State> {
+export class CommentInput extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -112,4 +117,19 @@ class CommentInput extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withRouter(CommentInput));
+const mapStateToProps = () => (state: RootState) => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+  return {
+    onCommentImage: (param: any) => {
+      dispatch(uploadActions.commentImage.started(param));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(withRouter(CommentInput)));
