@@ -34,7 +34,7 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   onSelectUser?: (user: any) => void;
 }
 
-class UserCard extends Component<Props> {
+export class UserCard extends Component<Props> {
   goToUserDetail = (selectedUserInfo: any) => (e: any) => {
     // 自分自身で無い場合のみ、ユーザー詳細画面へ移動することができる
     if (

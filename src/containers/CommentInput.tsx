@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 
 import { RootState } from "../modules";
-import { appActions, uploadActions } from "../actions";
+import { uploadActions } from "../actions";
 
 import React, { Component } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
@@ -38,7 +38,6 @@ const styles = (theme: Theme): StyleRules =>
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   selectedImageDetail: any;
-  onSelectUser?: (user: any) => void;
   onCommentImage?: (param: { uid: any; key: string; comment: string }) => void;
 }
 
@@ -50,7 +49,7 @@ interface State {
   postComment: string;
 }
 
-class CommentInput extends Component<Props, State> {
+export class CommentInput extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -124,9 +123,6 @@ const mapStateToProps = () => (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
   return {
-    onSelectUser: (user: any) => {
-      dispatch(appActions.selectUser(user));
-    },
     onCommentImage: (param: any) => {
       dispatch(uploadActions.commentImage.started(param));
     }

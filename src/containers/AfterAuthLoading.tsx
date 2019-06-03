@@ -14,13 +14,11 @@ interface Props extends RouteComponentProps {
   onStoreUserInfo: (p: any) => void;
 }
 
-interface State {}
-
 let userInfo: any;
-class AfterAuthLoading extends Component<Props, State> {
+export class AfterAuthLoading extends Component<Props> {
   constructor(props: Props) {
     super(props);
-    userInfo = firebase.auth().currentUser;
+    userInfo = this.getFirebaseCurrentUser();
   }
 
   componentDidMount = () => {
@@ -36,6 +34,10 @@ class AfterAuthLoading extends Component<Props, State> {
       this.props.onStoreUserInfo(snap.val());
       this.props.history.push("/userMain");
     });
+  };
+
+  getFirebaseCurrentUser = () => {
+    return firebase.auth().currentUser;
   };
 
   componentWillUnmount() {

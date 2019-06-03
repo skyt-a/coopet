@@ -114,7 +114,7 @@ function getModalStyle() {
     overflow: "auto"
   };
 }
-class ImageDetailModal extends Component<Props, State> {
+export class ImageDetailModal extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -206,7 +206,6 @@ class ImageDetailModal extends Component<Props, State> {
                   title="Contemplative Reptile"
                 />
                 <CommentsView
-                  onCancel={this.onCancel}
                   selectedImageDetail={this.props.selectedImageDetail}
                 />
               </Card>
@@ -223,6 +222,7 @@ class ImageDetailModal extends Component<Props, State> {
                   onClick={this.handleOpenCheckDeleteDialog}
                   color="secondary"
                   variant="contained"
+                  id="deleteButton"
                 >
                   <DeleteIcon className={classes.likeIcon} color="action" />
                 </Button>
@@ -231,6 +231,7 @@ class ImageDetailModal extends Component<Props, State> {
                 onClick={this.clickLike}
                 color="secondary"
                 variant="contained"
+                id="likeButton"
               >
                 <FavoriteIcon
                   className={classes.likeIcon}
@@ -240,6 +241,7 @@ class ImageDetailModal extends Component<Props, State> {
               <Button
                 color="secondary"
                 variant="contained"
+                id="closeButton"
                 onClick={this.onCancel}
                 className={classes.actionButton}
               >

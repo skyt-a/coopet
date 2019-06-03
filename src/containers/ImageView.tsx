@@ -58,15 +58,7 @@ const styles = (theme: Theme): StyleRules =>
   });
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
-  registerUser: State;
   auth: any;
-  onUploadImage: (param: {
-    uploadedImage: any;
-    comment: string;
-    petSpecies: string;
-  }) => void;
-  onLogout: () => void;
-  onStoreUserInfo: (p: any) => void;
 }
 
 interface State {
@@ -74,8 +66,6 @@ interface State {
   viewedImages: any[];
   isOpenImageDetailModal: boolean;
   selectedImageDetail: any;
-  postComment: string;
-  commentUserMast: any;
   loading: boolean;
   followingUid: string[];
   isFollowingView: boolean;
@@ -87,7 +77,7 @@ const allSpeciesItem = {
 };
 
 let userInfo: any;
-class ImageView extends Component<Props, State> {
+export class ImageView extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     userInfo = this.props.auth.user;
@@ -96,8 +86,6 @@ class ImageView extends Component<Props, State> {
       viewedImages: [],
       isOpenImageDetailModal: false,
       selectedImageDetail: {},
-      postComment: "",
-      commentUserMast: {},
       loading: false,
       followingUid: [],
       isFollowingView: true
@@ -291,14 +279,7 @@ const mapStateToProps = () => (state: RootState) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
-  return {
-    onStoreUserInfo: (p: any) => {
-      dispatch(authActions.storeUserInfo.started(p));
-    },
-    onUploadImage: (param: any) => {
-      dispatch(uploadActions.uploadImage.started(param));
-    }
-  };
+  return {};
 };
 
 export default connect(
