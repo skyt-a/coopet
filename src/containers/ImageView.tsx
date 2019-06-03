@@ -2,7 +2,6 @@ import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 
 import { RootState } from "../modules";
-import { authActions, uploadActions } from "../actions";
 
 import React, { Component, Fragment } from "react";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
