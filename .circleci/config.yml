@@ -10,6 +10,9 @@ jobs:
           keys:
             - 'v1-dependencies-{{ checksum "package.json" }}'
             - v1-dependencies-
+      - run:
+          name: 'Decode .env file'
+          command: echo ${ENV} | base64 --decode > .env
       - run: 'yarn install'
       - save_cache:
           paths:

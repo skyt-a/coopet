@@ -1,0 +1,150 @@
+[
+  {
+    "id": "Itachi",
+    "name": "イタチ"
+  },
+  {
+    "id": "Dog",
+    "name": "イヌ"
+  },
+  {
+    "id": "boar",
+    "name": "ウリボウ"
+  },
+  {
+    "id": "Inko",
+    "name": "インコ"
+  },
+  {
+    "id": "Rabbit",
+    "name": "ウサギ"
+  },
+  {
+    "id": "Horse",
+    "name": "ウマ"
+  },
+  {
+    "id": "Otter",
+    "name": "カワウソ"
+  },
+  {
+    "id": "tortoise",
+    "name": "カメ"
+  },
+  {
+    "id": "Fox",
+    "name": "キツネ"
+  },
+  {
+    "id": "Giraffe",
+    "name": "キリン"
+  },
+  {
+    "id": "GoldFish",
+    "name": "金魚"
+  },
+  {
+    "id": "bear",
+    "name": "クマ"
+  },
+  {
+    "id": "Bat",
+    "name": "コウモリ"
+  },
+  {
+    "id": "monkey",
+    "name": "サル"
+  },
+  {
+    "id": "Serval",
+    "name": "サーバル"
+  },
+  {
+    "id": "Raccoondog",
+    "name": "タヌキ"
+  },
+  {
+    "id": "Chinchilla",
+    "name": "チンチラ"
+  },
+  {
+    "id": "degu",
+    "name": "デグー"
+  },
+  {
+    "id": "cat",
+    "name": "ネコ"
+  },
+  {
+    "id": "Mouse",
+    "name": "ネズミ"
+  },
+  {
+    "id": "nettai",
+    "name": "熱帯魚"
+  },
+  {
+    "id": "hamster",
+    "name": "ハムスター"
+  },
+  {
+    "id": "Hedgehog",
+    "name": "ハリネズミ"
+  },
+  {
+    "id": "Sheep",
+    "name": "ヒツジ"
+  },
+  {
+    "id": "Beaver",
+    "name": "ビーバー"
+  },
+  {
+    "id": "Fennec",
+    "name": "フェネック"
+  },
+  {
+    "id": "pig",
+    "name": "ブタ"
+  },
+  {
+    "id": "Prairiedog",
+    "name": "プレーリードッグ"
+  },
+  {
+    "id": "buncho",
+    "name": "ブンチョウ"
+  },
+  {
+    "id": "owl",
+    "name": "フクロウ"
+  },
+  {
+    "id": "Momonga",
+    "name": "モモンガ"
+  },
+  {
+    "id": "Guineapig",
+    "name": "モルモット"
+  },
+  {
+    "id": "Goat",
+    "name": "ヤギ"
+  },
+  {
+    "id": "Porcupine",
+    "name": "ヤマアラシ"
+  },
+  {
+    "id": "Yamane",
+    "name": "ヤマネ"
+  },
+  {
+    "id": "Squirrel",
+    "name": "リス"
+  },
+  {
+    "id": "other",
+    "name": "その他"
+  }
+]
