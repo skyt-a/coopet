@@ -14,6 +14,7 @@ import createStyles from "@material-ui/core/styles/createStyles";
 import { TextField, Button } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import ChatIcon from "@material-ui/icons/Chat";
+import { withSnackbar, WithSnackbarProps } from "notistack";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -36,7 +37,10 @@ const styles = (theme: Theme): StyleRules =>
     }
   });
 
-interface Props extends WithStyles<typeof styles>, RouteComponentProps {
+interface Props
+  extends WithStyles<typeof styles>,
+    RouteComponentProps,
+    WithSnackbarProps {
   selectedImageDetail: any;
   onCommentImage?: (param: { uid: any; key: string; comment: string }) => void;
 }
@@ -77,6 +81,12 @@ export class CommentInput extends Component<Props, State> {
   commentUploadedImage = () => {
     if (!this.state.postComment || !this.props.onCommentImage) {
       return;
+    }
+    if (this.state.postComment.length > 300) {
+      this.props.enqueueSnackbar("コメントは300文字以内で入力してください", {
+        variant: "error",
+        autoHideDuration: 3000
+      });
     }
     this.props.onCommentImage({
       comment: this.state.postComment,
@@ -132,4 +142,4 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(withRouter(CommentInput)));
+)(withStyles(styles)(withRouter(withSnackbar(CommentInput))));

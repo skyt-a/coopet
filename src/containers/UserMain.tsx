@@ -298,12 +298,22 @@ class UserMain extends Component<Props, State> {
   };
 
   uploadImage = () => {
+    if (this.state.comment && this.state.comment.length > 300) {
+      this.props.enqueueSnackbar("コメントは300文字以内で入力してください", {
+        variant: "error",
+        autoHideDuration: 3000
+      });
+      return;
+    }
     this.props.onUploadImage({
       uploadedImage: this.state.uploadedImage,
       comment: this.state.comment,
       petSpecies: this.props.auth.additionalUserInfo.petSpecies
     });
     this.handleCloseUploadImageModal();
+    this.setState({
+      comment: ""
+    });
   };
 
   onMenuOpen = () => {

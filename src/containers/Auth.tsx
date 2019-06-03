@@ -26,6 +26,8 @@ import IconUtil from "../utils/IconUtil";
 import classNames from "classnames";
 import Loading from "../components/Loading";
 import dog from "../assets/images/dog.svg";
+import { isValidEmail } from "../utils/misc";
+import { withSnackbar, WithSnackbarProps } from "notistack";
 
 const styles = (theme: Theme): StyleRules =>
   createStyles({
@@ -57,8 +59,12 @@ const styles = (theme: Theme): StyleRules =>
       fontSize: "1.1rem"
     }
   });
-interface Props extends WithStyles<typeof styles>, RouteComponentProps {
+interface Props
+  extends WithStyles<typeof styles>,
+    RouteComponentProps,
+    WithSnackbarProps {
   auth: any;
+  app: any;
   onAuth: (signing: any) => void;
   onSignUp: (signing: any) => void;
   onUpdateUser: (user: any) => void;
@@ -130,6 +136,44 @@ export class Auth extends Component<Props, State> {
     this.props.onAuth(signing);
   };
 
+  authPassword = () => {
+    if (this.validateAuthPassword()) {
+      return;
+    }
+    this.authByProvider("Password");
+  };
+
+  validateAuthPassword = () => {
+    let hasValidationError = false;
+    if (!this.state.email) {
+      this.props.enqueueSnackbar("メールアドレスが入力されていません", {
+        variant: "error",
+        autoHideDuration: 3000
+      });
+      hasValidationError = true;
+    } else if (!isValidEmail(this.state.email)) {
+      this.props.enqueueSnackbar("不正なメールアドレスです", {
+        variant: "error",
+        autoHideDuration: 3000
+      });
+      hasValidationError = true;
+    }
+    if (!this.state.password) {
+      this.props.enqueueSnackbar("パスワードが入力されていません", {
+        variant: "error",
+        autoHideDuration: 3000
+      });
+      hasValidationError = true;
+    } else if (this.state.password.length > 20) {
+      this.props.enqueueSnackbar("パスワードは20文字以内で入力してください", {
+        variant: "error",
+        autoHideDuration: 3000
+      });
+      hasValidationError = true;
+    }
+    return hasValidationError;
+  };
+
   authByTestUser = () => {
     const signing = {
       email: testUserMail,
@@ -177,7 +221,7 @@ export class Auth extends Component<Props, State> {
                 className={classNames(classes.button, classes.listItemInner)}
                 color="secondary"
                 variant="contained"
-                onClick={() => this.authByProvider("Password")}
+                onClick={this.authPassword}
               >
                 {IconUtil.renderAuthProviderIcon("Password")}
                 メールでログイン
@@ -226,7 +270,8 @@ export class Auth extends Component<Props, State> {
 
 const mapStateToProps = () => (state: RootState) => {
   return {
-    auth: state.Auth
+    auth: state.Auth,
+    app: state.App
   };
 };
 
@@ -250,4 +295,4 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(withRouter(Auth)));
+)(withStyles(styles)(withRouter(withSnackbar(Auth))));
