@@ -35,24 +35,13 @@ const styles = (theme: Theme): StyleRules =>
       margin: theme.spacing.unit,
       padding: "10px"
     },
-    badge: {
-      flexBasis: "calc(100% / 3.1)"
-    },
     flex: {
       display: "flex",
       flexWrap: "wrap",
       overflow: "auto"
     },
-    uploadedImageWrap: {
-      position: "relative",
-      height: "150px",
-      border: "1px solid rgba(0, 0, 0, 0.12)",
-      margin: "1px"
-    },
-    uploadedImage: {
-      width: "100%",
-      height: "100%",
-      objectFit: "scale-down"
+    label: {
+      margin: "auto"
     }
   });
 
@@ -267,6 +256,7 @@ export class ImageView extends Component<Props, State> {
               ))}
             </TextField>
             <FormControlLabel
+              className={classes.label}
               control={
                 <Switch
                   checked={this.state.isFollowingView}

@@ -33,7 +33,13 @@ const styles = (theme: Theme): StyleRules =>
       padding: "10px"
     },
     badge: {
-      flexBasis: "calc(100% / 3.1)"
+      flexBasis: "calc(100% / 3.1)",
+      [theme.breakpoints.up("sm")]: {
+        flexBasis: "calc(100% / 4)"
+      },
+      [theme.breakpoints.up("md")]: {
+        flexBasis: "calc(100% / 5)"
+      }
     }
   });
 
