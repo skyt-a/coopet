@@ -50,10 +50,6 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
  * ランディングページ
  */
 class Landing extends Component<Props> {
-  constructor(props: Props) {
-    super(props);
-    this.goToLoginPage = this.goToLoginPage.bind(this);
-  }
   /**
    * ログインページへ遷移する
    */
@@ -66,7 +62,7 @@ class Landing extends Component<Props> {
       <article className={classes.landingView}>
         <section className={classes.landingSection}>
           <Typography variant="h6" paragraph className={classes.paragraph}>
-            あなたのペットの素晴らしさをみんなに知ってもらいましょう
+            ペットの素晴らしさを共有しましょう！
           </Typography>
           <Button
             variant="contained"
