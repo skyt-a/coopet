@@ -1,4 +1,4 @@
-https://qiita.com/RinGoku/items/508ce957a3db2fb34fbb
+記事を書きました https://qiita.com/RinGoku/items/508ce957a3db2fb34fbb
 ## アプリケーション概要
 ペットでつながるSNSサービス「Coopet」です。ペットの画像投稿とその画像へのコメントを通じて交流を図ります。<br>
 
