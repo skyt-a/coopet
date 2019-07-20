@@ -62,7 +62,7 @@ class Landing extends Component<Props> {
       <article className={classes.landingView}>
         <section className={classes.landingSection}>
           <Typography variant="h6" paragraph className={classes.paragraph}>
-            ペットの素晴らしさを共有しましょう！
+            ペットの素晴らしさを広めましょう！
           </Typography>
           <Button
             variant="contained"
