@@ -70,7 +70,7 @@ class Landing extends Component<Props> {
             color="primary"
             onClick={this.goToLoginPage}
           >
-            Start
+            始めましょう！
           </Button>
         </section>
       </article>
